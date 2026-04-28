@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 *)",
+      "Bash(py *)",
+      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir=false --import-alias=\"@/*\" --yes)",
+      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir=false --import-alias=\"@/*\" --yes --skip-install)",
+      "Bash(mkdir -p /tmp/exam-scheduler)",
+      "Read(//tmp/**)",
+      "Bash(cp -r /tmp/exam-scheduler/* D:/Programming/JustPay/)",
+      "Bash(cp -r /tmp/exam-scheduler/.* D:/Programming/JustPay/)",
+      "Bash(npx tsc *)",
+      "Bash(rm -rf .git)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
+    ]
+  }
+}
