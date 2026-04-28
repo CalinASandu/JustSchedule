@@ -21,7 +21,7 @@ export default function DayBookingSummary({ date, bookings }: DayBookingSummaryP
           const slotLabel = SLOTS.find((s) => s.id === b.slot)?.label ?? b.slot
           return (
             <li
-              key={`${b.slot}-${b.seat}`}
+              key={`${b.date}-${b.slot}-${b.seat}`}
               className="text-xs bg-[#DBEAFE] text-[#1D4ED8] border border-[#BFDBFE] rounded-full px-3 py-0.5 font-medium"
             >
               {slotLabel} · Seat {b.seat}

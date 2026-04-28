@@ -19,7 +19,7 @@ export default function SlotCard({ slotId, label, bookedCount, onClick }: SlotCa
     <button
       onClick={onClick}
       disabled={isFull}
-      aria-label={`${label} (${slotId}) — ${isFull ? 'fully booked' : `${available} seats available`}`}
+      aria-label={`${label} — ${isFull ? 'fully booked' : `${available} seats available`}`}
       className={[
         'w-full text-left rounded-xl border-2 px-4 py-3.5 transition-all duration-150',
         isFull

@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import type { Booking, SlotId } from './types'
-import { SLOTS } from './constants'
+import { SLOTS, SEATS_PER_SLOT } from './constants'
 import SeatGrid from './SeatGrid'
 import DayBookingSummary from './DayBookingSummary'
 
@@ -22,6 +22,7 @@ export default function SeatPickerModal({
   onClose,
 }: SeatPickerModalProps) {
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
 
   // Close on Escape key
   useEffect(() => {
@@ -32,12 +33,16 @@ export default function SeatPickerModal({
     return () => document.removeEventListener('keydown', handleKey)
   }, [onClose])
 
+  useEffect(() => {
+    panelRef.current?.focus()
+  }, [])
+
   const slotLabel = SLOTS.find((s) => s.id === slotId)?.label ?? slotId
   const bookedSeats = bookings
     .filter((b) => b.date === date && b.slot === slotId)
     .map((b) => b.seat)
 
-  const availableCount = 8 - bookedSeats.length
+  const availableCount = SEATS_PER_SLOT - bookedSeats.length
 
   const formattedDate = new Date(date + 'T00:00:00').toLocaleDateString('en-US', {
     weekday: 'long',
@@ -56,6 +61,8 @@ export default function SeatPickerModal({
       <div
         className="bg-white rounded-2xl w-full max-w-sm mx-4 overflow-hidden border border-[#E2E8F0]"
         onClick={(e) => e.stopPropagation()}
+        tabIndex={-1}
+        ref={panelRef}
       >
         {/* Header */}
         <div className="px-5 py-4 border-b border-[#E2E8F0]">
@@ -70,7 +77,7 @@ export default function SeatPickerModal({
         {/* Availability status */}
         <div className="px-5 pt-4">
           <p className="text-sm text-[#64748B]" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-            <span className="font-semibold text-[#1E293B]">{availableCount}</span> of 8 seats available — pick one
+            <span className="font-semibold text-[#1E293B]">{availableCount}</span> of {SEATS_PER_SLOT} seats available — pick one
           </p>
         </div>
 
@@ -98,7 +105,6 @@ export default function SeatPickerModal({
             disabled={selectedSeat === null}
             className="flex-1 py-2.5 rounded-xl bg-[#F97316] text-white text-sm font-semibold hover:bg-[#EA6C0A] transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
             style={{ fontFamily: "'DM Sans', sans-serif" }}
-            aria-disabled={selectedSeat === null}
           >
             Confirm Seat {selectedSeat ?? '—'}
           </button>

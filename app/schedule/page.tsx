@@ -14,7 +14,13 @@ export default function SchedulePage() {
 
   function handleConfirm(seat: number) {
     if (!selectedDate || !activeSlot) return
-    setBookings((prev) => [...prev, { date: selectedDate, slot: activeSlot, seat }])
+    setBookings((prev) => {
+      const alreadyBooked = prev.some(
+        (b) => b.date === selectedDate && b.slot === activeSlot && b.seat === seat
+      )
+      if (alreadyBooked) return prev
+      return [...prev, { date: selectedDate, slot: activeSlot, seat }]
+    })
     setActiveSlot(null)
   }
 

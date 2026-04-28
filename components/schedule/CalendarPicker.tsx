@@ -37,8 +37,10 @@ export default function CalendarPicker({ selectedDate, onSelectDate }: CalendarP
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate()
 
   const todayISO = toISO(today.getFullYear(), today.getMonth(), today.getDate())
+  const isCurrentMonth = viewYear === today.getFullYear() && viewMonth === today.getMonth()
 
   function prevMonth() {
+    if (isCurrentMonth) return
     if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1) }
     else setViewMonth(m => m - 1)
   }
@@ -55,7 +57,14 @@ export default function CalendarPicker({ selectedDate, onSelectDate }: CalendarP
         <button
           onClick={prevMonth}
           aria-label="Previous month"
-          className="w-8 h-8 flex items-center justify-center rounded-lg text-[#64748B] hover:bg-[#F1F5F9] transition-colors duration-150 cursor-pointer text-lg leading-none"
+          disabled={isCurrentMonth}
+          aria-disabled={isCurrentMonth}
+          className={[
+            'w-8 h-8 flex items-center justify-center rounded-lg transition-colors duration-150 text-lg leading-none',
+            isCurrentMonth
+              ? 'text-[#CBD5E1] opacity-30 cursor-not-allowed'
+              : 'text-[#64748B] hover:bg-[#F1F5F9] cursor-pointer',
+          ].join(' ')}
         >
           ‹
         </button>
