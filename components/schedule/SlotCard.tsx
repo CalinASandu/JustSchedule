@@ -10,7 +10,7 @@ interface SlotCardProps {
   onClick: () => void
 }
 
-export default function SlotCard({ label, bookedCount, onClick }: SlotCardProps) {
+export default function SlotCard({ slotId, label, bookedCount, onClick }: SlotCardProps) {
   const available = SEATS_PER_SLOT - bookedCount
   const isFull = available === 0
   const isLow = !isFull && available <= 2
@@ -19,7 +19,7 @@ export default function SlotCard({ label, bookedCount, onClick }: SlotCardProps)
     <button
       onClick={onClick}
       disabled={isFull}
-      aria-label={`${label} — ${isFull ? 'fully booked' : `${available} seats available`}`}
+      aria-label={`${label} (${slotId}) — ${isFull ? 'fully booked' : `${available} seats available`}`}
       className={[
         'w-full text-left rounded-xl border-2 px-4 py-3.5 transition-all duration-150',
         isFull
