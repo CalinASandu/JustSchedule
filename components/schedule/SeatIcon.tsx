@@ -11,12 +11,11 @@ export default function SeatIcon({ seatNumber, isBooked, isSelected, onClick }: 
   if (isBooked) {
     return (
       <div
-        className="flex flex-col items-center gap-1 cursor-not-allowed select-none"
-        title={`Seat ${seatNumber} — booked`}
+        className="flex flex-col items-center gap-1 select-none"
+        role="img"
         aria-label={`Seat ${seatNumber}, booked`}
-        aria-disabled="true"
       >
-        <div className="w-11 h-11 rounded-t-lg rounded-b-sm bg-[#E2E8F0] border-2 border-[#CBD5E1] flex items-center justify-center">
+        <div className="w-11 h-11 rounded-t-lg rounded-b-sm bg-[#E2E8F0] border-2 border-[#CBD5E1] flex items-center justify-center cursor-not-allowed">
           <svg viewBox="0 0 24 24" className="w-5 h-5 text-[#94A3B8]" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <line x1="18" y1="6" x2="6" y2="18" />
             <line x1="6" y1="6" x2="18" y2="18" />
@@ -34,7 +33,8 @@ export default function SeatIcon({ seatNumber, isBooked, isSelected, onClick }: 
       aria-label={`Seat ${seatNumber}, ${isSelected ? 'selected' : 'available'}`}
       aria-pressed={isSelected}
       className={[
-        'flex flex-col items-center gap-1 cursor-pointer transition-transform duration-150',
+        'flex flex-col items-center gap-1 p-1 cursor-pointer transition-transform duration-150',
+        'min-w-[44px] min-h-[44px] justify-center',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] focus-visible:ring-offset-2 rounded-sm',
         isSelected ? 'scale-105' : 'hover:scale-105 active:scale-95',
       ].join(' ')}
