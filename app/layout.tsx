@@ -1,20 +1,11 @@
 import type { Metadata } from 'next'
-import { EB_Garamond, DM_Sans } from 'next/font/google'
+import { Geist } from 'next/font/google'
 import './globals.css'
+import { cn } from "@/lib/utils";
 
-const ebGaramond = EB_Garamond({
+const geist = Geist({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
-  style: ['normal', 'italic'],
-  variable: '--font-garamond',
-  display: 'swap',
-})
-
-const dmSans = DM_Sans({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  style: ['normal', 'italic'],
-  variable: '--font-dm-sans',
+  variable: '--font-geist',
   display: 'swap',
 })
 
@@ -25,7 +16,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${ebGaramond.variable} ${dmSans.variable}`}>
+    <html lang="en" className={cn(geist.variable, "font-sans")}>
       <body className="font-sans antialiased">{children}</body>
     </html>
   )

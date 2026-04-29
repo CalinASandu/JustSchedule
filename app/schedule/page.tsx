@@ -78,7 +78,7 @@ export default function SchedulePage() {
         <div className="flex items-end justify-between py-8">
           <div className="anim-slide-up">
             <h1
-              className="text-4xl font-bold tracking-tight"
+              className="text-4xl font-bold"
               style={{ color: '#111827', fontFamily: 'var(--font-serif)', lineHeight: 1.15 }}
             >
               Schedule your exam

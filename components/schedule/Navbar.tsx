@@ -20,7 +20,7 @@ export default function Navbar() {
             <rect x="4.5" y="10.5" width="2.5" height="2" rx="0.5" fill="white" />
           </svg>
         </div>
-        <span className="text-[15px] font-semibold tracking-tight" style={{ color: '#111827' }}>
+        <span className="text-[15px] font-semibold" style={{ color: '#111827' }}>
           JustSchedule
         </span>
       </div>
