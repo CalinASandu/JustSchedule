@@ -1,102 +1,147 @@
-# Graph Report - JustSchedule  (2026-04-29)
+# Graph Report - .  (2026-04-30)
 
 ## Corpus Check
-- 27 files · ~103,271 words
+- 46 files · ~103,821 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 83 nodes · 66 edges · 8 communities detected
-- Extraction: 89% EXTRACTED · 11% INFERRED · 0% AMBIGUOUS · INFERRED: 7 edges (avg confidence: 0.9)
+- 89 nodes · 49 edges · 15 communities detected
+- Extraction: 88% EXTRACTED · 12% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.84)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
-- [[_COMMUNITY_Community 0|Community 0]]
-- [[_COMMUNITY_Community 1|Community 1]]
-- [[_COMMUNITY_Community 3|Community 3]]
-- [[_COMMUNITY_Community 5|Community 5]]
-- [[_COMMUNITY_Community 6|Community 6]]
-- [[_COMMUNITY_Community 7|Community 7]]
-- [[_COMMUNITY_Community 20|Community 20]]
-- [[_COMMUNITY_Community 31|Community 31]]
+- [[_COMMUNITY_CalendarPanel Logic|CalendarPanel Logic]]
+- [[_COMMUNITY_Auth & Server-Side Routing|Auth & Server-Side Routing]]
+- [[_COMMUNITY_UI Utilities (Badgecn)|UI Utilities (Badge/cn)]]
+- [[_COMMUNITY_Project README & Stack|Project README & Stack]]
+- [[_COMMUNITY_Supabase Schema & RLS|Supabase Schema & RLS]]
+- [[_COMMUNITY_Plan & Spec Docs|Plan & Spec Docs]]
+- [[_COMMUNITY_UI Mockup & System Overview|UI Mockup & System Overview]]
+- [[_COMMUNITY_Agent Rules|Agent Rules]]
+- [[_COMMUNITY_Slot Reference Config|Slot Reference Config]]
+- [[_COMMUNITY_Swap Requests Schema|Swap Requests Schema]]
+- [[_COMMUNITY_UI Component Structure|UI Component Structure]]
+- [[_COMMUNITY_Schedule Page (Docs)|Schedule Page (Docs)]]
+- [[_COMMUNITY_Booking Flow (Docs)|Booking Flow (Docs)]]
+- [[_COMMUNITY_Design System|Design System]]
+- [[_COMMUNITY_Weekly Schedule Mockup|Weekly Schedule Mockup]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `Exam Scheduler Implementation Plan` - 11 edges
-2. `Schedule Page Component` - 5 edges
-3. `SeatPickerModal Component` - 5 edges
-4. `Exam Scheduler Design Spec` - 5 edges
-5. `Schedule Types Module` - 4 edges
-6. `getDayStatus()` - 3 edges
-7. `CalendarPicker Component` - 3 edges
-8. `SlotCardList Component` - 3 edges
-9. `SlotCard Component` - 3 edges
-10. `SeatGrid Component` - 3 edges
+1. `getDayStatus()` - 3 edges
+2. `createClient()` - 3 edges
+3. `GET()` - 2 edges
+4. `SchedulePage()` - 2 edges
+5. `isWeekend()` - 2 edges
+6. `isPast()` - 2 edges
+7. `Badge()` - 2 edges
+8. `cn()` - 2 edges
+9. `JustSchedule Project` - 2 edges
+10. `Supabase Integration` - 2 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Next.js Framework` --conceptually_related_to--> `Next.js Logo SVG`  [INFERRED]
-  README.md → public/next.svg
-- `Vercel Deployment Platform` --conceptually_related_to--> `Vercel Logo SVG`  [INFERRED]
-  README.md → public/vercel.svg
-- `SeatPickerModal Component` --semantically_similar_to--> `Seat Picker Modal Spec`  [INFERRED] [semantically similar]
-  docs/superpowers/plans/2026-04-28-exam-scheduler.md → docs/superpowers/specs/2026-04-28-exam-scheduler-design.md
+- `GET()` --calls--> `createClient()`  [INFERRED]
+  app\auth\callback\route.ts → lib\supabase\server.ts
+- `SchedulePage()` --calls--> `createClient()`  [INFERRED]
+  app\schedule\page.tsx → lib\supabase\server.ts
 - `Badge()` --calls--> `cn()`  [INFERRED]
   components\ui\badge.tsx → lib\utils.ts
-- `Next.js Agent Rules` --conceptually_related_to--> `Next.js Framework`  [INFERRED]
-  AGENTS.md → README.md
-
-## Hyperedges (group relationships)
-- **Schedule Page Component Tree** — plan_schedule_page, plan_calendarpicker, plan_slotcardlist, plan_slotcard, plan_seatpickermodal, plan_seatgrid, plan_seaticon, plan_daybookingsummary, plan_debugpanel [EXTRACTED 1.00]
-- **Shared Schedule Type System** — plan_types_ts, plan_booking_type, plan_slotid_type, plan_slotdef_type, plan_constants_ts [EXTRACTED 1.00]
+- `JustSchedule UI Mockup (Full Dashboard)` --conceptually_related_to--> `JustSchedule System Overview`  [INFERRED]
+  docs/ChatGPT Image Apr 29, 2026, 09_51_58 AM.png → docs/system-design.md
+- `Spec: Booking Data Model` --conceptually_related_to--> `Booking Record Data Model`  [INFERRED]
+  docs/superpowers/specs/2026-04-28-exam-scheduler-design.md → docs/system-design.md
 
 ## Communities
 
-### Community 0 - "Community 0"
-Cohesion: 0.33
-Nodes (11): CalendarPicker Component, Schedule Constants Module, DayBookingSummary Component, DebugPanel Component, Exam Scheduler Implementation Plan, Schedule Page Component, SeatGrid Component, SeatIcon Component (+3 more)
-
-### Community 1 - "Community 1"
+### Community 0 - "CalendarPanel Logic"
 Cohesion: 0.38
 Nodes (3): getDayStatus(), isPast(), isWeekend()
 
-### Community 3 - "Community 3"
-Cohesion: 0.4
-Nodes (6): Date Picker Spec, Exam Scheduler Design Spec, Local In-Memory State, Seat Picker Modal Spec, Slot Cards Section Spec, Supabase Future Integration
+### Community 1 - "Auth & Server-Side Routing"
+Cohesion: 0.33
+Nodes (3): GET(), SchedulePage(), createClient()
 
-### Community 5 - "Community 5"
+### Community 4 - "UI Utilities (Badge/cn)"
 Cohesion: 0.5
 Nodes (2): cn(), Badge()
 
-### Community 6 - "Community 6"
+### Community 5 - "Project README & Stack"
 Cohesion: 0.5
-Nodes (4): Booking Type, SlotDef Interface, SlotId Type Union, Schedule Types Module
+Nodes (4): Google Auth Provider, JustSchedule Project, Next.js Framework, Supabase Integration
 
-### Community 7 - "Community 7"
-Cohesion: 0.67
-Nodes (3): Next.js Agent Rules, Next.js Logo SVG, Next.js Framework
+### Community 6 - "Supabase Schema & RLS"
+Cohesion: 0.5
+Nodes (4): Spec: Booking Data Model, Booking Record Data Model, Row Level Security Policy, Supabase Bookings Schema
 
-### Community 20 - "Community 20"
+### Community 22 - "Plan & Spec Docs"
 Cohesion: 1.0
-Nodes (2): Vercel Logo SVG, Vercel Deployment Platform
+Nodes (2): Exam Scheduler Implementation Plan, Exam Scheduler Design Spec
 
-### Community 31 - "Community 31"
+### Community 23 - "UI Mockup & System Overview"
 Cohesion: 1.0
-Nodes (1): JustSchedule Project README
+Nodes (2): JustSchedule UI Mockup (Full Dashboard), JustSchedule System Overview
+
+### Community 34 - "Agent Rules"
+Cohesion: 1.0
+Nodes (1): Next.js Agent Rules
+
+### Community 35 - "Slot Reference Config"
+Cohesion: 1.0
+Nodes (1): Slot Reference (Static Config)
+
+### Community 36 - "Swap Requests Schema"
+Cohesion: 1.0
+Nodes (1): Swap Requests Schema (Proposed)
+
+### Community 37 - "UI Component Structure"
+Cohesion: 1.0
+Nodes (1): UI Component Structure
+
+### Community 38 - "Schedule Page (Docs)"
+Cohesion: 1.0
+Nodes (1): Schedule Page Orchestrator
+
+### Community 39 - "Booking Flow (Docs)"
+Cohesion: 1.0
+Nodes (1): Booking Flow
+
+### Community 40 - "Design System"
+Cohesion: 1.0
+Nodes (1): Design System (CSS Custom Properties)
+
+### Community 41 - "Weekly Schedule Mockup"
+Cohesion: 1.0
+Nodes (1): Weekly Schedule Grid (Dark Theme Concept)
 
 ## Knowledge Gaps
-- **9 isolated node(s):** `Next.js Agent Rules`, `JustSchedule Project README`, `Vercel Deployment Platform`, `Schedule Constants Module`, `Booking Type` (+4 more)
+- **16 isolated node(s):** `Next.js Agent Rules`, `Next.js Framework`, `Google Auth Provider`, `JustSchedule System Overview`, `Slot Reference (Static Config)` (+11 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 5`** (4 nodes): `badge.tsx`, `cn()`, `utils.ts`, `Badge()`
+- **Thin community `UI Utilities (Badge/cn)`** (4 nodes): `badge.tsx`, `cn()`, `utils.ts`, `Badge()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 20`** (2 nodes): `Vercel Logo SVG`, `Vercel Deployment Platform`
+- **Thin community `Plan & Spec Docs`** (2 nodes): `Exam Scheduler Implementation Plan`, `Exam Scheduler Design Spec`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 31`** (1 nodes): `JustSchedule Project README`
+- **Thin community `UI Mockup & System Overview`** (2 nodes): `JustSchedule UI Mockup (Full Dashboard)`, `JustSchedule System Overview`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Agent Rules`** (1 nodes): `Next.js Agent Rules`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Slot Reference Config`** (1 nodes): `Slot Reference (Static Config)`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Swap Requests Schema`** (1 nodes): `Swap Requests Schema (Proposed)`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `UI Component Structure`** (1 nodes): `UI Component Structure`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Schedule Page (Docs)`** (1 nodes): `Schedule Page Orchestrator`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Booking Flow (Docs)`** (1 nodes): `Booking Flow`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Design System`** (1 nodes): `Design System (CSS Custom Properties)`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Weekly Schedule Mockup`** (1 nodes): `Weekly Schedule Grid (Dark Theme Concept)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Exam Scheduler Implementation Plan` connect `Community 0` to `Community 6`?**
-  _High betweenness centrality (0.036) - this node is a cross-community bridge._
-- **Why does `Schedule Types Module` connect `Community 6` to `Community 0`?**
-  _High betweenness centrality (0.016) - this node is a cross-community bridge._
-- **What connects `Next.js Agent Rules`, `JustSchedule Project README`, `Vercel Deployment Platform` to the rest of the system?**
-  _9 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Are the 2 inferred relationships involving `createClient()` (e.g. with `GET()` and `SchedulePage()`) actually correct?**
+  _`createClient()` has 2 INFERRED edges - model-reasoned connections that need verification._
+- **What connects `Next.js Agent Rules`, `Next.js Framework`, `Google Auth Provider` to the rest of the system?**
+  _16 weakly-connected nodes found - possible documentation gaps or missing edges._
