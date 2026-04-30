@@ -1,0 +1,1666 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "eslint.config.mjs",
+      "file_type": "code",
+      "source_file": "eslint.config.mjs",
+      "source_location": "L1",
+      "id": "eslint_config_mjs",
+      "community": 24,
+      "norm_label": "eslint.config.mjs"
+    },
+    {
+      "label": "next-env.d.ts",
+      "file_type": "code",
+      "source_file": "next-env.d.ts",
+      "source_location": "L1",
+      "id": "next_env_d_ts",
+      "community": 25,
+      "norm_label": "next-env.d.ts"
+    },
+    {
+      "label": "next.config.ts",
+      "file_type": "code",
+      "source_file": "next.config.ts",
+      "source_location": "L1",
+      "id": "next_config_ts",
+      "community": 26,
+      "norm_label": "next.config.ts"
+    },
+    {
+      "label": "postcss.config.mjs",
+      "file_type": "code",
+      "source_file": "postcss.config.mjs",
+      "source_location": "L1",
+      "id": "postcss_config_mjs",
+      "community": 27,
+      "norm_label": "postcss.config.mjs"
+    },
+    {
+      "label": "proxy.ts",
+      "file_type": "code",
+      "source_file": "proxy.ts",
+      "source_location": "L1",
+      "id": "proxy_ts",
+      "community": 9,
+      "norm_label": "proxy.ts"
+    },
+    {
+      "label": "proxy()",
+      "file_type": "code",
+      "source_file": "proxy.ts",
+      "source_location": "L4",
+      "id": "justschedule_proxy_proxy",
+      "community": 9,
+      "norm_label": "proxy()"
+    },
+    {
+      "label": "layout.tsx",
+      "file_type": "code",
+      "source_file": "app\\layout.tsx",
+      "source_location": "L1",
+      "id": "app_layout_tsx",
+      "community": 10,
+      "norm_label": "layout.tsx"
+    },
+    {
+      "label": "RootLayout()",
+      "file_type": "code",
+      "source_file": "app\\layout.tsx",
+      "source_location": "L17",
+      "id": "app_layout_rootlayout",
+      "community": 10,
+      "norm_label": "rootlayout()"
+    },
+    {
+      "label": "page.tsx",
+      "file_type": "code",
+      "source_file": "app\\page.tsx",
+      "source_location": "L1",
+      "id": "app_page_tsx",
+      "community": 0,
+      "norm_label": "page.tsx"
+    },
+    {
+      "label": "Home()",
+      "file_type": "code",
+      "source_file": "app\\page.tsx",
+      "source_location": "L5",
+      "id": "app_page_home",
+      "community": 0,
+      "norm_label": "home()"
+    },
+    {
+      "label": "route.ts",
+      "file_type": "code",
+      "source_file": "app\\auth\\callback\\route.ts",
+      "source_location": "L1",
+      "id": "app_auth_callback_route_ts",
+      "community": 0,
+      "norm_label": "route.ts"
+    },
+    {
+      "label": "GET()",
+      "file_type": "code",
+      "source_file": "app\\auth\\callback\\route.ts",
+      "source_location": "L4",
+      "id": "callback_route_get",
+      "community": 0,
+      "norm_label": "get()"
+    },
+    {
+      "label": "actions.ts",
+      "file_type": "code",
+      "source_file": "app\\dashboard\\actions.ts",
+      "source_location": "L1",
+      "id": "app_dashboard_actions_ts",
+      "community": 0,
+      "norm_label": "actions.ts"
+    },
+    {
+      "label": "registerSchool()",
+      "file_type": "code",
+      "source_file": "app\\dashboard\\actions.ts",
+      "source_location": "L11",
+      "id": "dashboard_actions_registerschool",
+      "community": 0,
+      "norm_label": "registerschool()"
+    },
+    {
+      "label": "page.tsx",
+      "file_type": "code",
+      "source_file": "app\\dashboard\\page.tsx",
+      "source_location": "L1",
+      "id": "app_dashboard_page_tsx",
+      "community": 2,
+      "norm_label": "page.tsx"
+    },
+    {
+      "label": "getInitials()",
+      "file_type": "code",
+      "source_file": "app\\dashboard\\page.tsx",
+      "source_location": "L31",
+      "id": "dashboard_page_getinitials",
+      "community": 2,
+      "norm_label": "getinitials()"
+    },
+    {
+      "label": "normalizeRole()",
+      "file_type": "code",
+      "source_file": "app\\dashboard\\page.tsx",
+      "source_location": "L42",
+      "id": "dashboard_page_normalizerole",
+      "community": 2,
+      "norm_label": "normalizerole()"
+    },
+    {
+      "label": "normalizeMemberships()",
+      "file_type": "code",
+      "source_file": "app\\dashboard\\page.tsx",
+      "source_location": "L46",
+      "id": "dashboard_page_normalizememberships",
+      "community": 2,
+      "norm_label": "normalizememberships()"
+    },
+    {
+      "label": "mergeCreatedSchools()",
+      "file_type": "code",
+      "source_file": "app\\dashboard\\page.tsx",
+      "source_location": "L65",
+      "id": "dashboard_page_mergecreatedschools",
+      "community": 2,
+      "norm_label": "mergecreatedschools()"
+    },
+    {
+      "label": "formatDate()",
+      "file_type": "code",
+      "source_file": "app\\dashboard\\page.tsx",
+      "source_location": "L86",
+      "id": "dashboard_page_formatdate",
+      "community": 2,
+      "norm_label": "formatdate()"
+    },
+    {
+      "label": "page.tsx",
+      "file_type": "code",
+      "source_file": "app\\dashboard\\schedule\\page.tsx",
+      "source_location": "L1",
+      "id": "app_dashboard_schedule_page_tsx",
+      "community": 0,
+      "norm_label": "page.tsx"
+    },
+    {
+      "label": "SchedulePage()",
+      "file_type": "code",
+      "source_file": "app\\dashboard\\schedule\\page.tsx",
+      "source_location": "L5",
+      "id": "schedule_page_schedulepage",
+      "community": 0,
+      "norm_label": "schedulepage()"
+    },
+    {
+      "label": "ScheduleClient.tsx",
+      "file_type": "code",
+      "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
+      "source_location": "L1",
+      "id": "app_dashboard_schedule_scheduleclient_tsx",
+      "community": 4,
+      "norm_label": "scheduleclient.tsx"
+    },
+    {
+      "label": "handleDateSelect()",
+      "file_type": "code",
+      "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
+      "source_location": "L31",
+      "id": "schedule_scheduleclient_handledateselect",
+      "community": 4,
+      "norm_label": "handledateselect()"
+    },
+    {
+      "label": "handleSlotSelect()",
+      "file_type": "code",
+      "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
+      "source_location": "L37",
+      "id": "schedule_scheduleclient_handleslotselect",
+      "community": 4,
+      "norm_label": "handleslotselect()"
+    },
+    {
+      "label": "handleReserve()",
+      "file_type": "code",
+      "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
+      "source_location": "L42",
+      "id": "schedule_scheduleclient_handlereserve",
+      "community": 4,
+      "norm_label": "handlereserve()"
+    },
+    {
+      "label": "handleReset()",
+      "file_type": "code",
+      "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
+      "source_location": "L65",
+      "id": "schedule_scheduleclient_handlereset",
+      "community": 4,
+      "norm_label": "handlereset()"
+    },
+    {
+      "label": "page.tsx",
+      "file_type": "code",
+      "source_file": "app\\dashboard\\schools\\[schoolId]\\page.tsx",
+      "source_location": "L1",
+      "id": "app_dashboard_schools_schoolid_page_tsx",
+      "community": 28,
+      "norm_label": "page.tsx"
+    },
+    {
+      "label": "page.tsx",
+      "file_type": "code",
+      "source_file": "app\\login\\page.tsx",
+      "source_location": "L1",
+      "id": "app_login_page_tsx",
+      "community": 0,
+      "norm_label": "page.tsx"
+    },
+    {
+      "label": "handleSubmit()",
+      "file_type": "code",
+      "source_file": "app\\login\\page.tsx",
+      "source_location": "L24",
+      "id": "login_page_handlesubmit",
+      "community": 0,
+      "norm_label": "handlesubmit()"
+    },
+    {
+      "label": "DashboardSignOutButton.tsx",
+      "file_type": "code",
+      "source_file": "components\\dashboard\\DashboardSignOutButton.tsx",
+      "source_location": "L1",
+      "id": "components_dashboard_dashboardsignoutbutton_tsx",
+      "community": 11,
+      "norm_label": "dashboardsignoutbutton.tsx"
+    },
+    {
+      "label": "DashboardSignOutButton()",
+      "file_type": "code",
+      "source_file": "components\\dashboard\\DashboardSignOutButton.tsx",
+      "source_location": "L6",
+      "id": "dashboard_dashboardsignoutbutton_dashboardsignoutbutton",
+      "community": 11,
+      "norm_label": "dashboardsignoutbutton()"
+    },
+    {
+      "label": "RegisterSchoolForm.tsx",
+      "file_type": "code",
+      "source_file": "components\\dashboard\\RegisterSchoolForm.tsx",
+      "source_location": "L1",
+      "id": "components_dashboard_registerschoolform_tsx",
+      "community": 29,
+      "norm_label": "registerschoolform.tsx"
+    },
+    {
+      "label": "GoogleSignInButton.tsx",
+      "file_type": "code",
+      "source_file": "components\\landing\\GoogleSignInButton.tsx",
+      "source_location": "L1",
+      "id": "components_landing_googlesigninbutton_tsx",
+      "community": 12,
+      "norm_label": "googlesigninbutton.tsx"
+    },
+    {
+      "label": "GoogleSignInButton()",
+      "file_type": "code",
+      "source_file": "components\\landing\\GoogleSignInButton.tsx",
+      "source_location": "L12",
+      "id": "landing_googlesigninbutton_googlesigninbutton",
+      "community": 12,
+      "norm_label": "googlesigninbutton()"
+    },
+    {
+      "label": "HeroSection.tsx",
+      "file_type": "code",
+      "source_file": "components\\landing\\HeroSection.tsx",
+      "source_location": "L1",
+      "id": "components_landing_herosection_tsx",
+      "community": 30,
+      "norm_label": "herosection.tsx"
+    },
+    {
+      "label": "HeroVisual.tsx",
+      "file_type": "code",
+      "source_file": "components\\landing\\HeroVisual.tsx",
+      "source_location": "L1",
+      "id": "components_landing_herovisual_tsx",
+      "community": 31,
+      "norm_label": "herovisual.tsx"
+    },
+    {
+      "label": "Navbar.tsx",
+      "file_type": "code",
+      "source_file": "components\\landing\\Navbar.tsx",
+      "source_location": "L1",
+      "id": "components_landing_navbar_tsx",
+      "community": 13,
+      "norm_label": "navbar.tsx"
+    },
+    {
+      "label": "Navbar()",
+      "file_type": "code",
+      "source_file": "components\\landing\\Navbar.tsx",
+      "source_location": "L9",
+      "id": "landing_navbar_navbar",
+      "community": 13,
+      "norm_label": "navbar()"
+    },
+    {
+      "label": "BookingsPanel.tsx",
+      "file_type": "code",
+      "source_file": "components\\schedule\\BookingsPanel.tsx",
+      "source_location": "L1",
+      "id": "components_schedule_bookingspanel_tsx",
+      "community": 14,
+      "norm_label": "bookingspanel.tsx"
+    },
+    {
+      "label": "handleSwap()",
+      "file_type": "code",
+      "source_file": "components\\schedule\\BookingsPanel.tsx",
+      "source_location": "L10",
+      "id": "schedule_bookingspanel_handleswap",
+      "community": 14,
+      "norm_label": "handleswap()"
+    },
+    {
+      "label": "BookingSummaryCard.tsx",
+      "file_type": "code",
+      "source_file": "components\\schedule\\BookingSummaryCard.tsx",
+      "source_location": "L1",
+      "id": "components_schedule_bookingsummarycard_tsx",
+      "community": 32,
+      "norm_label": "bookingsummarycard.tsx"
+    },
+    {
+      "label": "CalendarPanel.tsx",
+      "file_type": "code",
+      "source_file": "components\\schedule\\CalendarPanel.tsx",
+      "source_location": "L1",
+      "id": "components_schedule_calendarpanel_tsx",
+      "community": 1,
+      "norm_label": "calendarpanel.tsx"
+    },
+    {
+      "label": "toISO()",
+      "file_type": "code",
+      "source_file": "components\\schedule\\CalendarPanel.tsx",
+      "source_location": "L22",
+      "id": "schedule_calendarpanel_toiso",
+      "community": 1,
+      "norm_label": "toiso()"
+    },
+    {
+      "label": "isWeekend()",
+      "file_type": "code",
+      "source_file": "components\\schedule\\CalendarPanel.tsx",
+      "source_location": "L26",
+      "id": "schedule_calendarpanel_isweekend",
+      "community": 1,
+      "norm_label": "isweekend()"
+    },
+    {
+      "label": "isPast()",
+      "file_type": "code",
+      "source_file": "components\\schedule\\CalendarPanel.tsx",
+      "source_location": "L31",
+      "id": "schedule_calendarpanel_ispast",
+      "community": 1,
+      "norm_label": "ispast()"
+    },
+    {
+      "label": "getDayStatus()",
+      "file_type": "code",
+      "source_file": "components\\schedule\\CalendarPanel.tsx",
+      "source_location": "L39",
+      "id": "schedule_calendarpanel_getdaystatus",
+      "community": 1,
+      "norm_label": "getdaystatus()"
+    },
+    {
+      "label": "prevMonth()",
+      "file_type": "code",
+      "source_file": "components\\schedule\\CalendarPanel.tsx",
+      "source_location": "L66",
+      "id": "schedule_calendarpanel_prevmonth",
+      "community": 1,
+      "norm_label": "prevmonth()"
+    },
+    {
+      "label": "nextMonth()",
+      "file_type": "code",
+      "source_file": "components\\schedule\\CalendarPanel.tsx",
+      "source_location": "L72",
+      "id": "schedule_calendarpanel_nextmonth",
+      "community": 1,
+      "norm_label": "nextmonth()"
+    },
+    {
+      "label": "CalendarPicker.tsx",
+      "file_type": "code",
+      "source_file": "components\\schedule\\CalendarPicker.tsx",
+      "source_location": "L1",
+      "id": "components_schedule_calendarpicker_tsx",
+      "community": 3,
+      "norm_label": "calendarpicker.tsx"
+    },
+    {
+      "label": "toISO()",
+      "file_type": "code",
+      "source_file": "components\\schedule\\CalendarPicker.tsx",
+      "source_location": "L10",
+      "id": "schedule_calendarpicker_toiso",
+      "community": 3,
+      "norm_label": "toiso()"
+    },
+    {
+      "label": "isWeekend()",
+      "file_type": "code",
+      "source_file": "components\\schedule\\CalendarPicker.tsx",
+      "source_location": "L14",
+      "id": "schedule_calendarpicker_isweekend",
+      "community": 3,
+      "norm_label": "isweekend()"
+    },
+    {
+      "label": "isPast()",
+      "file_type": "code",
+      "source_file": "components\\schedule\\CalendarPicker.tsx",
+      "source_location": "L19",
+      "id": "schedule_calendarpicker_ispast",
+      "community": 3,
+      "norm_label": "ispast()"
+    },
+    {
+      "label": "prevMonth()",
+      "file_type": "code",
+      "source_file": "components\\schedule\\CalendarPicker.tsx",
+      "source_location": "L42",
+      "id": "schedule_calendarpicker_prevmonth",
+      "community": 3,
+      "norm_label": "prevmonth()"
+    },
+    {
+      "label": "nextMonth()",
+      "file_type": "code",
+      "source_file": "components\\schedule\\CalendarPicker.tsx",
+      "source_location": "L48",
+      "id": "schedule_calendarpicker_nextmonth",
+      "community": 3,
+      "norm_label": "nextmonth()"
+    },
+    {
+      "label": "constants.ts",
+      "file_type": "code",
+      "source_file": "components\\schedule\\constants.ts",
+      "source_location": "L1",
+      "id": "components_schedule_constants_ts",
+      "community": 33,
+      "norm_label": "constants.ts"
+    },
+    {
+      "label": "DayBookingSummary.tsx",
+      "file_type": "code",
+      "source_file": "components\\schedule\\DayBookingSummary.tsx",
+      "source_location": "L1",
+      "id": "components_schedule_daybookingsummary_tsx",
+      "community": 34,
+      "norm_label": "daybookingsummary.tsx"
+    },
+    {
+      "label": "DebugPanel.tsx",
+      "file_type": "code",
+      "source_file": "components\\schedule\\DebugPanel.tsx",
+      "source_location": "L1",
+      "id": "components_schedule_debugpanel_tsx",
+      "community": 15,
+      "norm_label": "debugpanel.tsx"
+    },
+    {
+      "label": "DebugPanel()",
+      "file_type": "code",
+      "source_file": "components\\schedule\\DebugPanel.tsx",
+      "source_location": "L9",
+      "id": "schedule_debugpanel_debugpanel",
+      "community": 15,
+      "norm_label": "debugpanel()"
+    },
+    {
+      "label": "Navbar.tsx",
+      "file_type": "code",
+      "source_file": "components\\schedule\\Navbar.tsx",
+      "source_location": "L1",
+      "id": "components_schedule_navbar_tsx",
+      "community": 0,
+      "norm_label": "navbar.tsx"
+    },
+    {
+      "label": "handleSignOut()",
+      "file_type": "code",
+      "source_file": "components\\schedule\\Navbar.tsx",
+      "source_location": "L22",
+      "id": "schedule_navbar_handlesignout",
+      "community": 0,
+      "norm_label": "handlesignout()"
+    },
+    {
+      "label": "SeatAvailabilityOverview.tsx",
+      "file_type": "code",
+      "source_file": "components\\schedule\\SeatAvailabilityOverview.tsx",
+      "source_location": "L1",
+      "id": "components_schedule_seatavailabilityoverview_tsx",
+      "community": 16,
+      "norm_label": "seatavailabilityoverview.tsx"
+    },
+    {
+      "label": "formatDate()",
+      "file_type": "code",
+      "source_file": "components\\schedule\\SeatAvailabilityOverview.tsx",
+      "source_location": "L11",
+      "id": "schedule_seatavailabilityoverview_formatdate",
+      "community": 16,
+      "norm_label": "formatdate()"
+    },
+    {
+      "label": "SlotCard.tsx",
+      "file_type": "code",
+      "source_file": "components\\schedule\\SlotCard.tsx",
+      "source_location": "L1",
+      "id": "components_schedule_slotcard_tsx",
+      "community": 17,
+      "norm_label": "slotcard.tsx"
+    },
+    {
+      "label": "SlotCard()",
+      "file_type": "code",
+      "source_file": "components\\schedule\\SlotCard.tsx",
+      "source_location": "L13",
+      "id": "schedule_slotcard_slotcard",
+      "community": 17,
+      "norm_label": "slotcard()"
+    },
+    {
+      "label": "SlotCardList.tsx",
+      "file_type": "code",
+      "source_file": "components\\schedule\\SlotCardList.tsx",
+      "source_location": "L1",
+      "id": "components_schedule_slotcardlist_tsx",
+      "community": 18,
+      "norm_label": "slotcardlist.tsx"
+    },
+    {
+      "label": "SlotCardList()",
+      "file_type": "code",
+      "source_file": "components\\schedule\\SlotCardList.tsx",
+      "source_location": "L13",
+      "id": "schedule_slotcardlist_slotcardlist",
+      "community": 18,
+      "norm_label": "slotcardlist()"
+    },
+    {
+      "label": "SlotPicker.tsx",
+      "file_type": "code",
+      "source_file": "components\\schedule\\SlotPicker.tsx",
+      "source_location": "L1",
+      "id": "components_schedule_slotpicker_tsx",
+      "community": 19,
+      "norm_label": "slotpicker.tsx"
+    },
+    {
+      "label": "formatDate()",
+      "file_type": "code",
+      "source_file": "components\\schedule\\SlotPicker.tsx",
+      "source_location": "L13",
+      "id": "schedule_slotpicker_formatdate",
+      "community": 19,
+      "norm_label": "formatdate()"
+    },
+    {
+      "label": "types.ts",
+      "file_type": "code",
+      "source_file": "components\\schedule\\types.ts",
+      "source_location": "L1",
+      "id": "components_schedule_types_ts",
+      "community": 35,
+      "norm_label": "types.ts"
+    },
+    {
+      "label": "badge.tsx",
+      "file_type": "code",
+      "source_file": "components\\ui\\badge.tsx",
+      "source_location": "L1",
+      "id": "components_ui_badge_tsx",
+      "community": 5,
+      "norm_label": "badge.tsx"
+    },
+    {
+      "label": "Badge()",
+      "file_type": "code",
+      "source_file": "components\\ui\\badge.tsx",
+      "source_location": "L30",
+      "id": "ui_badge_badge",
+      "community": 5,
+      "norm_label": "badge()"
+    },
+    {
+      "label": "button.tsx",
+      "file_type": "code",
+      "source_file": "components\\ui\\button.tsx",
+      "source_location": "L1",
+      "id": "components_ui_button_tsx",
+      "community": 20,
+      "norm_label": "button.tsx"
+    },
+    {
+      "label": "cn()",
+      "file_type": "code",
+      "source_file": "components\\ui\\button.tsx",
+      "source_location": "L52",
+      "id": "ui_button_cn",
+      "community": 20,
+      "norm_label": "cn()"
+    },
+    {
+      "label": "utils.ts",
+      "file_type": "code",
+      "source_file": "lib\\utils.ts",
+      "source_location": "L1",
+      "id": "lib_utils_ts",
+      "community": 5,
+      "norm_label": "utils.ts"
+    },
+    {
+      "label": "cn()",
+      "file_type": "code",
+      "source_file": "lib\\utils.ts",
+      "source_location": "L4",
+      "id": "lib_utils_cn",
+      "community": 5,
+      "norm_label": "cn()"
+    },
+    {
+      "label": "client.ts",
+      "file_type": "code",
+      "source_file": "lib\\supabase\\client.ts",
+      "source_location": "L1",
+      "id": "lib_supabase_client_ts",
+      "community": 21,
+      "norm_label": "client.ts"
+    },
+    {
+      "label": "createClient()",
+      "file_type": "code",
+      "source_file": "lib\\supabase\\client.ts",
+      "source_location": "L5",
+      "id": "supabase_client_createclient",
+      "community": 21,
+      "norm_label": "createclient()"
+    },
+    {
+      "label": "env.ts",
+      "file_type": "code",
+      "source_file": "lib\\supabase\\env.ts",
+      "source_location": "L1",
+      "id": "lib_supabase_env_ts",
+      "community": 8,
+      "norm_label": "env.ts"
+    },
+    {
+      "label": "getSupabaseEnv()",
+      "file_type": "code",
+      "source_file": "lib\\supabase\\env.ts",
+      "source_location": "L1",
+      "id": "supabase_env_getsupabaseenv",
+      "community": 8,
+      "norm_label": "getsupabaseenv()"
+    },
+    {
+      "label": "hasSupabaseEnv()",
+      "file_type": "code",
+      "source_file": "lib\\supabase\\env.ts",
+      "source_location": "L16",
+      "id": "supabase_env_hassupabaseenv",
+      "community": 8,
+      "norm_label": "hassupabaseenv()"
+    },
+    {
+      "label": "server.ts",
+      "file_type": "code",
+      "source_file": "lib\\supabase\\server.ts",
+      "source_location": "L1",
+      "id": "lib_supabase_server_ts",
+      "community": 0,
+      "norm_label": "server.ts"
+    },
+    {
+      "label": "createClient()",
+      "file_type": "code",
+      "source_file": "lib\\supabase\\server.ts",
+      "source_location": "L4",
+      "id": "supabase_server_createclient",
+      "community": 0,
+      "norm_label": "createclient()"
+    },
+    {
+      "label": "Next.js Agent Rules",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "1-5",
+      "community": 36,
+      "norm_label": "next.js agent rules",
+      "id": "agents_nextjs_agent_rules"
+    },
+    {
+      "label": "JustSchedule Project",
+      "file_type": "document",
+      "source_file": "README.md",
+      "community": 6,
+      "norm_label": "justschedule project",
+      "id": "readme_justschedule_project"
+    },
+    {
+      "label": "Next.js Framework",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "1",
+      "community": 6,
+      "norm_label": "next.js framework",
+      "id": "readme_nextjs_framework"
+    },
+    {
+      "label": "Supabase Integration",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "5-8",
+      "community": 6,
+      "norm_label": "supabase integration",
+      "id": "readme_supabase_integration"
+    },
+    {
+      "label": "Google Auth Provider",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "13-16",
+      "community": 6,
+      "norm_label": "google auth provider",
+      "id": "readme_google_auth"
+    },
+    {
+      "label": "JustSchedule System Overview",
+      "file_type": "document",
+      "source_file": "docs/system-design.md",
+      "source_location": "1-9",
+      "community": 23,
+      "norm_label": "justschedule system overview",
+      "id": "sysdesign_justschedule_overview"
+    },
+    {
+      "label": "Booking Record Data Model",
+      "file_type": "document",
+      "source_file": "docs/system-design.md",
+      "source_location": "15-27",
+      "community": 7,
+      "norm_label": "booking record data model",
+      "id": "sysdesign_booking_record"
+    },
+    {
+      "label": "Slot Reference (Static Config)",
+      "file_type": "document",
+      "source_file": "docs/system-design.md",
+      "source_location": "29-36",
+      "community": 37,
+      "norm_label": "slot reference (static config)",
+      "id": "sysdesign_slot_reference"
+    },
+    {
+      "label": "Supabase Bookings Schema",
+      "file_type": "document",
+      "source_file": "docs/system-design.md",
+      "source_location": "38-59",
+      "community": 7,
+      "norm_label": "supabase bookings schema",
+      "id": "sysdesign_supabase_schema"
+    },
+    {
+      "label": "Row Level Security Policy",
+      "file_type": "document",
+      "source_file": "docs/system-design.md",
+      "source_location": "61-79",
+      "community": 7,
+      "norm_label": "row level security policy",
+      "id": "sysdesign_row_level_security"
+    },
+    {
+      "label": "Swap Requests Schema (Proposed)",
+      "file_type": "document",
+      "source_file": "docs/system-design.md",
+      "source_location": "188-198",
+      "community": 38,
+      "norm_label": "swap requests schema (proposed)",
+      "id": "sysdesign_swap_requests_schema"
+    },
+    {
+      "label": "UI Component Structure",
+      "file_type": "document",
+      "source_file": "docs/system-design.md",
+      "source_location": "128-145",
+      "community": 39,
+      "norm_label": "ui component structure",
+      "id": "sysdesign_ui_component_structure"
+    },
+    {
+      "label": "Schedule Page Orchestrator",
+      "file_type": "document",
+      "source_file": "docs/system-design.md",
+      "community": 40,
+      "norm_label": "schedule page orchestrator",
+      "id": "sysdesign_page_tsx"
+    },
+    {
+      "label": "Booking Flow",
+      "file_type": "document",
+      "source_file": "docs/system-design.md",
+      "source_location": "161-178",
+      "community": 41,
+      "norm_label": "booking flow",
+      "id": "sysdesign_booking_flow"
+    },
+    {
+      "label": "Design System (CSS Custom Properties)",
+      "file_type": "document",
+      "source_file": "docs/system-design.md",
+      "source_location": "200-213",
+      "community": 42,
+      "norm_label": "design system (css custom properties)",
+      "id": "sysdesign_design_system"
+    },
+    {
+      "label": "Exam Scheduler Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-04-28-exam-scheduler.md",
+      "community": 22,
+      "norm_label": "exam scheduler implementation plan",
+      "id": "plan_exam_scheduler"
+    },
+    {
+      "label": "Exam Scheduler Design Spec",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-04-28-exam-scheduler-design.md",
+      "community": 22,
+      "norm_label": "exam scheduler design spec",
+      "id": "spec_exam_scheduler"
+    },
+    {
+      "label": "Spec: Booking Data Model",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-04-28-exam-scheduler-design.md",
+      "community": 7,
+      "norm_label": "spec: booking data model",
+      "id": "spec_booking_data_model"
+    },
+    {
+      "label": "JustSchedule UI Mockup (Full Dashboard)",
+      "file_type": "image",
+      "source_file": "docs/ChatGPT Image Apr 29, 2026, 09_51_58 AM.png",
+      "community": 23,
+      "norm_label": "justschedule ui mockup (full dashboard)",
+      "id": "img_ui_mockup_morning"
+    },
+    {
+      "label": "Weekly Schedule Grid (Dark Theme Concept)",
+      "file_type": "image",
+      "source_file": "docs/images/ChatGPT Image Apr 29, 2026, 02_43_55 PM.png",
+      "community": 43,
+      "norm_label": "weekly schedule grid (dark theme concept)",
+      "id": "img_weekly_schedule_grid"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "proxy.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "proxy_ts",
+      "_tgt": "justschedule_proxy_proxy",
+      "source": "proxy_ts",
+      "target": "justschedule_proxy_proxy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\layout.tsx",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_src": "app_layout_tsx",
+      "_tgt": "app_layout_rootlayout",
+      "source": "app_layout_tsx",
+      "target": "app_layout_rootlayout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\page.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_src": "app_page_tsx",
+      "_tgt": "app_page_home",
+      "source": "app_page_tsx",
+      "target": "app_page_home",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app\\page.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_src": "app_page_home",
+      "_tgt": "supabase_server_createclient",
+      "source": "app_page_home",
+      "target": "supabase_server_createclient"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\auth\\callback\\route.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "app_auth_callback_route_ts",
+      "_tgt": "callback_route_get",
+      "source": "app_auth_callback_route_ts",
+      "target": "callback_route_get",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app\\auth\\callback\\route.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_src": "callback_route_get",
+      "_tgt": "supabase_server_createclient",
+      "source": "callback_route_get",
+      "target": "supabase_server_createclient"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app\\dashboard\\actions.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_src": "dashboard_actions_registerschool",
+      "_tgt": "callback_route_get",
+      "source": "callback_route_get",
+      "target": "dashboard_actions_registerschool"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\dashboard\\actions.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_src": "app_dashboard_actions_ts",
+      "_tgt": "dashboard_actions_registerschool",
+      "source": "app_dashboard_actions_ts",
+      "target": "dashboard_actions_registerschool",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app\\dashboard\\actions.ts",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_src": "dashboard_actions_registerschool",
+      "_tgt": "supabase_server_createclient",
+      "source": "dashboard_actions_registerschool",
+      "target": "supabase_server_createclient"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\dashboard\\page.tsx",
+      "source_location": "L31",
+      "weight": 1.0,
+      "_src": "app_dashboard_page_tsx",
+      "_tgt": "dashboard_page_getinitials",
+      "source": "app_dashboard_page_tsx",
+      "target": "dashboard_page_getinitials",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\dashboard\\page.tsx",
+      "source_location": "L42",
+      "weight": 1.0,
+      "_src": "app_dashboard_page_tsx",
+      "_tgt": "dashboard_page_normalizerole",
+      "source": "app_dashboard_page_tsx",
+      "target": "dashboard_page_normalizerole",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\dashboard\\page.tsx",
+      "source_location": "L46",
+      "weight": 1.0,
+      "_src": "app_dashboard_page_tsx",
+      "_tgt": "dashboard_page_normalizememberships",
+      "source": "app_dashboard_page_tsx",
+      "target": "dashboard_page_normalizememberships",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\dashboard\\page.tsx",
+      "source_location": "L65",
+      "weight": 1.0,
+      "_src": "app_dashboard_page_tsx",
+      "_tgt": "dashboard_page_mergecreatedschools",
+      "source": "app_dashboard_page_tsx",
+      "target": "dashboard_page_mergecreatedschools",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\dashboard\\page.tsx",
+      "source_location": "L86",
+      "weight": 1.0,
+      "_src": "app_dashboard_page_tsx",
+      "_tgt": "dashboard_page_formatdate",
+      "source": "app_dashboard_page_tsx",
+      "target": "dashboard_page_formatdate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\dashboard\\schedule\\page.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_src": "app_dashboard_schedule_page_tsx",
+      "_tgt": "schedule_page_schedulepage",
+      "source": "app_dashboard_schedule_page_tsx",
+      "target": "schedule_page_schedulepage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app\\schedule\\page.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_src": "schedule_page_schedulepage",
+      "_tgt": "supabase_server_createclient",
+      "source": "schedule_page_schedulepage",
+      "target": "supabase_server_createclient"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
+      "source_location": "L31",
+      "weight": 1.0,
+      "_src": "app_dashboard_schedule_scheduleclient_tsx",
+      "_tgt": "schedule_scheduleclient_handledateselect",
+      "source": "app_dashboard_schedule_scheduleclient_tsx",
+      "target": "schedule_scheduleclient_handledateselect",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_src": "app_dashboard_schedule_scheduleclient_tsx",
+      "_tgt": "schedule_scheduleclient_handleslotselect",
+      "source": "app_dashboard_schedule_scheduleclient_tsx",
+      "target": "schedule_scheduleclient_handleslotselect",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
+      "source_location": "L42",
+      "weight": 1.0,
+      "_src": "app_dashboard_schedule_scheduleclient_tsx",
+      "_tgt": "schedule_scheduleclient_handlereserve",
+      "source": "app_dashboard_schedule_scheduleclient_tsx",
+      "target": "schedule_scheduleclient_handlereserve",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
+      "source_location": "L65",
+      "weight": 1.0,
+      "_src": "app_dashboard_schedule_scheduleclient_tsx",
+      "_tgt": "schedule_scheduleclient_handlereset",
+      "source": "app_dashboard_schedule_scheduleclient_tsx",
+      "target": "schedule_scheduleclient_handlereset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\login\\page.tsx",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_src": "app_login_page_tsx",
+      "_tgt": "login_page_handlesubmit",
+      "source": "app_login_page_tsx",
+      "target": "login_page_handlesubmit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app\\login\\page.tsx",
+      "source_location": "L34",
+      "weight": 1.0,
+      "_src": "login_page_handlesubmit",
+      "_tgt": "supabase_server_createclient",
+      "source": "login_page_handlesubmit",
+      "target": "supabase_server_createclient"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\dashboard\\DashboardSignOutButton.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_src": "components_dashboard_dashboardsignoutbutton_tsx",
+      "_tgt": "dashboard_dashboardsignoutbutton_dashboardsignoutbutton",
+      "source": "components_dashboard_dashboardsignoutbutton_tsx",
+      "target": "dashboard_dashboardsignoutbutton_dashboardsignoutbutton",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\landing\\GoogleSignInButton.tsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_src": "components_landing_googlesigninbutton_tsx",
+      "_tgt": "landing_googlesigninbutton_googlesigninbutton",
+      "source": "components_landing_googlesigninbutton_tsx",
+      "target": "landing_googlesigninbutton_googlesigninbutton",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\landing\\Navbar.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_src": "components_landing_navbar_tsx",
+      "_tgt": "landing_navbar_navbar",
+      "source": "components_landing_navbar_tsx",
+      "target": "landing_navbar_navbar",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\schedule\\BookingsPanel.tsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_src": "components_schedule_bookingspanel_tsx",
+      "_tgt": "schedule_bookingspanel_handleswap",
+      "source": "components_schedule_bookingspanel_tsx",
+      "target": "schedule_bookingspanel_handleswap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\schedule\\CalendarPanel.tsx",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_src": "components_schedule_calendarpanel_tsx",
+      "_tgt": "schedule_calendarpanel_toiso",
+      "source": "components_schedule_calendarpanel_tsx",
+      "target": "schedule_calendarpanel_toiso",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\schedule\\CalendarPanel.tsx",
+      "source_location": "L26",
+      "weight": 1.0,
+      "_src": "components_schedule_calendarpanel_tsx",
+      "_tgt": "schedule_calendarpanel_isweekend",
+      "source": "components_schedule_calendarpanel_tsx",
+      "target": "schedule_calendarpanel_isweekend",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\schedule\\CalendarPanel.tsx",
+      "source_location": "L31",
+      "weight": 1.0,
+      "_src": "components_schedule_calendarpanel_tsx",
+      "_tgt": "schedule_calendarpanel_ispast",
+      "source": "components_schedule_calendarpanel_tsx",
+      "target": "schedule_calendarpanel_ispast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\schedule\\CalendarPanel.tsx",
+      "source_location": "L39",
+      "weight": 1.0,
+      "_src": "components_schedule_calendarpanel_tsx",
+      "_tgt": "schedule_calendarpanel_getdaystatus",
+      "source": "components_schedule_calendarpanel_tsx",
+      "target": "schedule_calendarpanel_getdaystatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\schedule\\CalendarPanel.tsx",
+      "source_location": "L66",
+      "weight": 1.0,
+      "_src": "components_schedule_calendarpanel_tsx",
+      "_tgt": "schedule_calendarpanel_prevmonth",
+      "source": "components_schedule_calendarpanel_tsx",
+      "target": "schedule_calendarpanel_prevmonth",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\schedule\\CalendarPanel.tsx",
+      "source_location": "L72",
+      "weight": 1.0,
+      "_src": "components_schedule_calendarpanel_tsx",
+      "_tgt": "schedule_calendarpanel_nextmonth",
+      "source": "components_schedule_calendarpanel_tsx",
+      "target": "schedule_calendarpanel_nextmonth",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\schedule\\CalendarPanel.tsx",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_src": "schedule_calendarpanel_getdaystatus",
+      "_tgt": "schedule_calendarpanel_isweekend",
+      "source": "schedule_calendarpanel_isweekend",
+      "target": "schedule_calendarpanel_getdaystatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\schedule\\CalendarPanel.tsx",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_src": "schedule_calendarpanel_getdaystatus",
+      "_tgt": "schedule_calendarpanel_ispast",
+      "source": "schedule_calendarpanel_ispast",
+      "target": "schedule_calendarpanel_getdaystatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\schedule\\CalendarPicker.tsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_src": "components_schedule_calendarpicker_tsx",
+      "_tgt": "schedule_calendarpicker_toiso",
+      "source": "components_schedule_calendarpicker_tsx",
+      "target": "schedule_calendarpicker_toiso",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\schedule\\CalendarPicker.tsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_src": "components_schedule_calendarpicker_tsx",
+      "_tgt": "schedule_calendarpicker_isweekend",
+      "source": "components_schedule_calendarpicker_tsx",
+      "target": "schedule_calendarpicker_isweekend",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\schedule\\CalendarPicker.tsx",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_src": "components_schedule_calendarpicker_tsx",
+      "_tgt": "schedule_calendarpicker_ispast",
+      "source": "components_schedule_calendarpicker_tsx",
+      "target": "schedule_calendarpicker_ispast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\schedule\\CalendarPicker.tsx",
+      "source_location": "L42",
+      "weight": 1.0,
+      "_src": "components_schedule_calendarpicker_tsx",
+      "_tgt": "schedule_calendarpicker_prevmonth",
+      "source": "components_schedule_calendarpicker_tsx",
+      "target": "schedule_calendarpicker_prevmonth",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\schedule\\CalendarPicker.tsx",
+      "source_location": "L48",
+      "weight": 1.0,
+      "_src": "components_schedule_calendarpicker_tsx",
+      "_tgt": "schedule_calendarpicker_nextmonth",
+      "source": "components_schedule_calendarpicker_tsx",
+      "target": "schedule_calendarpicker_nextmonth",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\schedule\\DebugPanel.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_src": "components_schedule_debugpanel_tsx",
+      "_tgt": "schedule_debugpanel_debugpanel",
+      "source": "components_schedule_debugpanel_tsx",
+      "target": "schedule_debugpanel_debugpanel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\schedule\\Navbar.tsx",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_src": "components_schedule_navbar_tsx",
+      "_tgt": "schedule_navbar_handlesignout",
+      "source": "components_schedule_navbar_tsx",
+      "target": "schedule_navbar_handlesignout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "components\\schedule\\Navbar.tsx",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_src": "schedule_navbar_handlesignout",
+      "_tgt": "supabase_server_createclient",
+      "source": "schedule_navbar_handlesignout",
+      "target": "supabase_server_createclient"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\schedule\\SeatAvailabilityOverview.tsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_src": "components_schedule_seatavailabilityoverview_tsx",
+      "_tgt": "schedule_seatavailabilityoverview_formatdate",
+      "source": "components_schedule_seatavailabilityoverview_tsx",
+      "target": "schedule_seatavailabilityoverview_formatdate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\schedule\\SlotCard.tsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "_src": "components_schedule_slotcard_tsx",
+      "_tgt": "schedule_slotcard_slotcard",
+      "source": "components_schedule_slotcard_tsx",
+      "target": "schedule_slotcard_slotcard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\schedule\\SlotCardList.tsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "_src": "components_schedule_slotcardlist_tsx",
+      "_tgt": "schedule_slotcardlist_slotcardlist",
+      "source": "components_schedule_slotcardlist_tsx",
+      "target": "schedule_slotcardlist_slotcardlist",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\schedule\\SlotPicker.tsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "_src": "components_schedule_slotpicker_tsx",
+      "_tgt": "schedule_slotpicker_formatdate",
+      "source": "components_schedule_slotpicker_tsx",
+      "target": "schedule_slotpicker_formatdate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\ui\\badge.tsx",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_src": "components_ui_badge_tsx",
+      "_tgt": "ui_badge_badge",
+      "source": "components_ui_badge_tsx",
+      "target": "ui_badge_badge",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "components\\ui\\badge.tsx",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_src": "ui_badge_badge",
+      "_tgt": "lib_utils_cn",
+      "source": "ui_badge_badge",
+      "target": "lib_utils_cn"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\ui\\button.tsx",
+      "source_location": "L52",
+      "weight": 1.0,
+      "_src": "components_ui_button_tsx",
+      "_tgt": "ui_button_cn",
+      "source": "components_ui_button_tsx",
+      "target": "ui_button_cn",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib\\utils.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "lib_utils_ts",
+      "_tgt": "lib_utils_cn",
+      "source": "lib_utils_ts",
+      "target": "lib_utils_cn",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib\\supabase\\client.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_src": "lib_supabase_client_ts",
+      "_tgt": "supabase_client_createclient",
+      "source": "lib_supabase_client_ts",
+      "target": "supabase_client_createclient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib\\supabase\\env.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_src": "lib_supabase_env_ts",
+      "_tgt": "supabase_env_getsupabaseenv",
+      "source": "lib_supabase_env_ts",
+      "target": "supabase_env_getsupabaseenv",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib\\supabase\\env.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_src": "lib_supabase_env_ts",
+      "_tgt": "supabase_env_hassupabaseenv",
+      "source": "lib_supabase_env_ts",
+      "target": "supabase_env_hassupabaseenv",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib\\supabase\\server.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "lib_supabase_server_ts",
+      "_tgt": "supabase_server_createclient",
+      "source": "lib_supabase_server_ts",
+      "target": "supabase_server_createclient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "weight": 1.0,
+      "_src": "readme_justschedule_project",
+      "_tgt": "readme_nextjs_framework",
+      "source": "readme_justschedule_project",
+      "target": "readme_nextjs_framework"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "weight": 1.0,
+      "_src": "readme_justschedule_project",
+      "_tgt": "readme_supabase_integration",
+      "source": "readme_justschedule_project",
+      "target": "readme_supabase_integration"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "weight": 1.0,
+      "_src": "readme_supabase_integration",
+      "_tgt": "readme_google_auth",
+      "source": "readme_supabase_integration",
+      "target": "readme_google_auth"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "docs/ChatGPT Image Apr 29, 2026, 09_51_58 AM.png",
+      "weight": 0.9,
+      "_src": "sysdesign_justschedule_overview",
+      "_tgt": "img_ui_mockup_morning",
+      "source": "sysdesign_justschedule_overview",
+      "target": "img_ui_mockup_morning"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/system-design.md",
+      "weight": 1.0,
+      "_src": "sysdesign_booking_record",
+      "_tgt": "sysdesign_supabase_schema",
+      "source": "sysdesign_booking_record",
+      "target": "sysdesign_supabase_schema"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "docs/superpowers/specs/2026-04-28-exam-scheduler-design.md",
+      "weight": 0.9,
+      "_src": "sysdesign_booking_record",
+      "_tgt": "spec_booking_data_model",
+      "source": "sysdesign_booking_record",
+      "target": "spec_booking_data_model"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/system-design.md",
+      "weight": 1.0,
+      "_src": "sysdesign_supabase_schema",
+      "_tgt": "sysdesign_row_level_security",
+      "source": "sysdesign_supabase_schema",
+      "target": "sysdesign_row_level_security"
+    },
+    {
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/superpowers/plans/2026-04-28-exam-scheduler.md",
+      "weight": 0.85,
+      "_src": "plan_exam_scheduler",
+      "_tgt": "spec_exam_scheduler",
+      "source": "plan_exam_scheduler",
+      "target": "spec_exam_scheduler"
+    }
+  ],
+  "hyperedges": []
+}

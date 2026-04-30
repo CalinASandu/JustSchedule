@@ -10,7 +10,7 @@ interface SlotCardProps {
   onClick: () => void
 }
 
-export default function SlotCard({ slotId, label, bookedCount, onClick }: SlotCardProps) {
+export default function SlotCard({ label, bookedCount, onClick }: SlotCardProps) {
   const available = SEATS_PER_SLOT - bookedCount
   const isFull = available === 0
   const isLow = !isFull && available <= 2
@@ -19,7 +19,7 @@ export default function SlotCard({ slotId, label, bookedCount, onClick }: SlotCa
     <button
       onClick={onClick}
       disabled={isFull}
-      aria-label={`${label} — ${isFull ? 'fully booked' : `${available} seats available`}`}
+      aria-label={`${label} - ${isFull ? 'fully booked' : `${available} seats available`}`}
       className={[
         'w-full text-left rounded-xl border-2 px-4 py-3.5 transition-all duration-150',
         isFull
@@ -29,10 +29,10 @@ export default function SlotCard({ slotId, label, bookedCount, onClick }: SlotCa
     >
       <div className="flex items-center justify-between gap-4">
         <div>
-          <p className="text-[11px] font-medium text-[#94A3B8] uppercase tracking-wider mb-0.5" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+          <p className="text-[11px] font-medium text-[#94A3B8] uppercase mb-0.5">
             Time Slot
           </p>
-          <p className="text-base font-semibold text-[#1E293B]" style={{ fontFamily: "'EB Garamond', serif" }}>
+          <p className="text-base font-semibold text-[#1E293B]">
             {label}
           </p>
         </div>
