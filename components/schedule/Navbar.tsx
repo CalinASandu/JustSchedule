@@ -1,6 +1,29 @@
 'use client'
 
-export default function Navbar() {
+import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
+
+interface NavbarProps {
+  userName: string
+  userEmail: string
+}
+
+export default function Navbar({ userName, userEmail }: NavbarProps) {
+  const router = useRouter()
+  const initials = userName
+    .split(' ')
+    .map(part => part[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase() || 'JS'
+
+  async function handleSignOut() {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.replace('/')
+    router.refresh()
+  }
+
   return (
     <header
       className="h-14 bg-white flex items-center px-6 sticky top-0 z-30"
@@ -78,14 +101,23 @@ export default function Navbar() {
           </svg>
         </button>
 
+        <button
+          onClick={handleSignOut}
+          className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl transition-colors duration-150 hover:bg-slate-50"
+          style={{ border: '1px solid #E4E8EF', color: '#6B7280' }}
+        >
+          Sign out
+        </button>
+
         {/* Avatar */}
         <div
           className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[11px] font-semibold select-none"
           style={{ background: '#2563EB' }}
-          aria-label="User profile"
+          aria-label={userEmail}
+          title={userEmail}
           role="img"
         >
-          CS
+          {initials}
         </div>
       </div>
     </header>

@@ -2,6 +2,19 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+Create a `.env.local` file with your Supabase project values:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
+```
+
+In Supabase, enable the Google auth provider and add this callback URL for local development:
+
+```text
+http://localhost:3000/auth/callback
+```
+
 First, run the development server:
 
 ```bash
