@@ -56,7 +56,7 @@ export default function LoginPage() {
       return;
     }
 
-    router.replace("/schedule");
+    router.replace("/dashboard/schedule");
   }
 
   return (

@@ -4,8 +4,8 @@ import { NextResponse, type NextRequest } from "next/server";
 export async function GET(request: NextRequest) {
   const requestUrl = request.nextUrl;
   const code = requestUrl.searchParams.get("code");
-  const rawNext = requestUrl.searchParams.get("next") ?? "/schedule";
-  const next = rawNext.startsWith("/") ? rawNext : "/schedule";
+  const rawNext = requestUrl.searchParams.get("next") ?? "/dashboard";
+  const next = rawNext.startsWith("/") ? rawNext : "/dashboard";
 
   if (code) {
     const supabase = await createClient();
