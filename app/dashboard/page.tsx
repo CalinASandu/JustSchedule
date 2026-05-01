@@ -244,14 +244,16 @@ export default async function DashboardPage() {
                 : `/dashboard/schedule?schoolId=${membership.school.id}`;
 
               return (
-                <Link
+                <article
                   key={membership.id}
-                  href={href}
-                  className={`panel group flex min-h-[178px] flex-col justify-between p-5 transition-colors duration-150 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 anim-slide-up ${
+                  className={`panel flex min-h-[178px] flex-col justify-between p-5 anim-slide-up ${
                     index === 0 ? "anim-d1" : index === 1 ? "anim-d2" : "anim-d3"
                   }`}
                 >
-                  <div>
+                  <Link
+                    href={href}
+                    className="group block rounded-[10px] transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                  >
                     <div className="mb-5 flex items-start justify-between gap-3">
                       <div
                         className="flex h-10 w-10 items-center justify-center rounded-xl"
@@ -273,25 +275,27 @@ export default async function DashboardPage() {
                     <p className="mt-1 text-xs" style={{ color: "#9CA3AF" }}>
                       Joined {formatDate(membership.joined_at)}
                     </p>
-                  </div>
+                  </Link>
 
-                  <div className="mt-6 flex items-center justify-between gap-3">
-                    <span
-                      className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold capitalize"
-                      style={
-                        isAdmin
-                          ? { background: "#DBEAFE", color: "#1D4ED8" }
-                          : { background: "#E2E8F0", color: "#64748B" }
-                      }
-                    >
-                      {isAdmin && <ShieldCheck size={13} strokeWidth={1.8} />}
-                      {membership.role}
-                    </span>
-                    <span className="text-xs font-medium" style={{ color: "#6B7280" }}>
-                      {isAdmin ? "Manage school" : "Schedule exam"}
-                    </span>
+                  <div className="mt-6">
+                    <div className="flex items-center justify-between gap-3">
+                      <span
+                        className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold capitalize"
+                        style={
+                          isAdmin
+                            ? { background: "#DBEAFE", color: "#1D4ED8" }
+                            : { background: "#E2E8F0", color: "#64748B" }
+                        }
+                      >
+                        {isAdmin && <ShieldCheck size={13} strokeWidth={1.8} />}
+                        {membership.role}
+                      </span>
+                      <span className="text-xs font-medium" style={{ color: "#6B7280" }}>
+                        {isAdmin ? "Manage school" : "Schedule exam"}
+                      </span>
+                    </div>
                   </div>
-                </Link>
+                </article>
               );
             })}
             <div className="anim-slide-up anim-d3 min-h-[178px] rounded-[8px] border border-dashed border-[#C7D2FE] bg-white/60 p-5 transition-colors duration-150 hover:bg-white">

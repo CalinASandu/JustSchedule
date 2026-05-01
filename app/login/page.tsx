@@ -56,7 +56,8 @@ export default function LoginPage() {
       return;
     }
 
-    router.replace("/dashboard/schedule");
+    const next = new URLSearchParams(window.location.search).get("next") ?? "/dashboard";
+    router.replace(next.startsWith("/") ? next : "/dashboard");
   }
 
   return (

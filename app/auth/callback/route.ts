@@ -24,7 +24,9 @@ export async function GET(request: NextRequest) {
           .single();
 
         if (!profile?.name) {
-          return NextResponse.redirect(new URL("/login", requestUrl.origin));
+          return NextResponse.redirect(
+            new URL(`/login?next=${encodeURIComponent(next)}`, requestUrl.origin),
+          );
         }
       }
 

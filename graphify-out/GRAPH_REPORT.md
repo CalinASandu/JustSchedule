@@ -1,50 +1,52 @@
-# Graph Report - JustSchedule  (2026-04-30)
+# Graph Report - JustSchedule  (2026-05-01)
 
 ## Corpus Check
-- 39 files · ~56,537 words
+- 46 files · ~61,614 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 103 nodes · 62 edges · 15 communities detected
-- Extraction: 82% EXTRACTED · 18% INFERRED · 0% AMBIGUOUS · INFERRED: 11 edges (avg confidence: 0.82)
+- 129 nodes · 90 edges · 17 communities detected
+- Extraction: 81% EXTRACTED · 19% INFERRED · 0% AMBIGUOUS · INFERRED: 17 edges (avg confidence: 0.81)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
 - [[_COMMUNITY_Community 0|Community 0]]
 - [[_COMMUNITY_Community 1|Community 1]]
 - [[_COMMUNITY_Community 5|Community 5]]
-- [[_COMMUNITY_Community 6|Community 6]]
 - [[_COMMUNITY_Community 7|Community 7]]
-- [[_COMMUNITY_Community 22|Community 22]]
-- [[_COMMUNITY_Community 23|Community 23]]
-- [[_COMMUNITY_Community 36|Community 36]]
-- [[_COMMUNITY_Community 37|Community 37]]
-- [[_COMMUNITY_Community 38|Community 38]]
-- [[_COMMUNITY_Community 39|Community 39]]
-- [[_COMMUNITY_Community 40|Community 40]]
-- [[_COMMUNITY_Community 41|Community 41]]
+- [[_COMMUNITY_Community 8|Community 8]]
+- [[_COMMUNITY_Community 9|Community 9]]
+- [[_COMMUNITY_Community 10|Community 10]]
+- [[_COMMUNITY_Community 28|Community 28]]
+- [[_COMMUNITY_Community 29|Community 29]]
 - [[_COMMUNITY_Community 42|Community 42]]
 - [[_COMMUNITY_Community 43|Community 43]]
+- [[_COMMUNITY_Community 44|Community 44]]
+- [[_COMMUNITY_Community 45|Community 45]]
+- [[_COMMUNITY_Community 46|Community 46]]
+- [[_COMMUNITY_Community 47|Community 47]]
+- [[_COMMUNITY_Community 48|Community 48]]
+- [[_COMMUNITY_Community 49|Community 49]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `createClient()` - 7 edges
-2. `GET()` - 3 edges
-3. `registerSchool()` - 3 edges
-4. `getDayStatus()` - 3 edges
-5. `Home()` - 2 edges
-6. `SchedulePage()` - 2 edges
-7. `handleSubmit()` - 2 edges
-8. `isWeekend()` - 2 edges
-9. `isPast()` - 2 edges
-10. `handleSignOut()` - 2 edges
+1. `createClient()` - 10 edges
+2. `GET()` - 6 edges
+3. `SchoolDashboardPage()` - 4 edges
+4. `Home()` - 3 edges
+5. `registerSchool()` - 3 edges
+6. `SchedulePage()` - 3 edges
+7. `requestSchoolJoin()` - 3 edges
+8. `handleSubmit()` - 3 edges
+9. `getDayStatus()` - 3 edges
+10. `sanitizeNext()` - 2 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `leaveSchool()` --calls--> `createClient()`  [INFERRED]
+  components\dashboard\LeaveSchoolButton.tsx → lib\supabase\server.ts
 - `Home()` --calls--> `createClient()`  [INFERRED]
   app\page.tsx → lib\supabase\server.ts
 - `SchedulePage()` --calls--> `createClient()`  [INFERRED]
   app\dashboard\schedule\page.tsx → lib\supabase\server.ts
-- `handleSubmit()` --calls--> `createClient()`  [INFERRED]
-  app\login\page.tsx → lib\supabase\server.ts
 - `handleSignOut()` --calls--> `createClient()`  [INFERRED]
   components\schedule\Navbar.tsx → lib\supabase\server.ts
 - `GET()` --calls--> `createClient()`  [INFERRED]
@@ -53,98 +55,114 @@
 ## Communities
 
 ### Community 0 - "Community 0"
-Cohesion: 0.15
-Nodes (7): Home(), GET(), registerSchool(), handleSubmit(), handleSignOut(), SchedulePage(), createClient()
+Cohesion: 0.17
+Nodes (8): GET(), registerSchool(), requestSchoolJoin(), handleSubmit(), handleSignOut(), getInitials(), SchoolDashboardPage(), createClient()
 
 ### Community 1 - "Community 1"
 Cohesion: 0.38
 Nodes (3): getDayStatus(), isPast(), isWeekend()
 
 ### Community 5 - "Community 5"
-Cohesion: 0.5
-Nodes (2): cn(), Badge()
-
-### Community 6 - "Community 6"
-Cohesion: 0.5
-Nodes (4): Google Auth Provider, JustSchedule Project, Next.js Framework, Supabase Integration
+Cohesion: 0.4
+Nodes (4): Home(), sanitizeNext(), getSchoolId(), SchedulePage()
 
 ### Community 7 - "Community 7"
 Cohesion: 0.5
+Nodes (1): leaveSchool()
+
+### Community 8 - "Community 8"
+Cohesion: 0.5
+Nodes (2): cn(), Badge()
+
+### Community 9 - "Community 9"
+Cohesion: 0.5
+Nodes (4): Google Auth Provider, JustSchedule Project, Next.js Framework, Supabase Integration
+
+### Community 10 - "Community 10"
+Cohesion: 0.5
 Nodes (4): Spec: Booking Data Model, Booking Record Data Model, Row Level Security Policy, Supabase Bookings Schema
 
-### Community 22 - "Community 22"
+### Community 28 - "Community 28"
 Cohesion: 1.0
 Nodes (2): Exam Scheduler Implementation Plan, Exam Scheduler Design Spec
 
-### Community 23 - "Community 23"
+### Community 29 - "Community 29"
 Cohesion: 1.0
 Nodes (2): JustSchedule UI Mockup (Full Dashboard), JustSchedule System Overview
 
-### Community 36 - "Community 36"
+### Community 42 - "Community 42"
 Cohesion: 1.0
 Nodes (1): Next.js Agent Rules
 
-### Community 37 - "Community 37"
+### Community 43 - "Community 43"
 Cohesion: 1.0
 Nodes (1): Slot Reference (Static Config)
 
-### Community 38 - "Community 38"
+### Community 44 - "Community 44"
 Cohesion: 1.0
 Nodes (1): Swap Requests Schema (Proposed)
 
-### Community 39 - "Community 39"
+### Community 45 - "Community 45"
 Cohesion: 1.0
 Nodes (1): UI Component Structure
 
-### Community 40 - "Community 40"
+### Community 46 - "Community 46"
 Cohesion: 1.0
 Nodes (1): Schedule Page Orchestrator
 
-### Community 41 - "Community 41"
+### Community 47 - "Community 47"
 Cohesion: 1.0
 Nodes (1): Booking Flow
 
-### Community 42 - "Community 42"
+### Community 48 - "Community 48"
 Cohesion: 1.0
 Nodes (1): Design System (CSS Custom Properties)
 
-### Community 43 - "Community 43"
+### Community 49 - "Community 49"
 Cohesion: 1.0
 Nodes (1): Weekly Schedule Grid (Dark Theme Concept)
 
 ## Knowledge Gaps
 - **16 isolated node(s):** `Next.js Agent Rules`, `Next.js Framework`, `Google Auth Provider`, `JustSchedule System Overview`, `Slot Reference (Static Config)` (+11 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 5`** (4 nodes): `badge.tsx`, `cn()`, `utils.ts`, `Badge()`
+- **Thin community `Community 7`** (4 nodes): `LeaveSchoolButton.tsx`, `closeDialog()`, `leaveSchool()`, `openDialog()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 22`** (2 nodes): `Exam Scheduler Implementation Plan`, `Exam Scheduler Design Spec`
+- **Thin community `Community 8`** (4 nodes): `badge.tsx`, `cn()`, `utils.ts`, `Badge()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 23`** (2 nodes): `JustSchedule UI Mockup (Full Dashboard)`, `JustSchedule System Overview`
+- **Thin community `Community 28`** (2 nodes): `Exam Scheduler Implementation Plan`, `Exam Scheduler Design Spec`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 36`** (1 nodes): `Next.js Agent Rules`
+- **Thin community `Community 29`** (2 nodes): `JustSchedule UI Mockup (Full Dashboard)`, `JustSchedule System Overview`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 37`** (1 nodes): `Slot Reference (Static Config)`
+- **Thin community `Community 42`** (1 nodes): `Next.js Agent Rules`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 38`** (1 nodes): `Swap Requests Schema (Proposed)`
+- **Thin community `Community 43`** (1 nodes): `Slot Reference (Static Config)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 39`** (1 nodes): `UI Component Structure`
+- **Thin community `Community 44`** (1 nodes): `Swap Requests Schema (Proposed)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 40`** (1 nodes): `Schedule Page Orchestrator`
+- **Thin community `Community 45`** (1 nodes): `UI Component Structure`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 41`** (1 nodes): `Booking Flow`
+- **Thin community `Community 46`** (1 nodes): `Schedule Page Orchestrator`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 42`** (1 nodes): `Design System (CSS Custom Properties)`
+- **Thin community `Community 47`** (1 nodes): `Booking Flow`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 43`** (1 nodes): `Weekly Schedule Grid (Dark Theme Concept)`
+- **Thin community `Community 48`** (1 nodes): `Design System (CSS Custom Properties)`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 49`** (1 nodes): `Weekly Schedule Grid (Dark Theme Concept)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Are the 6 inferred relationships involving `createClient()` (e.g. with `Home()` and `GET()`) actually correct?**
-  _`createClient()` has 6 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 2 inferred relationships involving `GET()` (e.g. with `createClient()` and `registerSchool()`) actually correct?**
-  _`GET()` has 2 INFERRED edges - model-reasoned connections that need verification._
+- **Why does `createClient()` connect `Community 0` to `Community 5`, `Community 7`?**
+  _High betweenness centrality (0.029) - this node is a cross-community bridge._
+- **Why does `leaveSchool()` connect `Community 7` to `Community 0`?**
+  _High betweenness centrality (0.008) - this node is a cross-community bridge._
+- **Are the 9 inferred relationships involving `createClient()` (e.g. with `Home()` and `GET()`) actually correct?**
+  _`createClient()` has 9 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 5 inferred relationships involving `GET()` (e.g. with `createClient()` and `registerSchool()`) actually correct?**
+  _`GET()` has 5 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 2 inferred relationships involving `SchoolDashboardPage()` (e.g. with `createClient()` and `GET()`) actually correct?**
+  _`SchoolDashboardPage()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 2 inferred relationships involving `registerSchool()` (e.g. with `GET()` and `createClient()`) actually correct?**
   _`registerSchool()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `Next.js Agent Rules`, `Next.js Framework`, `Google Auth Provider` to the rest of the system?**

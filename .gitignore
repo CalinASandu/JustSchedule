@@ -24,6 +24,8 @@
 .DS_Store
 *.pem
 .graphify*
+graphify-out/cache/
+supabase/.temp/
 
 # debug
 npm-debug.log*

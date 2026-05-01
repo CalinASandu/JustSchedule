@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { CalendarDays, UserRound } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { Booking, SlotId, ExamType } from "@/components/schedule/types";
 import { SLOTS } from "@/components/schedule/constants";
 import Navbar from "@/components/schedule/Navbar";
@@ -10,16 +12,26 @@ import BookingSummaryCard from "@/components/schedule/BookingSummaryCard";
 import SeatAvailabilityOverview from "@/components/schedule/SeatAvailabilityOverview";
 import BookingsPanel from "@/components/schedule/BookingsPanel";
 import DebugPanel from "@/components/schedule/DebugPanel";
+import LeaveSchoolButton from "@/components/dashboard/LeaveSchoolButton";
 
 interface ScheduleClientProps {
+  schoolId: string;
+  schoolName: string;
+  membershipId: string;
   studentName: string;
   userEmail: string;
 }
 
 export default function ScheduleClient({
+  schoolId,
+  schoolName,
+  membershipId,
   studentName: initialStudentName,
   userEmail,
 }: ScheduleClientProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [studentName, setStudentName] = useState(initialStudentName);
   const [selectedExam, setSelectedExam] = useState("");
   const [examType, setExamType] = useState<ExamType>("midterm");
@@ -87,13 +99,27 @@ export default function ScheduleClient({
     !!selectedDate &&
     !!selectedSlotId &&
     !showConfirmation;
+  const activePanel = searchParams.get("panel") === "profile" ? "profile" : "schedule";
+
+  function selectPanel(panel: "schedule" | "profile") {
+    const params = new URLSearchParams(searchParams);
+    params.set("schoolId", schoolId);
+
+    if (panel === "profile") {
+      params.set("panel", "profile");
+    } else {
+      params.delete("panel");
+    }
+
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }
 
   return (
     <div className="min-h-dvh" style={{ background: "#F7F8FA" }}>
       <Navbar userName={studentName} userEmail={userEmail} />
 
       <main style={{ maxWidth: 1400, margin: "0 auto", padding: "0 24px 64px" }}>
-        <div className="flex items-end justify-between py-8">
+        <div className="flex flex-col gap-4 py-8 lg:flex-row lg:items-end lg:justify-between">
           <div className="anim-slide-up">
             <h1
               className="text-4xl font-bold"
@@ -106,95 +132,195 @@ export default function ScheduleClient({
               Schedule your exam
             </h1>
             <p className="mt-1.5 text-sm" style={{ color: "#9CA3AF" }}>
-              Choose a date and time that works best for you.
+              {schoolName}
             </p>
           </div>
-          <button
-            className="hidden sm:flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-xl transition-colors duration-150 anim-slide-up focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-            style={{
-              color: "#6B7280",
-              border: "1px solid #E4E8EF",
-              background: "white",
-            }}
-            onMouseEnter={(event) => {
-              event.currentTarget.style.background = "#F9FAFB";
-            }}
-            onMouseLeave={(event) => {
-              event.currentTarget.style.background = "white";
-            }}
+          <div
+            className="panel anim-slide-up flex w-full p-1 sm:w-auto"
+            role="tablist"
+            aria-label="School workspace panels"
           >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 14 14"
-              fill="none"
-              aria-hidden="true"
-            >
-              <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.3" />
-              <path
-                d="M7 6v4M7 4.5v.5"
-                stroke="currentColor"
-                strokeWidth="1.3"
-                strokeLinecap="round"
-              />
-            </svg>
-            Need help?
-          </button>
-        </div>
-
-        <div className="schedule-main-grid">
-          <div className="anim-slide-up anim-d1">
-            <CalendarPanel
-              studentName={studentName}
-              onStudentNameChange={setStudentName}
-              selectedExam={selectedExam}
-              onExamChange={setSelectedExam}
-              examType={examType}
-              onExamTypeChange={setExamType}
-              selectedDate={selectedDate}
-              onSelectDate={handleDateSelect}
+            <PanelTab
+              active={activePanel === "schedule"}
+              icon={<CalendarDays size={15} aria-hidden="true" />}
+              label="Schedule"
+              onClick={() => selectPanel("schedule")}
             />
-          </div>
-
-          <div className="anim-slide-up anim-d2">
-            <SlotPicker
-              selectedDate={selectedDate}
-              selectedSlotId={selectedSlotId}
-              onSelectSlot={handleSlotSelect}
-              bookings={bookings}
-            />
-          </div>
-
-          <div className="anim-slide-up anim-d3">
-            <BookingSummaryCard
-              studentName={studentName}
-              exam={selectedExam}
-              examType={examType}
-              date={formattedDate}
-              time={selectedSlotDef?.label ?? null}
-              duration={selectedSlotDef?.duration ?? null}
-              canReserve={canReserve}
-              isConfirmed={showConfirmation}
-              onReserve={handleReserve}
-              onReset={handleReset}
+            <PanelTab
+              active={activePanel === "profile"}
+              icon={<UserRound size={15} aria-hidden="true" />}
+              label="School Profile"
+              onClick={() => selectPanel("profile")}
             />
           </div>
         </div>
 
-        <div className="schedule-bottom-grid mt-6">
-          <div className="anim-slide-up anim-d2">
-            <SeatAvailabilityOverview selectedDate={selectedDate} bookings={bookings} />
-          </div>
+        {activePanel === "schedule" ? (
+          <>
+            <div className="schedule-main-grid">
+              <div className="anim-slide-up anim-d1">
+                <CalendarPanel
+                  studentName={studentName}
+                  onStudentNameChange={setStudentName}
+                  selectedExam={selectedExam}
+                  onExamChange={setSelectedExam}
+                  examType={examType}
+                  onExamTypeChange={setExamType}
+                  selectedDate={selectedDate}
+                  onSelectDate={handleDateSelect}
+                />
+              </div>
 
-          <div className="anim-slide-up anim-d3">
-            <BookingsPanel />
-          </div>
-        </div>
+              <div className="anim-slide-up anim-d2">
+                <SlotPicker
+                  selectedDate={selectedDate}
+                  selectedSlotId={selectedSlotId}
+                  onSelectSlot={handleSlotSelect}
+                  bookings={bookings}
+                />
+              </div>
 
-        <div className="mt-8">
-          <DebugPanel bookings={bookings} />
-        </div>
+              <div className="anim-slide-up anim-d3">
+                <BookingSummaryCard
+                  studentName={studentName}
+                  exam={selectedExam}
+                  examType={examType}
+                  date={formattedDate}
+                  time={selectedSlotDef?.label ?? null}
+                  duration={selectedSlotDef?.duration ?? null}
+                  canReserve={canReserve}
+                  isConfirmed={showConfirmation}
+                  onReserve={handleReserve}
+                  onReset={handleReset}
+                />
+              </div>
+            </div>
+
+            <div className="schedule-bottom-grid mt-6">
+              <div className="anim-slide-up anim-d2">
+                <SeatAvailabilityOverview selectedDate={selectedDate} bookings={bookings} />
+              </div>
+
+              <div className="anim-slide-up anim-d3">
+                <BookingsPanel />
+              </div>
+            </div>
+
+            <div className="mt-8">
+              <DebugPanel bookings={bookings} />
+            </div>
+          </>
+        ) : (
+          <SchoolProfilePanel
+            schoolName={schoolName}
+            studentName={studentName}
+            userEmail={userEmail}
+            membershipId={membershipId}
+          />
+        )}
       </main>
     </div>
+  );
+}
+
+function PanelTab({
+  active,
+  icon,
+  label,
+  onClick,
+}: {
+  active: boolean;
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={active}
+      onClick={onClick}
+      className="inline-flex h-9 min-w-0 flex-1 items-center justify-center gap-2 rounded-[10px] px-3 text-sm font-semibold transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 sm:flex-none"
+      style={
+        active
+          ? { background: "#EFF6FF", color: "#1D4ED8" }
+          : { background: "#FFFFFF", color: "#6B7280" }
+      }
+    >
+      {icon}
+      <span className="truncate">{label}</span>
+    </button>
+  );
+}
+
+function SchoolProfilePanel({
+  schoolName,
+  studentName,
+  userEmail,
+  membershipId,
+}: {
+  schoolName: string;
+  studentName: string;
+  userEmail: string;
+  membershipId: string;
+}) {
+  return (
+    <section className="panel anim-slide-up anim-d1 p-6">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h2 className="text-[0.9375rem] font-semibold" style={{ color: "#111827" }}>
+            School Profile
+          </h2>
+          <p className="mt-1 text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
+            Your membership details for {schoolName}.
+          </p>
+        </div>
+        <span
+          className="inline-flex w-fit rounded-full px-3 py-1 text-xs font-semibold"
+          style={{ background: "#E2E8F0", color: "#64748B" }}
+        >
+          Student
+        </span>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="rounded-[10px] border border-[#E4E8EF] p-4">
+          <p className="text-xs font-medium uppercase" style={{ color: "#94A3B8" }}>
+            School
+          </p>
+          <p className="mt-1 truncate text-sm font-semibold" style={{ color: "#111827" }}>
+            {schoolName}
+          </p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div>
+              <p className="text-xs font-medium uppercase" style={{ color: "#94A3B8" }}>
+                Name
+              </p>
+              <p className="mt-1 truncate text-sm" style={{ color: "#374151" }}>
+                {studentName}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs font-medium uppercase" style={{ color: "#94A3B8" }}>
+                Email
+              </p>
+              <p className="mt-1 truncate text-sm" style={{ color: "#374151" }}>
+                {userEmail}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-[10px] border border-[#E4E8EF] p-4">
+          <h3 className="text-sm font-semibold" style={{ color: "#111827" }}>
+            Membership
+          </h3>
+          <p className="mb-4 mt-1 text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
+            Leave this school if you no longer need access.
+          </p>
+          <LeaveSchoolButton membershipId={membershipId} schoolName={schoolName} />
+        </div>
+      </div>
+    </section>
   );
 }

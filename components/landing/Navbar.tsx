@@ -6,7 +6,7 @@ import { GoogleSignInButton } from "./GoogleSignInButton";
 
 const links = ["Features", "Schools", "Pricing"];
 
-export function Navbar() {
+export function Navbar({ redirectPath = "/dashboard" }: { redirectPath?: string }) {
   const { scrollY } = useScroll();
   const bg = useTransform(
     scrollY,
@@ -61,7 +61,7 @@ export function Navbar() {
 
         {/* Right CTAs */}
         <div className="flex items-center gap-2">
-          <GoogleSignInButton compact />
+          <GoogleSignInButton compact redirectPath={redirectPath} />
         </div>
       </nav>
     </motion.header>
