@@ -37,6 +37,18 @@ type JoinRequestRow = {
   email: string | null;
 };
 
+type SchoolRole = "admin" | "professor" | "student";
+
+type SchoolMember = {
+  id: string;
+  userId: string;
+  name: string;
+  email: string | null;
+  role: SchoolRole;
+  joinedAt: string;
+  isCurrentUser: boolean;
+};
+
 function getInitials(name: string) {
   return (
     name
@@ -54,6 +66,14 @@ function formatMemberName(member: SchoolMemberRow, currentUserId: string) {
   }
 
   return member.user_id === currentUserId ? "You" : "Unnamed member";
+}
+
+function normalizeRole(role: string | null): SchoolRole {
+  if (role === "admin" || role === "professor") {
+    return role;
+  }
+
+  return "student";
 }
 
 export default async function SchoolDashboardPage({
@@ -87,8 +107,9 @@ export default async function SchoolDashboardPage({
   }
 
   const isAdmin = membership?.role === "admin" || school.created_by === user.id;
+  const isProfessor = membership?.role === "professor";
 
-  if (!isAdmin) {
+  if (!isAdmin && !isProfessor) {
     redirect(`/dashboard/schedule?schoolId=${schoolId}`);
   }
 
@@ -118,16 +139,17 @@ export default async function SchoolDashboardPage({
       : user.email?.split("@")[0]) ||
     "Admin";
   const initials = getInitials(displayName);
-  const members = [
-    ...rows.map((member) => ({
-      id: member.id,
-      userId: member.user_id,
-      name: formatMemberName(member, user.id),
-      email: member.email,
-      role: member.role ?? "student",
-      joinedAt: member.joined_at,
-      isCurrentUser: member.user_id === user.id,
-    })),
+  const rowMembers: SchoolMember[] = rows.map((member) => ({
+    id: member.id,
+    userId: member.user_id,
+    name: formatMemberName(member, user.id),
+    email: member.email,
+    role: normalizeRole(member.role),
+    joinedAt: member.joined_at,
+    isCurrentUser: member.user_id === user.id,
+  }));
+  const members: SchoolMember[] = [
+    ...rowMembers,
     ...(hasCurrentUserRow
       ? []
       : [
@@ -136,7 +158,7 @@ export default async function SchoolDashboardPage({
             userId: user.id,
             name: displayName,
             email: user.email ?? null,
-            role: "admin",
+            role: "admin" as const,
             joinedAt: school.created_at,
             isCurrentUser: true,
           },
@@ -226,7 +248,7 @@ export default async function SchoolDashboardPage({
               <ShieldCheck size={17} color="#2563EB" strokeWidth={1.9} />
               <div>
                 <p className="text-sm font-semibold" style={{ color: "#111827" }}>
-                  Admin access
+                  {isAdmin ? "Admin access" : "Professor access"}
                 </p>
                 <p className="text-xs" style={{ color: "#9CA3AF" }}>
                   Signed in as {displayName}
@@ -242,6 +264,7 @@ export default async function SchoolDashboardPage({
           members={members}
           invites={invites}
           joinRequests={joinRequests}
+          canManageMembers={isAdmin}
           memberError={
             membersError
               ? `Could not load all member rows: ${membersError.message}`

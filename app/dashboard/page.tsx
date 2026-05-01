@@ -5,7 +5,7 @@ import DashboardSignOutButton from "@/components/dashboard/DashboardSignOutButto
 import RegisterSchoolForm from "@/components/dashboard/RegisterSchoolForm";
 import { createClient } from "@/lib/supabase/server";
 
-type SchoolRole = "admin" | "student";
+type SchoolRole = "admin" | "professor" | "student";
 
 type SchoolMembership = {
   id: string;
@@ -40,7 +40,11 @@ function getInitials(name: string) {
 }
 
 function normalizeRole(role: string | null): SchoolRole {
-  return role === "admin" ? "admin" : "student";
+  if (role === "admin" || role === "professor") {
+    return role;
+  }
+
+  return "student";
 }
 
 function normalizeMemberships(rows: SchoolMemberRow[] | null, schools: SchoolRow[] | null): SchoolMembership[] {
@@ -239,7 +243,8 @@ export default async function DashboardPage() {
           <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {memberships.map((membership, index) => {
               const isAdmin = membership.role === "admin";
-              const href = isAdmin
+              const opensSchoolDashboard = isAdmin || membership.role === "professor";
+              const href = opensSchoolDashboard
                 ? `/dashboard/schools/${membership.school.id}`
                 : `/dashboard/schedule?schoolId=${membership.school.id}`;
 
@@ -291,7 +296,11 @@ export default async function DashboardPage() {
                         {membership.role}
                       </span>
                       <span className="text-xs font-medium" style={{ color: "#6B7280" }}>
-                        {isAdmin ? "Manage school" : "Schedule exam"}
+                        {isAdmin
+                          ? "Manage school"
+                          : membership.role === "professor"
+                            ? "View members"
+                            : "Schedule exam"}
                       </span>
                     </div>
                   </div>

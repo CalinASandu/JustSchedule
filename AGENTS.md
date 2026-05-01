@@ -72,13 +72,13 @@ Admins review pending join requests in the `Join Requests` tab of `components/da
 
 ### Schedule Page
 
-`app/dashboard/page.tsx` is the authenticated dashboard overview. It lists the schools the signed-in user belongs to, shows a profile panel, and includes a ghost card with `RegisterSchoolForm` for creating another school. Admin school cards link to `/dashboard/schools/[schoolId]`; student school cards link to `/dashboard/schedule?schoolId=...`.
+`app/dashboard/page.tsx` is the authenticated dashboard overview. It lists the schools the signed-in user belongs to, shows a profile panel, and includes a ghost card with `RegisterSchoolForm` for creating another school. Admin and professor school cards link to `/dashboard/schools/[schoolId]`; student school cards link to `/dashboard/schedule?schoolId=...`.
 
-`app/dashboard/schedule/page.tsx` is the schedule server component that fetches the session, validates the `schoolId` query param, redirects admins to `/dashboard/schools/[schoolId]`, and passes the current non-admin membership down. `app/dashboard/schedule/ScheduleClient.tsx` is the client component that owns all interactive schedule state (`handleDateSelect`, `handleReserve`, `handleReset`) plus the URL-backed workspace panel switcher. There is no `/schedule` route; schedule lives at `/dashboard/schedule`.
+`app/dashboard/schedule/page.tsx` is the schedule server component that fetches the session, validates the `schoolId` query param, redirects admins and professors to `/dashboard/schools/[schoolId]`, and passes the current non-admin membership down. `app/dashboard/schedule/ScheduleClient.tsx` is the client component that owns all interactive schedule state (`handleDateSelect`, `handleReserve`, `handleReset`) plus the URL-backed workspace panel switcher. There is no `/schedule` route; schedule lives at `/dashboard/schedule`.
 
 The student schedule workspace uses a panel switcher above the content, not navbar tabs. The current panels are `Schedule` and `School Profile`; `School Profile` currently shows membership details and a `Leave school` action. Keep school-specific panels in this workspace switcher rather than adding school selectors or school tabs to the global navbar.
 
-`app/dashboard/schools/[schoolId]/page.tsx` is the admin-only school dashboard shell. It verifies the signed-in user's `SchoolMembers` row or `Schools.created_by` ownership for the selected school before rendering and redirects non-admin members to `/dashboard/schedule?schoolId=...`.
+`app/dashboard/schools/[schoolId]/page.tsx` is the school management shell for admins and professors. It verifies the signed-in user's `SchoolMembers` row or `Schools.created_by` ownership for the selected school before rendering. Admins can manage members, invites, join requests, and settings; professors can only view the members list.
 
 The schedule UI is split into panels: `CalendarPanel`, `SlotPicker`, `BookingSummaryCard`, `SeatAvailabilityOverview`, and `BookingsPanel`. All live in `components/schedule/`.
 
@@ -90,6 +90,8 @@ School deletion and student leave use normal Supabase database calls guarded by 
 
 Admins delete schools from the `Settings` tab in `SchoolManagementTabs`. The UI requires typing the exact school name before enabling the delete button. The live foreign keys use `ON DELETE CASCADE` from `Schools` to `SchoolMembers`, `SchoolInvites`, and `JoinRequests`, so deleting a school cleans up those dependent rows.
 
+Admins kick non-admin members from the `Members` tab in `SchoolManagementTabs`. The UI shows a `Kick` button on each non-admin member card, opens a confirmation dialog, and requires a 5-second cooldown before confirmation. Professors can be listed but cannot manage members, and admins must be able to update roles through the staged dropdown plus confirm panel before members are updated.
+
 Students leave schools from the `School Profile` panel in the schedule workspace via `components/dashboard/LeaveSchoolButton.tsx`. The leave flow opens a confirmation dialog and requires a 5-second delay before confirmation. Do not put the leave action on the main school card grid.
 
 ### Proxy
@@ -100,7 +102,7 @@ Students leave schools from the `School Profile` panel in the schedule workspace
 
 - Use `supabase.auth.getUser()` for server-side auth decisions. `user_metadata` is allowed only for display fallbacks, never authorization.
 - Do not expose Supabase service-role keys or private secrets to client components. Public client code may only use `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
-- Dashboard authorization depends on Supabase RLS for `Profiles`, `Schools`, `SchoolMembers`, `SchoolInvites`, and `JoinRequests`; frontend filters are not a substitute for policies.
+- Dashboard authorization depends on Supabase RLS for `Profiles`, `Schools`, `SchoolMembers`, `SchoolInvites`, and `JoinRequests`; frontend filters are not a substitute for policies. The `school_role` enum now includes `admin`, `professor`, and `student`, and member-management policies must match that three-role model.
 - Edge Functions that perform privileged writes must first verify the caller with the user's JWT before using service-role access.
 - `npm audit` currently reports a moderate PostCSS advisory through `next@16.2.4`; do not run `npm audit fix --force` because npm suggests downgrading Next to `9.3.3`. Re-check after a Next release updates the transitive PostCSS version.
 

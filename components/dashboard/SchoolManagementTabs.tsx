@@ -7,10 +7,11 @@ import {
   Link2,
   Loader2,
   Mail,
-  ShieldCheck,
   Trash2,
+  UserMinus,
   UserPlus,
   UserRound,
+  X,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -20,7 +21,7 @@ type SchoolMember = {
   userId: string;
   name: string;
   email: string | null;
-  role: string;
+  role: SchoolRole;
   joinedAt: string;
   isCurrentUser: boolean;
 };
@@ -44,6 +45,9 @@ type JoinRequest = {
 };
 
 type Decision = "approved" | "rejected";
+type SchoolRole = "admin" | "professor" | "student";
+
+const roleOptions: SchoolRole[] = ["student", "professor", "admin"];
 
 type Props = {
   schoolId: string;
@@ -54,6 +58,7 @@ type Props = {
   memberError: string | null;
   inviteError: string | null;
   joinRequestError: string | null;
+  canManageMembers: boolean;
 };
 
 function formatDate(value: string) {
@@ -84,6 +89,7 @@ export default function SchoolManagementTabs({
   memberError,
   inviteError,
   joinRequestError,
+  canManageMembers,
 }: Props) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"members" | "requests" | "invites" | "settings">("members");
@@ -93,6 +99,24 @@ export default function SchoolManagementTabs({
   const [generatedInvites, setGeneratedInvites] = useState<SchoolInvite[]>([]);
   const [reviewedRequestIds, setReviewedRequestIds] = useState<Set<string>>(new Set());
   const [requestDecisions, setRequestDecisions] = useState<Record<string, Decision>>({});
+  const [removedMemberIds, setRemovedMemberIds] = useState<Set<string>>(new Set());
+  const [roleOverrides, setRoleOverrides] = useState<Record<string, SchoolRole>>({});
+  const [selectedRoles, setSelectedRoles] = useState<Record<string, SchoolRole>>({});
+  const [roleState, setRoleState] = useState<{
+    error: string | null;
+    success: string | null;
+    pending: boolean;
+  }>({
+    error: null,
+    success: null,
+    pending: false,
+  });
+  const [kickDialogMemberId, setKickDialogMemberId] = useState<string | null>(null);
+  const [kickSecondsRemaining, setKickSecondsRemaining] = useState(5);
+  const [kickState, setKickState] = useState<{ error: string | null; pending: boolean }>({
+    error: null,
+    pending: false,
+  });
   const [inviteState, setInviteState] = useState<{ error: string | null; pending: boolean }>({
     error: null,
     pending: false,
@@ -121,9 +145,31 @@ export default function SchoolManagementTabs({
     () => joinRequests.filter((request) => !reviewedRequestIds.has(request.id)),
     [joinRequests, reviewedRequestIds],
   );
+  const visibleMembers = useMemo(
+    () =>
+      members
+        .filter((member) => !removedMemberIds.has(member.id))
+        .map((member) => ({
+          ...member,
+          role: roleOverrides[member.id] ?? member.role,
+        })),
+    [members, removedMemberIds, roleOverrides],
+  );
   const selectedDecisions = Object.entries(requestDecisions).filter(([requestId]) =>
     visibleJoinRequests.some((request) => request.id === requestId),
   );
+  const pendingRoleChanges = visibleMembers.flatMap((member) => {
+    const selectedRole = selectedRoles[member.id];
+
+    if (!selectedRole || selectedRole === member.role) {
+      return [];
+    }
+
+    return [{ member, nextRole: selectedRole }];
+  });
+  const kickDialogMember = kickDialogMemberId
+    ? visibleMembers.find((member) => member.id === kickDialogMemberId) ?? null
+    : null;
 
   useEffect(() => {
     if (!copiedUrl) {
@@ -133,6 +179,18 @@ export default function SchoolManagementTabs({
     const timeout = window.setTimeout(() => setCopiedUrl(null), 1600);
     return () => window.clearTimeout(timeout);
   }, [copiedUrl]);
+
+  useEffect(() => {
+    if (!kickDialogMemberId || kickSecondsRemaining === 0) {
+      return;
+    }
+
+    const timeout = window.setTimeout(() => {
+      setKickSecondsRemaining((seconds) => Math.max(0, seconds - 1));
+    }, 1000);
+
+    return () => window.clearTimeout(timeout);
+  }, [kickDialogMemberId, kickSecondsRemaining]);
 
   async function copyInvite(url: string) {
     await navigator.clipboard.writeText(url);
@@ -253,6 +311,126 @@ export default function SchoolManagementTabs({
       success: `Reviewed ${approved + rejected} request${approved + rejected === 1 ? "" : "s"}.`,
       pending: false,
     });
+    router.refresh();
+  }
+
+  async function confirmRoleChanges() {
+    if (pendingRoleChanges.length === 0) {
+      setRoleState({
+        error: "Choose a different role before confirming.",
+        success: null,
+        pending: false,
+      });
+      return;
+    }
+
+    setRoleState({ error: null, success: null, pending: true });
+
+    const supabase = createClient();
+    const results = await Promise.all(
+      pendingRoleChanges.map(({ member, nextRole }) =>
+        supabase
+          .from("SchoolMembers")
+          .update({ role: nextRole }, { count: "exact" })
+          .eq("id", member.id)
+          .eq("school_id", schoolId),
+      ),
+    );
+    const failedResult = results.find((result) => result.error);
+    const unchangedResult = results.find((result) => result.count !== 1);
+
+    if (failedResult?.error) {
+      setRoleState({
+        error: failedResult.error.message || "Could not update member roles.",
+        success: null,
+        pending: false,
+      });
+      return;
+    }
+
+    if (unchangedResult) {
+      setRoleState({
+        error: "No role changes were applied. Your admin permissions may need to be refreshed.",
+        success: null,
+        pending: false,
+      });
+      return;
+    }
+
+    setRoleOverrides((current) => {
+      const next = { ...current };
+      for (const change of pendingRoleChanges) {
+        next[change.member.id] = change.nextRole;
+      }
+      return next;
+    });
+    setSelectedRoles((current) => {
+      const next = { ...current };
+      for (const change of pendingRoleChanges) {
+        delete next[change.member.id];
+      }
+      return next;
+    });
+    setRoleState({
+      error: null,
+      success: `Updated ${pendingRoleChanges.length} role${pendingRoleChanges.length === 1 ? "" : "s"}.`,
+      pending: false,
+    });
+    router.refresh();
+  }
+
+  function openKickDialog(member: SchoolMember) {
+    setKickDialogMemberId(member.id);
+    setKickSecondsRemaining(5);
+    setKickState({ error: null, pending: false });
+  }
+
+  function closeKickDialog() {
+    if (kickState.pending) {
+      return;
+    }
+
+    setKickDialogMemberId(null);
+    setKickSecondsRemaining(5);
+    setKickState({ error: null, pending: false });
+  }
+
+  async function kickMember() {
+    if (!kickDialogMember || kickSecondsRemaining > 0) {
+      return;
+    }
+
+    setKickState({ error: null, pending: true });
+
+    const supabase = createClient();
+    const { count, error } = await supabase
+      .from("SchoolMembers")
+      .delete({ count: "exact" })
+      .eq("id", kickDialogMember.id)
+      .eq("school_id", schoolId)
+      .neq("role", "admin");
+
+    if (error) {
+      setKickState({
+        error: error.message || `Could not kick ${kickDialogMember.name}.`,
+        pending: false,
+      });
+      return;
+    }
+
+    if (count !== 1) {
+      setKickState({
+        error: "No member was kicked. Your admin permissions may need to be refreshed.",
+        pending: false,
+      });
+      return;
+    }
+
+    setRemovedMemberIds((current) => new Set([...current, kickDialogMember.id]));
+    setKickDialogMemberId(null);
+    setKickSecondsRemaining(5);
+    setKickState({ error: null, pending: false });
+    router.refresh();
   }
 
   async function deleteSchool() {
@@ -299,9 +477,9 @@ export default function SchoolManagementTabs({
     <section className="panel anim-slide-up anim-d1 overflow-hidden">
       <div className="flex border-b border-[#E4E8EF] px-2 pt-2">
         {renderTabButton("members", "Members")}
-        {renderTabButton("requests", "Join Requests")}
-        {renderTabButton("invites", "Invites")}
-        {renderTabButton("settings", "Settings")}
+        {canManageMembers && renderTabButton("requests", "Join Requests")}
+        {canManageMembers && renderTabButton("invites", "Invites")}
+        {canManageMembers && renderTabButton("settings", "Settings")}
       </div>
 
       {activeTab === "members" && (
@@ -319,15 +497,79 @@ export default function SchoolManagementTabs({
               className="rounded-full px-3 py-1 text-xs font-semibold"
               style={{ background: "#DBEAFE", color: "#1D4ED8" }}
             >
-              {members.length} total
+              {visibleMembers.length} total
             </span>
           </div>
 
-          {memberError && <ErrorBanner message={memberError} />}
+          {(memberError || roleState.error) && (
+            <ErrorBanner message={roleState.error ?? memberError ?? ""} />
+          )}
 
-          <div className="divide-y divide-[#E4E8EF]">
-            {members.map((member) => (
-              <div key={member.id} className="flex items-center justify-between gap-4 py-3">
+          {roleState.success && (
+            <p className="anim-fade-in mb-4 text-[0.8125rem] font-medium" style={{ color: "#1D4ED8" }}>
+              {roleState.success}
+            </p>
+          )}
+
+          {canManageMembers && pendingRoleChanges.length > 0 && (
+            <div
+              className="anim-fade-in mb-4 rounded-[10px] border border-[#E4E8EF] bg-white p-4"
+            >
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm font-semibold" style={{ color: "#111827" }}>
+                    Pending role changes
+                  </p>
+                  <p className="mt-1 text-sm" style={{ color: "#6B7280" }}>
+                    {pendingRoleChanges.length} member{pendingRoleChanges.length === 1 ? "" : "s"} will be updated.
+                  </p>
+                </div>
+                <div className="flex flex-col-reverse gap-2 sm:flex-row">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedRoles({});
+                      setRoleState({ error: null, success: null, pending: false });
+                    }}
+                    disabled={roleState.pending}
+                    className="inline-flex h-[2.625rem] items-center justify-center rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
+                    style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={confirmRoleChanges}
+                    disabled={roleState.pending}
+                    className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
+                    style={{
+                      background: roleState.pending ? "#93C5FD" : "#2563EB",
+                      boxShadow: roleState.pending
+                        ? "none"
+                        : "0 1px 3px rgba(37,99,235,0.25), 0 4px 12px rgba(37,99,235,0.12)",
+                    }}
+                  >
+                    {roleState.pending ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
+                    Confirm changes
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-3">
+            {visibleMembers.map((member) => {
+              const selectedRole = selectedRoles[member.id] ?? member.role;
+              const canManage = canManageMembers && !member.isCurrentUser && !member.id.startsWith("created-");
+              const canKick = canManage && member.role !== "admin";
+
+              return (
+              <div
+                key={member.id}
+                className="rounded-[10px] border border-[#E4E8EF] p-4"
+                style={{ background: "#FFFFFF" }}
+              >
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex min-w-0 items-center gap-3">
                   <div
                     className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
@@ -351,19 +593,44 @@ export default function SchoolManagementTabs({
                     </p>
                   </div>
                 </div>
-                <span
-                  className="inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold capitalize"
-                  style={
-                    member.role === "admin"
-                      ? { background: "#DBEAFE", color: "#1D4ED8" }
-                      : { background: "#E2E8F0", color: "#64748B" }
-                  }
-                >
-                  {member.role === "admin" && <ShieldCheck size={13} strokeWidth={1.8} />}
-                  {member.role}
-                </span>
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <select
+                    value={selectedRole}
+                    onChange={(event) => {
+                      const value = event.target.value as SchoolRole;
+                      setSelectedRoles((current) => ({
+                        ...current,
+                        [member.id]: value,
+                      }));
+                      setRoleState((current) => ({ ...current, error: null, success: null }));
+                    }}
+                    disabled={!canManage || roleState.pending}
+                    className="h-[2.625rem] rounded-[10px] bg-white px-3 text-[0.9375rem] capitalize outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed disabled:bg-[#F8FAFC] disabled:text-[#94A3B8]"
+                    style={{ border: "1.5px solid #E4E8EF", color: canManage ? "#111827" : "#94A3B8" }}
+                  >
+                    {roleOptions.map((role) => (
+                      <option key={role} value={role}>
+                        {role}
+                      </option>
+                    ))}
+                  </select>
+                  {canKick && (
+                    <button
+                      type="button"
+                      onClick={() => openKickDialog(member)}
+                      disabled={kickState.pending}
+                      className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
+                      style={{ border: "1px solid #E4E8EF", color: "#DC2626" }}
+                    >
+                      <UserMinus size={16} />
+                      Kick
+                    </button>
+                  )}
+                </div>
+                </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
@@ -647,6 +914,72 @@ export default function SchoolManagementTabs({
               >
                 {deleteState.pending ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
                 Delete school
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {kickDialogMember && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="kick-student-title"
+        >
+          <div className="panel w-full max-w-[420px] p-5 shadow-[0_18px_60px_rgba(15,23,42,0.18)]">
+            <div className="mb-4 flex items-start justify-between gap-4">
+              <div>
+                <h2
+                  id="kick-student-title"
+                  className="text-sm font-semibold"
+                  style={{ color: "#111827" }}
+                >
+                  Kick {kickDialogMember.name}
+                </h2>
+                <p className="mt-1 text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
+                  This removes the member from {schoolName}. They will need a new approved join request to return.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={closeKickDialog}
+                disabled={kickState.pending}
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
+                style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+                aria-label="Close dialog"
+              >
+                <X size={15} />
+              </button>
+            </div>
+
+            {kickState.error && <ErrorBanner message={kickState.error} />}
+
+            <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                onClick={closeKickDialog}
+                disabled={kickState.pending}
+                className="inline-flex h-[2.625rem] items-center justify-center rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
+                style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={kickMember}
+                disabled={kickState.pending || kickSecondsRemaining > 0}
+                className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
+                style={{
+                  background: kickState.pending || kickSecondsRemaining > 0 ? "#93C5FD" : "#2563EB",
+                  boxShadow:
+                    kickState.pending || kickSecondsRemaining > 0
+                      ? "none"
+                      : "0 1px 3px rgba(37,99,235,0.25), 0 4px 12px rgba(37,99,235,0.12)",
+                }}
+              >
+                {kickState.pending && <Loader2 size={16} className="animate-spin" />}
+                {kickSecondsRemaining > 0 ? `Confirm in ${kickSecondsRemaining}s` : "Confirm Kick"}
               </button>
             </div>
           </div>

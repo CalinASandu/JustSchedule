@@ -66,7 +66,7 @@ export default async function SchedulePage({
     redirect("/dashboard");
   }
 
-  if (membershipRow.role === "admin") {
+  if (membershipRow.role === "admin" || membershipRow.role === "professor") {
     redirect(`/dashboard/schools/${schoolId}`);
   }
 

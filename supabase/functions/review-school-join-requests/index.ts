@@ -1,8 +1,9 @@
-import { createClient } from "npm:@supabase/supabase-js@2.105.1";
+import { createClient } from "@supabase/supabase-js";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
@@ -49,9 +50,10 @@ function parseDecisions(value: unknown): ParsedDecision[] | null {
       return null;
     }
 
-    const requestId = "requestId" in item && typeof item.requestId === "string"
-      ? item.requestId.trim()
-      : "";
+    const requestId =
+      "requestId" in item && typeof item.requestId === "string"
+        ? item.requestId.trim()
+        : "";
     const decision = "decision" in item ? item.decision : "";
 
     if (!requestId || (decision !== "approved" && decision !== "rejected")) {
@@ -94,7 +96,8 @@ Deno.serve(async (req) => {
     return jsonResponse({ error: "Invalid JSON body." }, 400);
   }
 
-  const schoolId = typeof body.schoolId === "string" ? body.schoolId.trim() : "";
+  const schoolId =
+    typeof body.schoolId === "string" ? body.schoolId.trim() : "";
   const decisions = parseDecisions(body.decisions);
 
   if (!schoolId) {
@@ -102,16 +105,24 @@ Deno.serve(async (req) => {
   }
 
   if (!decisions) {
-    return jsonResponse({ error: "Provide at least one valid join request decision." }, 400);
+    return jsonResponse(
+      { error: "Provide at least one valid join request decision." },
+      400,
+    );
   }
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
   const publishableKey =
-    Deno.env.get("SUPABASE_ANON_KEY") ?? Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ?? "";
+    Deno.env.get("SUPABASE_ANON_KEY") ??
+    Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ??
+    "";
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
   if (!supabaseUrl || !publishableKey || !serviceRoleKey) {
-    return jsonResponse({ error: "Supabase environment is not configured." }, 500);
+    return jsonResponse(
+      { error: "Supabase environment is not configured." },
+      500,
+    );
   }
 
   const userClient = createClient(supabaseUrl, publishableKey, {
@@ -140,13 +151,21 @@ Deno.serve(async (req) => {
       .eq("school_id", schoolId)
       .eq("user_id", user.id)
       .maybeSingle(),
-    userClient.from("Schools").select("created_by").eq("id", schoolId).maybeSingle(),
+    userClient
+      .from("Schools")
+      .select("created_by")
+      .eq("id", schoolId)
+      .maybeSingle(),
   ]);
 
-  const isAdmin = membership?.role === "admin" || school?.created_by === user.id;
+  const isAdmin =
+    membership?.role === "admin" || school?.created_by === user.id;
 
   if (!isAdmin) {
-    return jsonResponse({ error: "Only school admins can review join requests." }, 403);
+    return jsonResponse(
+      { error: "Only school admins can review join requests." },
+      403,
+    );
   }
 
   const adminClient = createClient(supabaseUrl, serviceRoleKey, {
@@ -165,12 +184,18 @@ Deno.serve(async (req) => {
     .in("id", requestIds);
 
   if (requestError) {
-    return jsonResponse({ error: requestError.message || "Could not load join requests." }, 400);
+    return jsonResponse(
+      { error: requestError.message || "Could not load join requests." },
+      400,
+    );
   }
 
   const rows = (requestRows ?? []) as JoinRequestRow[];
   if (rows.length !== requestIds.length) {
-    return jsonResponse({ error: "One or more join requests are no longer pending." }, 409);
+    return jsonResponse(
+      { error: "One or more join requests are no longer pending." },
+      409,
+    );
   }
 
   const rowById = new Map(rows.map((row) => [row.id, row]));
@@ -188,11 +213,16 @@ Deno.serve(async (req) => {
       .in("user_id", approvedUserIds);
 
     if (existingError) {
-      return jsonResponse({ error: existingError.message || "Could not check members." }, 400);
+      return jsonResponse(
+        { error: existingError.message || "Could not check members." },
+        400,
+      );
     }
 
     const existingUserIds = new Set(
-      ((existingMembers ?? []) as SchoolMemberRow[]).map((member) => member.user_id),
+      ((existingMembers ?? []) as SchoolMemberRow[]).map(
+        (member) => member.user_id,
+      ),
     );
     const memberRows = approvedRows
       .filter((row) => !existingUserIds.has(row.user_id))
@@ -203,22 +233,34 @@ Deno.serve(async (req) => {
       }));
 
     if (memberRows.length > 0) {
-      const { error: memberError } = await adminClient.from("SchoolMembers").insert(memberRows);
+      const { error: memberError } = await adminClient
+        .from("SchoolMembers")
+        .insert(memberRows);
 
       if (memberError) {
-        return jsonResponse({ error: memberError.message || "Could not add school members." }, 400);
+        return jsonResponse(
+          { error: memberError.message || "Could not add school members." },
+          400,
+        );
       }
     }
   }
 
-  const { error: deleteError } = await adminClient.from("JoinRequests").delete().in("id", requestIds);
+  const { error: deleteError } = await adminClient
+    .from("JoinRequests")
+    .delete()
+    .in("id", requestIds);
 
   if (deleteError) {
-    return jsonResponse({ error: deleteError.message || "Could not clear reviewed requests." }, 400);
+    return jsonResponse(
+      { error: deleteError.message || "Could not clear reviewed requests." },
+      400,
+    );
   }
 
   return jsonResponse({
     approved: approvedRows.length,
-    rejected: decisions.filter((decision) => decision.decision === "rejected").length,
+    rejected: decisions.filter((decision) => decision.decision === "rejected")
+      .length,
   });
 });
