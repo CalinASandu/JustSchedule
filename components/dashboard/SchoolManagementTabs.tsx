@@ -3,6 +3,8 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import {
   Check,
+  ChevronLeft,
+  ChevronRight,
   Copy,
   Link2,
   Loader2,
@@ -44,8 +46,28 @@ type JoinRequest = {
   requestedAt: string;
 };
 
+type ExamSlot = {
+  id: string;
+  name: string;
+  startsAt: string;
+  endsAt: string;
+  capacity: number;
+};
+
+type Reservation = {
+  id: string;
+  userId: string;
+  slotId: string;
+  reservationDate: string;
+  examName: string;
+  examType: "midterm" | "final";
+  status: string;
+  createdAt: string;
+};
+
 type Decision = "approved" | "rejected";
 type SchoolRole = "admin" | "professor" | "student";
+type SchoolDashboardTab = "members" | "reservations" | "requests" | "invites" | "settings";
 
 const roleOptions: SchoolRole[] = ["student", "professor", "admin"];
 
@@ -55,9 +77,12 @@ type Props = {
   members: SchoolMember[];
   invites: SchoolInvite[];
   joinRequests: JoinRequest[];
+  examSlots: ExamSlot[];
+  reservations: Reservation[];
   memberError: string | null;
   inviteError: string | null;
   joinRequestError: string | null;
+  reservationError: string | null;
   canManageMembers: boolean;
 };
 
@@ -80,19 +105,65 @@ function dateInputToEndOfDay(value: string) {
   return new Date(year, month - 1, day, 23, 59, 59, 999).toISOString();
 }
 
+function getTodayKey() {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+function addDays(dateKey: string, days: number) {
+  const date = new Date(`${dateKey}T00:00:00`);
+  date.setDate(date.getDate() + days);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+function formatReservationDate(dateKey: string) {
+  return new Date(`${dateKey}T00:00:00`).toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+function formatSlotTime(value: string) {
+  const [hour = "0", minute = "0"] = value.split(":");
+  const date = new Date(2026, 0, 1, Number(hour), Number(minute));
+
+  return date.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+function formatExamType(type: Reservation["examType"]) {
+  return type[0].toUpperCase() + type.slice(1);
+}
+
 export default function SchoolManagementTabs({
   schoolId,
   schoolName,
   members,
   invites,
   joinRequests,
+  examSlots,
+  reservations,
   memberError,
   inviteError,
   joinRequestError,
+  reservationError,
   canManageMembers,
 }: Props) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"members" | "requests" | "invites" | "settings">("members");
+  const [activeTab, setActiveTab] = useState<SchoolDashboardTab>("members");
+  const [reservationDate, setReservationDate] = useState(getTodayKey);
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
   const [expiresOn, setExpiresOn] = useState(getDefaultExpiryDate);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
@@ -170,6 +241,30 @@ export default function SchoolManagementTabs({
   const kickDialogMember = kickDialogMemberId
     ? visibleMembers.find((member) => member.id === kickDialogMemberId) ?? null
     : null;
+  const memberNamesByUserId = useMemo(
+    () => new Map(visibleMembers.map((member) => [member.userId, member.name])),
+    [visibleMembers],
+  );
+  const reservationsBySlotId = useMemo(() => {
+    const grouped = new Map<string, Reservation[]>();
+
+    for (const reservation of reservations) {
+      if (reservation.reservationDate !== reservationDate) {
+        continue;
+      }
+
+      const slotReservations = grouped.get(reservation.slotId) ?? [];
+      slotReservations.push(reservation);
+      grouped.set(reservation.slotId, slotReservations);
+    }
+
+    for (const slotReservations of grouped.values()) {
+      slotReservations.sort((first, second) => first.createdAt.localeCompare(second.createdAt));
+    }
+
+    return grouped;
+  }, [reservationDate, reservations]);
+  const reservationRowCount = Math.max(8, ...examSlots.map((slot) => slot.capacity));
 
   useEffect(() => {
     if (!copiedUrl) {
@@ -456,7 +551,7 @@ export default function SchoolManagementTabs({
     router.refresh();
   }
 
-  function renderTabButton(tab: "members" | "requests" | "invites" | "settings", label: string) {
+  function renderTabButton(tab: SchoolDashboardTab, label: string) {
     return (
       <button
         type="button"
@@ -477,6 +572,7 @@ export default function SchoolManagementTabs({
     <section className="panel anim-slide-up anim-d1 overflow-hidden">
       <div className="flex border-b border-[#E4E8EF] px-2 pt-2">
         {renderTabButton("members", "Members")}
+        {renderTabButton("reservations", "Reservations")}
         {canManageMembers && renderTabButton("requests", "Join Requests")}
         {canManageMembers && renderTabButton("invites", "Invites")}
         {canManageMembers && renderTabButton("settings", "Settings")}
@@ -632,6 +728,123 @@ export default function SchoolManagementTabs({
               );
             })}
           </div>
+        </div>
+      )}
+
+      {activeTab === "reservations" && (
+        <div className="p-5">
+          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <h2 className="text-sm font-semibold" style={{ color: "#111827" }}>
+                Reservations
+              </h2>
+              <p className="mt-1 text-sm" style={{ color: "#6B7280" }}>
+                Confirmed student exams for {formatReservationDate(reservationDate)}.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setReservationDate((current) => addDays(current, -1))}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50"
+                style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+                aria-label="Previous day"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <span
+                className="min-w-[150px] rounded-xl px-3 py-2 text-center text-sm font-semibold"
+                style={{ border: "1px solid #E4E8EF", color: "#111827" }}
+              >
+                {formatReservationDate(reservationDate)}
+              </span>
+              <button
+                type="button"
+                onClick={() => setReservationDate((current) => addDays(current, 1))}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50"
+                style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+                aria-label="Next day"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+
+          {reservationError && <ErrorBanner message={reservationError} />}
+
+          {examSlots.length === 0 ? (
+            <EmptyState
+              title="No exam slots configured"
+              description="Reservations will appear here after this school has reusable exam slots."
+            />
+          ) : (
+            <div className="overflow-x-auto">
+              <div
+                className="grid min-w-[760px] gap-3"
+                style={{ gridTemplateColumns: `repeat(${examSlots.length}, minmax(0, 1fr))` }}
+              >
+                {examSlots.map((slot) => (
+                  <div
+                    key={slot.id}
+                    className="rounded-[10px] border border-[#E4E8EF] bg-white p-3"
+                  >
+                    <p className="text-sm font-semibold" style={{ color: "#111827" }}>
+                      {slot.name}
+                    </p>
+                    <p className="mt-1 text-xs" style={{ color: "#9CA3AF" }}>
+                      {formatSlotTime(slot.startsAt)} - {formatSlotTime(slot.endsAt)}
+                    </p>
+                  </div>
+                ))}
+
+                {Array.from({ length: reservationRowCount }, (_, seatIndex) =>
+                  examSlots.map((slot) => {
+                    const reservation = reservationsBySlotId.get(slot.id)?.[seatIndex] ?? null;
+                    const isBeyondCapacity = seatIndex >= slot.capacity;
+
+                    return (
+                      <div
+                        key={`${slot.id}-${seatIndex}`}
+                        className="min-h-[92px] rounded-[10px] border p-3"
+                        style={{
+                          background: reservation ? "#FFFFFF" : "#F8FAFC",
+                          borderColor: reservation ? "#BFDBFE" : "#E4E8EF",
+                        }}
+                      >
+                        {reservation ? (
+                          <div>
+                            <div className="mb-2 flex items-center justify-between gap-2">
+                              <p className="truncate text-sm font-semibold" style={{ color: "#111827" }}>
+                                {memberNamesByUserId.get(reservation.userId) ?? "Unnamed student"}
+                              </p>
+                              <span
+                                className="shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold"
+                                style={{ background: "#DBEAFE", color: "#1D4ED8" }}
+                              >
+                                Seat {seatIndex + 1}
+                              </span>
+                            </div>
+                            <p className="truncate text-sm" style={{ color: "#374151" }}>
+                              {reservation.examName}
+                            </p>
+                            <p className="mt-1 text-xs font-medium" style={{ color: "#9CA3AF" }}>
+                              {formatExamType(reservation.examType)}
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="flex h-full min-h-[66px] items-center justify-center text-xs">
+                            <span style={{ color: isBeyondCapacity ? "#CBD5E1" : "#94A3B8" }}>
+                              {isBeyondCapacity ? "Unavailable" : `Seat ${seatIndex + 1}`}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }),
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
 

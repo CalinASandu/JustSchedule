@@ -37,6 +37,25 @@ type JoinRequestRow = {
   email: string | null;
 };
 
+type ExamSlotRow = {
+  id: string;
+  name: string;
+  starts_at: string;
+  ends_at: string;
+  capacity: number;
+};
+
+type ReservationRow = {
+  id: string;
+  user_id: string;
+  slot_id: string;
+  reservation_date: string;
+  exam_name: string;
+  exam_type: "midterm" | "final";
+  status: string;
+  created_at: string;
+};
+
 type SchoolRole = "admin" | "professor" | "student";
 
 type SchoolMember = {
@@ -47,6 +66,25 @@ type SchoolMember = {
   role: SchoolRole;
   joinedAt: string;
   isCurrentUser: boolean;
+};
+
+type ExamSlot = {
+  id: string;
+  name: string;
+  startsAt: string;
+  endsAt: string;
+  capacity: number;
+};
+
+type Reservation = {
+  id: string;
+  userId: string;
+  slotId: string;
+  reservationDate: string;
+  examName: string;
+  examType: "midterm" | "final";
+  status: string;
+  createdAt: string;
 };
 
 function getInitials(name: string) {
@@ -117,6 +155,8 @@ export default async function SchoolDashboardPage({
     { data: memberRows, error: membersError },
     { data: inviteRows, error: invitesError },
     { data: joinRequestRows, error: joinRequestsError },
+    { data: examSlotRows, error: examSlotsError },
+    { data: reservationRows, error: reservationsError },
   ] =
     await Promise.all([
       supabase
@@ -127,6 +167,19 @@ export default async function SchoolDashboardPage({
         .eq("school_id", schoolId)
         .order("created_at", { ascending: false }),
       supabase.rpc("get_school_join_requests_with_profiles", { target_school_id: schoolId }),
+      supabase
+        .from("ExamSlots")
+        .select("id, name, starts_at, ends_at, capacity")
+        .eq("school_id", schoolId)
+        .eq("is_active", true)
+        .order("starts_at", { ascending: true }),
+      supabase
+        .from("Reservations")
+        .select("id, user_id, slot_id, reservation_date, exam_name, exam_type, status, created_at")
+        .eq("school_id", schoolId)
+        .eq("status", "confirmed")
+        .order("reservation_date", { ascending: true })
+        .order("created_at", { ascending: true }),
     ]);
 
   const rows = (memberRows ?? []) as SchoolMemberRow[];
@@ -186,6 +239,23 @@ export default async function SchoolDashboardPage({
     name: request.profile_name || "Unnamed user",
     email: request.email,
     requestedAt: request.requested_at,
+  }));
+  const examSlots: ExamSlot[] = ((examSlotRows ?? []) as ExamSlotRow[]).map((slot) => ({
+    id: slot.id,
+    name: slot.name,
+    startsAt: slot.starts_at,
+    endsAt: slot.ends_at,
+    capacity: slot.capacity,
+  }));
+  const reservations: Reservation[] = ((reservationRows ?? []) as ReservationRow[]).map((reservation) => ({
+    id: reservation.id,
+    userId: reservation.user_id,
+    slotId: reservation.slot_id,
+    reservationDate: reservation.reservation_date,
+    examName: reservation.exam_name,
+    examType: reservation.exam_type,
+    status: reservation.status,
+    createdAt: reservation.created_at,
   }));
 
   return (
@@ -264,6 +334,8 @@ export default async function SchoolDashboardPage({
           members={members}
           invites={invites}
           joinRequests={joinRequests}
+          examSlots={examSlots}
+          reservations={reservations}
           canManageMembers={isAdmin}
           memberError={
             membersError
@@ -278,6 +350,13 @@ export default async function SchoolDashboardPage({
           joinRequestError={
             joinRequestsError
               ? `Could not load join requests: ${joinRequestsError.message}`
+              : null
+          }
+          reservationError={
+            examSlotsError || reservationsError
+              ? `Could not load reservations: ${
+                  examSlotsError?.message ?? reservationsError?.message
+                }`
               : null
           }
         />

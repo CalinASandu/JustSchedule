@@ -1,23 +1,23 @@
 # Graph Report - JustSchedule  (2026-05-01)
 
 ## Corpus Check
-- 46 files · ~63,144 words
+- 46 files · ~64,032 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 130 nodes · 91 edges · 18 communities detected
-- Extraction: 81% EXTRACTED · 19% INFERRED · 0% AMBIGUOUS · INFERRED: 17 edges (avg confidence: 0.81)
+- 135 nodes · 96 edges · 18 communities detected
+- Extraction: 82% EXTRACTED · 18% INFERRED · 0% AMBIGUOUS · INFERRED: 17 edges (avg confidence: 0.81)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
 - [[_COMMUNITY_Community 0|Community 0]]
-- [[_COMMUNITY_Community 1|Community 1]]
-- [[_COMMUNITY_Community 5|Community 5]]
+- [[_COMMUNITY_Community 2|Community 2]]
+- [[_COMMUNITY_Community 6|Community 6]]
 - [[_COMMUNITY_Community 7|Community 7]]
 - [[_COMMUNITY_Community 8|Community 8]]
 - [[_COMMUNITY_Community 9|Community 9]]
 - [[_COMMUNITY_Community 10|Community 10]]
-- [[_COMMUNITY_Community 11|Community 11]]
+- [[_COMMUNITY_Community 12|Community 12]]
 - [[_COMMUNITY_Community 29|Community 29]]
 - [[_COMMUNITY_Community 30|Community 30]]
 - [[_COMMUNITY_Community 43|Community 43]]
@@ -59,11 +59,11 @@
 Cohesion: 0.15
 Nodes (7): GET(), registerSchool(), leaveSchool(), requestSchoolJoin(), handleSubmit(), handleSignOut(), createClient()
 
-### Community 1 - "Community 1"
+### Community 2 - "Community 2"
 Cohesion: 0.38
 Nodes (3): getDayStatus(), isPast(), isWeekend()
 
-### Community 5 - "Community 5"
+### Community 6 - "Community 6"
 Cohesion: 0.5
 Nodes (2): getInitials(), SchoolDashboardPage()
 
@@ -83,17 +83,17 @@ Nodes (4): Spec: Booking Data Model, Booking Record Data Model, Row Level Securi
 Cohesion: 1.0
 Nodes (2): Home(), sanitizeNext()
 
-### Community 11 - "Community 11"
+### Community 12 - "Community 12"
 Cohesion: 1.0
 Nodes (2): getSchoolId(), SchedulePage()
 
 ### Community 29 - "Community 29"
 Cohesion: 1.0
-Nodes (2): Exam Scheduler Implementation Plan, Exam Scheduler Design Spec
+Nodes (2): JustSchedule UI Mockup (Full Dashboard), JustSchedule System Overview
 
 ### Community 30 - "Community 30"
 Cohesion: 1.0
-Nodes (2): JustSchedule UI Mockup (Full Dashboard), JustSchedule System Overview
+Nodes (2): Exam Scheduler Implementation Plan, Exam Scheduler Design Spec
 
 ### Community 43 - "Community 43"
 Cohesion: 1.0
@@ -130,17 +130,17 @@ Nodes (1): Weekly Schedule Grid (Dark Theme Concept)
 ## Knowledge Gaps
 - **16 isolated node(s):** `Next.js Agent Rules`, `Next.js Framework`, `Google Auth Provider`, `JustSchedule System Overview`, `Slot Reference (Static Config)` (+11 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 5`** (5 nodes): `page.tsx`, `formatMemberName()`, `getInitials()`, `normalizeRole()`, `SchoolDashboardPage()`
+- **Thin community `Community 6`** (5 nodes): `page.tsx`, `formatMemberName()`, `getInitials()`, `normalizeRole()`, `SchoolDashboardPage()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 7`** (4 nodes): `badge.tsx`, `cn()`, `utils.ts`, `Badge()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 10`** (3 nodes): `Home()`, `sanitizeNext()`, `page.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 11`** (3 nodes): `page.tsx`, `getSchoolId()`, `SchedulePage()`
+- **Thin community `Community 12`** (3 nodes): `page.tsx`, `getSchoolId()`, `SchedulePage()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 29`** (2 nodes): `Exam Scheduler Implementation Plan`, `Exam Scheduler Design Spec`
+- **Thin community `Community 29`** (2 nodes): `JustSchedule UI Mockup (Full Dashboard)`, `JustSchedule System Overview`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 30`** (2 nodes): `JustSchedule UI Mockup (Full Dashboard)`, `JustSchedule System Overview`
+- **Thin community `Community 30`** (2 nodes): `Exam Scheduler Implementation Plan`, `Exam Scheduler Design Spec`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 43`** (1 nodes): `Next.js Agent Rules`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -162,10 +162,10 @@ Nodes (1): Weekly Schedule Grid (Dark Theme Concept)
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `createClient()` connect `Community 0` to `Community 10`, `Community 11`, `Community 5`?**
-  _High betweenness centrality (0.031) - this node is a cross-community bridge._
-- **Why does `SchoolDashboardPage()` connect `Community 5` to `Community 0`?**
-  _High betweenness centrality (0.011) - this node is a cross-community bridge._
+- **Why does `createClient()` connect `Community 0` to `Community 10`, `Community 12`, `Community 6`?**
+  _High betweenness centrality (0.029) - this node is a cross-community bridge._
+- **Why does `SchoolDashboardPage()` connect `Community 6` to `Community 0`?**
+  _High betweenness centrality (0.010) - this node is a cross-community bridge._
 - **Are the 9 inferred relationships involving `createClient()` (e.g. with `Home()` and `GET()`) actually correct?**
   _`createClient()` has 9 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 5 inferred relationships involving `GET()` (e.g. with `createClient()` and `registerSchool()`) actually correct?**
