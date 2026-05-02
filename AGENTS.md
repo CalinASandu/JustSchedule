@@ -84,6 +84,28 @@ The schedule UI is split into panels: `CalendarPanel`, `SlotPicker`, `BookingSum
 
 Static slot definitions (`9-11`, `11-1`, `2-4:30`) are in `components/schedule/constants.ts`; there is no DB table for them.
 
+### Reservation Read Model
+
+Admin/professor reservation visibility is implemented in the school dashboard, not the student schedule workspace. `app/dashboard/schools/[schoolId]/page.tsx` loads active `ExamSlots` plus confirmed `Reservations` for the selected school and passes them into `components/dashboard/SchoolManagementTabs.tsx`.
+
+`SchoolManagementTabs` has a `Reservations` tab for admins and professors. It renders a day-based reservations panel with previous/next day arrows. The grid uses `ExamSlots` as columns and seat rows based on slot `capacity` with a minimum visual height of 8 rows. Reservation cells show student name, exam name, and exam type.
+
+The current database model is:
+
+| Table | Purpose |
+|---|---|
+| `ExamSlots` | Reusable per-school slot template: `name`, `starts_at`, `ends_at`, `capacity`, `is_active`. Does not store a date. |
+| `Reservations` | Actual bookings: `school_id`, `user_id`, `slot_id`, `reservation_date`, `exam_name`, `exam_type`, `status`. |
+
+`Reservations.slot_id` references `ExamSlots.id`. `Reservations.reservation_date` stores the actual calendar day. The uniqueness constraint is date-aware: one user cannot reserve the same slot twice on the same date, but the same reusable slot can be booked again on a different date.
+
+Relevant migrations:
+
+- `supabase/migrations/20260501181342_reservation_panel_read_model.sql` adds `reservation_date`, the `slot_id` foreign key, the confirmed-reservation lookup index, and read policies for slots/reservations.
+- `supabase/migrations/20260501181425_date_aware_reservation_uniqueness.sql` replaces the old `(user_id, slot_id)` uniqueness with `(user_id, slot_id, reservation_date)`.
+
+For now, scheduling creation logic is intentionally not implemented in the frontend. The future reservation write path should use a Supabase Edge Function that verifies the caller's JWT, checks the caller is a student member of the target school, counts confirmed reservations for the requested `slot_id` and `reservation_date`, compares that count with `ExamSlots.capacity`, and only then inserts the `Reservations` row. Do not trust a frontend-only seat availability check for booking enforcement.
+
 ### Delete and Leave Flows
 
 School deletion and student leave use normal Supabase database calls guarded by RLS, not Edge Functions. The relevant policies live in `supabase/migrations/20260501140000_school_delete_leave_policies.sql`.
@@ -96,7 +118,19 @@ Students leave schools from the `School Profile` panel in the schedule workspace
 
 ### Proxy
 
-`proxy.ts` at the root is a dev proxy that handles cookie/session refresh for Server Components that cannot set cookies themselves due to a `@supabase/ssr` limitation.
+`proxy.ts` at the root is the Next.js 16 proxy for auth cookie/session refresh. It is part of the app integration with Supabase SSR, not a custom authorization layer. Dashboard pages still make their own authorization decisions with `supabase.auth.getUser()` and database/RLS checks.
+
+For a normal request like `/dashboard`, the flow is:
+
+1. The browser sends `/dashboard` with any existing Supabase auth cookies.
+2. Next.js checks `proxy.ts`'s matcher. Normal app routes match; static assets, optimized images, favicon, and common image files are skipped.
+3. `proxy(request)` creates `NextResponse.next({ request })`, meaning the request should continue to the real route after proxy work finishes.
+4. The proxy creates a Supabase `createServerClient` using the incoming request cookies via `getAll()`.
+5. `await supabase.auth.getClaims()` asks Supabase to inspect the cookie-backed session. If the access token is still valid, the request continues unchanged. If it is stale but refreshable, Supabase refreshes the session.
+6. When Supabase refreshes, the proxy `setAll()` updates both `request.cookies` and `response.cookies`. Updating `request.cookies` lets the Server Component for the same request see the fresh session immediately; updating `response.cookies` stores the refreshed cookies in the browser for future requests.
+7. The proxy returns the response, then the actual page renders. For `/dashboard`, `app/dashboard/page.tsx` calls `auth.getUser()` through `lib/supabase/server.ts`; if there is no user it redirects to `/`, otherwise it loads the dashboard data.
+
+Do not move authorization decisions into `proxy.ts`. Keep it focused on keeping Supabase SSR cookies fresh before Server Components run. The server client in `lib/supabase/server.ts` still catches cookie writes because Server Components cannot always set cookies themselves; `proxy.ts` is the place where cookie refresh writes are reliable.
 
 ### Security Notes
 
