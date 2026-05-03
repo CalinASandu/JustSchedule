@@ -1,0 +1,177 @@
+import { createClient } from "npm:@supabase/supabase-js@2.105.1";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+
+type ExamType = "midterm" | "final";
+
+type ReserveRequest = {
+  schoolId?: unknown;
+  slotId?: unknown;
+  reservationDate?: unknown;
+  examName?: unknown;
+  examType?: unknown;
+};
+
+type ReserveResult = {
+  reservation_id: string;
+  remaining: number;
+};
+
+function jsonResponse(body: Record<string, unknown>, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      ...corsHeaders,
+      "Content-Type": "application/json",
+    },
+  });
+}
+
+function isIsoDate(value: string) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(value);
+}
+
+function parseExamType(value: unknown): ExamType | null {
+  return value === "midterm" || value === "final" ? value : null;
+}
+
+function statusForDatabaseError(error: { code?: string; message?: string }) {
+  const message = (error.message ?? "").toLowerCase();
+
+  if (error.code === "23505" || message.includes("already reserved")) {
+    return 409;
+  }
+
+  if (message.includes("full")) {
+    return 409;
+  }
+
+  if (
+    message.includes("student members") ||
+    message.includes("invalid session")
+  ) {
+    return 403;
+  }
+
+  if (
+    error.code === "22023" ||
+    message.includes("unavailable") ||
+    message.includes("reservation date") ||
+    message.includes("exam")
+  ) {
+    return 400;
+  }
+
+  return 400;
+}
+
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
+
+  if (req.method !== "POST") {
+    return jsonResponse({ error: "Method not allowed." }, 405);
+  }
+
+  const authorization = req.headers.get("Authorization");
+  if (!authorization) {
+    return jsonResponse({ error: "Missing authorization header." }, 401);
+  }
+
+  let body: ReserveRequest;
+  try {
+    body = await req.json();
+  } catch {
+    return jsonResponse({ error: "Invalid JSON body." }, 400);
+  }
+
+  const schoolId = typeof body.schoolId === "string" ? body.schoolId.trim() : "";
+  const slotId = typeof body.slotId === "string" ? body.slotId.trim() : "";
+  const reservationDate =
+    typeof body.reservationDate === "string" ? body.reservationDate.trim() : "";
+  const examName = typeof body.examName === "string" ? body.examName.trim() : "";
+  const examType = parseExamType(body.examType);
+
+  if (!schoolId) {
+    return jsonResponse({ error: "Missing schoolId." }, 400);
+  }
+
+  if (!slotId) {
+    return jsonResponse({ error: "Missing slotId." }, 400);
+  }
+
+  if (!isIsoDate(reservationDate)) {
+    return jsonResponse({ error: "reservationDate must use YYYY-MM-DD." }, 400);
+  }
+
+  if (!examName) {
+    return jsonResponse({ error: "examName is required." }, 400);
+  }
+
+  if (!examType) {
+    return jsonResponse({ error: "examType must be midterm or final." }, 400);
+  }
+
+  const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+  const publishableKey =
+    Deno.env.get("SUPABASE_ANON_KEY") ??
+    Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ??
+    "";
+
+  if (!supabaseUrl || !publishableKey) {
+    return jsonResponse(
+      { error: "Supabase environment is not configured." },
+      500,
+    );
+  }
+
+  const supabase = createClient(supabaseUrl, publishableKey, {
+    global: {
+      headers: { Authorization: authorization },
+    },
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  });
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return jsonResponse({ error: "Invalid session." }, 401);
+  }
+
+  const { data, error } = await supabase.rpc("reserve_exam_slot", {
+    target_school_id: schoolId,
+    target_slot_id: slotId,
+    target_reservation_date: reservationDate,
+    target_exam_name: examName,
+    target_exam_type: examType,
+  });
+
+  if (error) {
+    return jsonResponse(
+      { error: error.message || "Could not reserve exam slot." },
+      statusForDatabaseError(error),
+    );
+  }
+
+  const [reservation] = (data ?? []) as ReserveResult[];
+  if (!reservation) {
+    return jsonResponse({ error: "Could not reserve exam slot." }, 400);
+  }
+
+  return jsonResponse({
+    reservationId: reservation.reservation_id,
+    remaining: reservation.remaining,
+  });
+});

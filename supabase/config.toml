@@ -3,3 +3,6 @@ verify_jwt = true
 
 [functions.review-school-join-requests]
 verify_jwt = true
+
+[functions.reserve-exam-slot]
+verify_jwt = true

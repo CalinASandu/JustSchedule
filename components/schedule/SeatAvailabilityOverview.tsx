@@ -1,11 +1,11 @@
 'use client'
 
-import type { Booking, SlotId } from './types'
-import { SLOTS, SEATS_PER_SLOT } from './constants'
+import type { Reservation, SlotDef } from './types'
 
 interface SeatAvailabilityOverviewProps {
   selectedDate: string | null
-  bookings: Booking[]
+  slots: SlotDef[]
+  reservations: Reservation[]
 }
 
 function formatDate(iso: string) {
@@ -14,17 +14,25 @@ function formatDate(iso: string) {
   })
 }
 
-export default function SeatAvailabilityOverview({ selectedDate, bookings }: SeatAvailabilityOverviewProps) {
-  const totalSeats = SLOTS.length * SEATS_PER_SLOT
+export default function SeatAvailabilityOverview({
+  selectedDate,
+  slots,
+  reservations,
+}: SeatAvailabilityOverviewProps) {
+  const totalSeats = slots.reduce((total, slot) => total + slot.capacity, 0)
 
   const occupiedSeats = selectedDate
-    ? bookings.filter(b => b.date === selectedDate).length
+    ? reservations.filter(
+        reservation =>
+          reservation.reservationDate === selectedDate &&
+          reservation.status === 'confirmed'
+      ).length
     : 0
 
-  const availableSeats = totalSeats - occupiedSeats
+  const availableSeats = Math.max(totalSeats - occupiedSeats, 0)
 
-  const availablePct = (availableSeats / totalSeats) * 100
-  const occupiedPct  = (occupiedSeats  / totalSeats) * 100
+  const availablePct = totalSeats > 0 ? (availableSeats / totalSeats) * 100 : 0
+  const occupiedPct  = totalSeats > 0 ? (occupiedSeats  / totalSeats) * 100 : 0
 
   return (
     <div className="panel p-5 flex flex-col gap-4">
@@ -103,9 +111,14 @@ export default function SeatAvailabilityOverview({ selectedDate, bookings }: Sea
 
       {/* Per-slot breakdown */}
       <div className="flex flex-col gap-1.5" role="list" aria-label="Slot breakdown">
-        {SLOTS.map(slot => {
-          const booked    = bookings.filter(b => b.date === selectedDate && b.slot === slot.id as SlotId).length
-          const remaining = SEATS_PER_SLOT - booked
+        {slots.map(slot => {
+          const booked = reservations.filter(
+            reservation =>
+              reservation.reservationDate === selectedDate &&
+              reservation.slotId === slot.id &&
+              reservation.status === 'confirmed'
+          ).length
+          const remaining = Math.max(slot.capacity - booked, 0)
           const isFull    = remaining === 0
           const isLimited = !isFull && remaining <= 2
 
@@ -132,6 +145,15 @@ export default function SeatAvailabilityOverview({ selectedDate, bookings }: Sea
             </div>
           )
         })}
+        {slots.length === 0 && (
+          <div
+            className="py-4 text-center text-xs"
+            style={{ color: '#9CA3AF' }}
+            role="listitem"
+          >
+            No active slots are configured.
+          </div>
+        )}
       </div>
     </div>
   )

@@ -23,10 +23,11 @@ export function GoogleSignInButton({ onClick, compact = false, redirectPath = "/
 
     try {
       const supabase = createClient();
+      const origin = `${window.location.protocol}//${window.location.host}`;
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(
+          redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(
             redirectPath,
           )}`,
         },

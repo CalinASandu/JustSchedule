@@ -1,17 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { CalendarDays, UserRound } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import type { Booking, SlotId, ExamType } from "@/components/schedule/types";
-import { SLOTS } from "@/components/schedule/constants";
+import type { ExamType, Reservation, SlotDef } from "@/components/schedule/types";
+import { createClient } from "@/lib/supabase/client";
 import Navbar from "@/components/schedule/Navbar";
 import CalendarPanel from "@/components/schedule/CalendarPanel";
 import SlotPicker from "@/components/schedule/SlotPicker";
 import BookingSummaryCard from "@/components/schedule/BookingSummaryCard";
 import SeatAvailabilityOverview from "@/components/schedule/SeatAvailabilityOverview";
 import BookingsPanel from "@/components/schedule/BookingsPanel";
-import DebugPanel from "@/components/schedule/DebugPanel";
 import LeaveSchoolButton from "@/components/dashboard/LeaveSchoolButton";
 
 interface ScheduleClientProps {
@@ -20,6 +19,10 @@ interface ScheduleClientProps {
   membershipId: string;
   studentName: string;
   userEmail: string;
+  currentUserId: string;
+  examSlots: SlotDef[];
+  initialReservations: Reservation[];
+  reservationError: string | null;
 }
 
 export default function ScheduleClient({
@@ -28,60 +31,115 @@ export default function ScheduleClient({
   membershipId,
   studentName: initialStudentName,
   userEmail,
+  currentUserId,
+  examSlots,
+  initialReservations,
+  reservationError,
 }: ScheduleClientProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const supabase = useMemo(() => createClient(), []);
+  const [isReserving, setIsReserving] = useState(false);
   const [studentName, setStudentName] = useState(initialStudentName);
   const [selectedExam, setSelectedExam] = useState("");
   const [examType, setExamType] = useState<ExamType>("midterm");
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [selectedSlotId, setSelectedSlotId] = useState<SlotId | null>(null);
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
+  const [reservations, setReservations] = useState<Reservation[]>(initialReservations);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [reserveError, setReserveError] = useState<string | null>(reservationError);
 
   function handleDateSelect(date: string) {
     setSelectedDate(date);
     setSelectedSlotId(null);
     setShowConfirmation(false);
+    setReserveError(reservationError);
   }
 
-  function handleSlotSelect(slotId: SlotId) {
+  function handleSlotSelect(slotId: string) {
     setSelectedSlotId(slotId);
     setShowConfirmation(false);
+    setReserveError(reservationError);
   }
 
   function handleReserve() {
     if (!selectedDate || !selectedSlotId) return;
-    setBookings((prev) => {
-      const already = prev.some(
-        (booking) =>
-          booking.date === selectedDate &&
-          booking.slot === selectedSlotId &&
-          booking.studentName === studentName,
-      );
-      if (already) return prev;
-      return [
-        ...prev,
-        {
-          date: selectedDate,
-          slot: selectedSlotId,
-          examName: selectedExam,
-          studentName,
-        },
-      ];
-    });
-    setShowConfirmation(true);
+    const slot = examSlots.find((item) => item.id === selectedSlotId);
+    if (!slot) return;
+
+    setReserveError(null);
+    setIsReserving(true);
+    void (async () => {
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        if (!session?.access_token) {
+          setReserveError("Your session expired. Sign in again to reserve a seat.");
+          return;
+        }
+
+        const { data, error } = await supabase.functions.invoke("reserve-exam-slot", {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: {
+            schoolId,
+            slotId: selectedSlotId,
+            reservationDate: selectedDate,
+            examName: selectedExam.trim(),
+            examType,
+          },
+        });
+
+        if (error) {
+          setReserveError(error.message || "Could not reserve this slot.");
+          return;
+        }
+
+        const reservationId =
+          data && typeof data === "object" && "reservationId" in data
+            ? String(data.reservationId)
+            : crypto.randomUUID();
+
+        setReservations((prev) => [
+          ...prev,
+          {
+            id: reservationId,
+            userId: currentUserId,
+            studentName: studentName.trim() || initialStudentName,
+            slotId: selectedSlotId,
+            slotName: slot.label,
+            startsAt: slot.startsAt,
+            endsAt: slot.endsAt,
+            capacity: slot.capacity,
+            reservationDate: selectedDate,
+            examName: selectedExam.trim(),
+            examType,
+            status: "confirmed",
+            createdAt: new Date().toISOString(),
+          },
+        ]);
+        setShowConfirmation(true);
+      } catch {
+        setReserveError("Could not reserve this slot.");
+      } finally {
+        setIsReserving(false);
+      }
+    })();
   }
 
   function handleReset() {
     setSelectedDate(null);
     setSelectedSlotId(null);
     setShowConfirmation(false);
+    setReserveError(reservationError);
   }
 
   const selectedSlotDef = selectedSlotId
-    ? SLOTS.find((slot) => slot.id === selectedSlotId)
+    ? examSlots.find((slot) => slot.id === selectedSlotId)
     : null;
 
   const formattedDate = selectedDate
@@ -98,7 +156,8 @@ export default function ScheduleClient({
     !!selectedExam.trim() &&
     !!selectedDate &&
     !!selectedSlotId &&
-    !showConfirmation;
+    !showConfirmation &&
+    !isReserving;
   const activePanel = searchParams.get("panel") === "profile" ? "profile" : "schedule";
 
   function selectPanel(panel: "schedule" | "profile") {
@@ -176,7 +235,8 @@ export default function ScheduleClient({
                   selectedDate={selectedDate}
                   selectedSlotId={selectedSlotId}
                   onSelectSlot={handleSlotSelect}
-                  bookings={bookings}
+                  slots={examSlots}
+                  reservations={reservations}
                 />
               </div>
 
@@ -189,7 +249,9 @@ export default function ScheduleClient({
                   time={selectedSlotDef?.label ?? null}
                   duration={selectedSlotDef?.duration ?? null}
                   canReserve={canReserve}
+                  isSubmitting={isReserving}
                   isConfirmed={showConfirmation}
+                  error={reserveError}
                   onReserve={handleReserve}
                   onReset={handleReset}
                 />
@@ -198,16 +260,16 @@ export default function ScheduleClient({
 
             <div className="schedule-bottom-grid mt-6">
               <div className="anim-slide-up anim-d2">
-                <SeatAvailabilityOverview selectedDate={selectedDate} bookings={bookings} />
+                <SeatAvailabilityOverview
+                  selectedDate={selectedDate}
+                  slots={examSlots}
+                  reservations={reservations}
+                />
               </div>
 
               <div className="anim-slide-up anim-d3">
-                <BookingsPanel />
+                <BookingsPanel reservations={reservations} />
               </div>
-            </div>
-
-            <div className="mt-8">
-              <DebugPanel bookings={bookings} />
             </div>
           </>
         ) : (

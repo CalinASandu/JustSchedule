@@ -11,7 +11,9 @@ interface BookingSummaryCardProps {
   time: string | null
   duration: string | null
   canReserve: boolean
+  isSubmitting: boolean
   isConfirmed: boolean
+  error: string | null
   onReserve: () => void
   onReset: () => void
 }
@@ -42,7 +44,9 @@ export default function BookingSummaryCard({
   time,
   duration,
   canReserve,
+  isSubmitting,
   isConfirmed,
+  error,
   onReserve,
   onReset,
 }: BookingSummaryCardProps) {
@@ -167,6 +171,21 @@ export default function BookingSummaryCard({
           </div>
 
           <div className="mt-5 flex flex-col gap-3">
+            {error && (
+              <p
+                className="anim-fade-in text-[0.8125rem]"
+                style={{
+                  color: '#dc2626',
+                  background: '#fef2f2',
+                  border: '1px solid #fecaca',
+                  borderRadius: 8,
+                  padding: '0.5rem 0.75rem',
+                }}
+              >
+                {error}
+              </p>
+            )}
+
             <button
               onClick={onReserve}
               disabled={!canReserve}
@@ -181,7 +200,7 @@ export default function BookingSummaryCard({
               onMouseDown={e => { if (canReserve) e.currentTarget.style.transform = 'scale(0.98)' }}
               onMouseUp={e => { e.currentTarget.style.transform = 'scale(1)' }}
             >
-              Reserve seat
+              {isSubmitting ? 'Reserving...' : 'Reserve seat'}
               {canReserve && (
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                   <path d="M3 7h8M8 4l3 3-3 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

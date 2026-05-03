@@ -74,15 +74,15 @@ Admins review pending join requests in the `Join Requests` tab of `components/da
 
 `app/dashboard/page.tsx` is the authenticated dashboard overview. It lists the schools the signed-in user belongs to, shows a profile panel, and includes a ghost card with `RegisterSchoolForm` for creating another school. Admin and professor school cards link to `/dashboard/schools/[schoolId]`; student school cards link to `/dashboard/schedule?schoolId=...`.
 
-`app/dashboard/schedule/page.tsx` is the schedule server component that fetches the session, validates the `schoolId` query param, redirects admins and professors to `/dashboard/schools/[schoolId]`, and passes the current non-admin membership down. `app/dashboard/schedule/ScheduleClient.tsx` is the client component that owns all interactive schedule state (`handleDateSelect`, `handleReserve`, `handleReset`) plus the URL-backed workspace panel switcher. There is no `/schedule` route; schedule lives at `/dashboard/schedule`.
+`app/dashboard/schedule/page.tsx` is the schedule server component that fetches the session, validates the `schoolId` query param, redirects admins and professors to `/dashboard/schools/[schoolId]`, loads active `ExamSlots` plus confirmed school `Reservations` for today through today + 14 days, and passes the current non-admin membership down. `app/dashboard/schedule/ScheduleClient.tsx` is the client component that owns all interactive schedule state (`handleDateSelect`, `handleReserve`, `handleReset`) plus the URL-backed workspace panel switcher. There is no `/schedule` route; schedule lives at `/dashboard/schedule`.
 
 The student schedule workspace uses a panel switcher above the content, not navbar tabs. The current panels are `Schedule` and `School Profile`; `School Profile` currently shows membership details and a `Leave school` action. Keep school-specific panels in this workspace switcher rather than adding school selectors or school tabs to the global navbar.
 
 `app/dashboard/schools/[schoolId]/page.tsx` is the school management shell for admins and professors. It verifies the signed-in user's `SchoolMembers` row or `Schools.created_by` ownership for the selected school before rendering. Admins can manage members, invites, join requests, and settings; professors can only view the members list.
 
-The schedule UI is split into panels: `CalendarPanel`, `SlotPicker`, `BookingSummaryCard`, `SeatAvailabilityOverview`, and `BookingsPanel`. All live in `components/schedule/`.
+The schedule UI is split into panels: `CalendarPanel`, `SlotPicker`, `BookingSummaryCard`, `SeatAvailabilityOverview`, and `BookingsPanel`. All live in `components/schedule/`. The student schedule UI computes slot availability from database `Reservations`, not local mock booking state.
 
-Static slot definitions (`9-11`, `11-1`, `2-4:30`) are in `components/schedule/constants.ts`; there is no DB table for them.
+`ExamSlots` is now the authoritative slot source for active school slots. `components/schedule/constants.ts` only contains fallback/default slot shapes for isolated component compatibility and must not be treated as the scheduling source of truth.
 
 ### Reservation Read Model
 
@@ -99,12 +99,23 @@ The current database model is:
 
 `Reservations.slot_id` references `ExamSlots.id`. `Reservations.reservation_date` stores the actual calendar day. The uniqueness constraint is date-aware: one user cannot reserve the same slot twice on the same date, but the same reusable slot can be booked again on a different date.
 
+Students can view full confirmed reservations for schools where they are members. The student bookings panel intentionally shows student name, exam name, exam type, reservation date, and slot times for confirmed school reservations, because this read model supports visibility and future swap flows.
+
 Relevant migrations:
 
 - `supabase/migrations/20260501181342_reservation_panel_read_model.sql` adds `reservation_date`, the `slot_id` foreign key, the confirmed-reservation lookup index, and read policies for slots/reservations.
 - `supabase/migrations/20260501181425_date_aware_reservation_uniqueness.sql` replaces the old `(user_id, slot_id)` uniqueness with `(user_id, slot_id, reservation_date)`.
+- `supabase/migrations/20260502202056_reserve_exam_slot.sql` adds member-scoped confirmed reservation listing RPCs and transactional reservation RPCs with a per-school/date/slot advisory transaction lock.
+- `supabase/migrations/20260502202249_consolidate_reservation_read_policy.sql` replaces overlapping reservation read policies with one member-scoped confirmed-reservation read policy.
+- `supabase/migrations/20260502202326_add_reservations_slot_fk_index.sql` adds the plain `Reservations.slot_id` foreign-key index requested by Supabase advisors.
 
-For now, scheduling creation logic is intentionally not implemented in the frontend. The future reservation write path should use a Supabase Edge Function that verifies the caller's JWT, checks the caller is a student member of the target school, counts confirmed reservations for the requested `slot_id` and `reservation_date`, compares that count with `ExamSlots.capacity`, and only then inserts the `Reservations` row. Do not trust a frontend-only seat availability check for booking enforcement.
+### Reservation Write Flow
+
+Reservation creation is implemented through the deployed Supabase Edge Function `reserve-exam-slot` (`supabase/functions/reserve-exam-slot/index.ts`) with JWT verification enabled in `supabase/config.toml`. The client calls `supabase.functions.invoke("reserve-exam-slot")` with the signed-in user's access token and `{ schoolId, slotId, reservationDate, examName, examType }`.
+
+Server-side checks are authoritative. The RPC verifies the caller is signed in, is a `student` member of the target school, the slot is active and belongs to that school, the date is today through today + 14 calendar days, the date is not a weekend, the exam type is `midterm` or `final`, and the exam name is non-empty. It locks `school_id + reservation_date + slot_id`, counts confirmed reservations after acquiring the lock, compares that count with `ExamSlots.capacity`, and inserts a confirmed reservation only if capacity remains. Do not trust a frontend-only seat availability check for booking enforcement.
+
+Duplicate rule: one student cannot reserve the same slot on the same date twice, but can book another slot on the same date.
 
 ### Delete and Leave Flows
 

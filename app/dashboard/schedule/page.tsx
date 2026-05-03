@@ -1,6 +1,7 @@
 import ScheduleClient from "./ScheduleClient";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import type { ExamType, Reservation, SlotDef } from "@/components/schedule/types";
 
 type SchoolMemberRow = {
   id: string;
@@ -14,9 +15,71 @@ type SchoolRow = {
   created_by: string | null;
 };
 
+type ExamSlotRow = {
+  id: string;
+  name: string;
+  starts_at: string;
+  ends_at: string;
+  capacity: number;
+};
+
+type ReservationRow = {
+  id: string;
+  user_id: string;
+  student_name: string | null;
+  slot_id: string;
+  slot_name: string;
+  starts_at: string;
+  ends_at: string;
+  capacity: number;
+  reservation_date: string;
+  exam_name: string;
+  exam_type: string;
+  status: string;
+  created_at: string;
+};
+
 function getSchoolId(value: string | string[] | undefined) {
   const schoolId = Array.isArray(value) ? value[0] : value;
   return schoolId?.trim() || null;
+}
+
+function formatLocalDate(date: Date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
+    date.getDate(),
+  ).padStart(2, "0")}`;
+}
+
+function formatTime(value: string) {
+  const [hour = "0", minute = "0"] = value.split(":");
+  return new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(2000, 0, 1, Number(hour), Number(minute)));
+}
+
+function formatDuration(startsAt: string, endsAt: string) {
+  const [startHour = "0", startMinute = "0"] = startsAt.split(":");
+  const [endHour = "0", endMinute = "0"] = endsAt.split(":");
+  const start = Number(startHour) * 60 + Number(startMinute);
+  const end = Number(endHour) * 60 + Number(endMinute);
+  const duration = Math.max(end - start, 0);
+  const hours = Math.floor(duration / 60);
+  const minutes = duration % 60;
+
+  if (hours && minutes) {
+    return `${hours}h ${minutes}m`;
+  }
+
+  if (hours) {
+    return `${hours}h`;
+  }
+
+  return `${minutes}m`;
+}
+
+function normalizeExamType(value: string): ExamType {
+  return value === "final" ? "final" : "midterm";
 }
 
 export default async function SchedulePage({
@@ -70,6 +133,57 @@ export default async function SchedulePage({
     redirect(`/dashboard/schools/${schoolId}`);
   }
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const end = new Date(today);
+  end.setDate(end.getDate() + 14);
+  const startDate = formatLocalDate(today);
+  const endDate = formatLocalDate(end);
+
+  const [
+    { data: examSlotRows, error: examSlotsError },
+    { data: reservationRows, error: reservationsError },
+  ] = await Promise.all([
+    supabase
+      .from("ExamSlots")
+      .select("id, name, starts_at, ends_at, capacity")
+      .eq("school_id", schoolId)
+      .eq("is_active", true)
+      .order("starts_at", { ascending: true }),
+    supabase.rpc("get_school_confirmed_reservations", {
+      target_school_id: schoolId,
+      start_date: startDate,
+      end_date: endDate,
+    }),
+  ]);
+
+  const examSlots: SlotDef[] = ((examSlotRows ?? []) as ExamSlotRow[]).map((slot) => ({
+    id: slot.id,
+    label: `${formatTime(slot.starts_at)} - ${formatTime(slot.ends_at)}`,
+    duration: formatDuration(slot.starts_at, slot.ends_at),
+    startsAt: slot.starts_at,
+    endsAt: slot.ends_at,
+    capacity: slot.capacity,
+  }));
+
+  const reservations: Reservation[] = ((reservationRows ?? []) as ReservationRow[]).map(
+    (reservation) => ({
+      id: reservation.id,
+      userId: reservation.user_id,
+      studentName: reservation.student_name || "Unnamed student",
+      slotId: reservation.slot_id,
+      slotName: reservation.slot_name,
+      startsAt: reservation.starts_at,
+      endsAt: reservation.ends_at,
+      capacity: reservation.capacity,
+      reservationDate: reservation.reservation_date,
+      examName: reservation.exam_name,
+      examType: normalizeExamType(reservation.exam_type),
+      status: reservation.status,
+      createdAt: reservation.created_at,
+    }),
+  );
+
   const displayName =
     profile?.name ||
     (typeof user.user_metadata?.full_name === "string"
@@ -84,6 +198,14 @@ export default async function SchedulePage({
       membershipId={membershipRow.id}
       studentName={displayName}
       userEmail={user.email ?? "Signed in with Google"}
+      currentUserId={user.id}
+      examSlots={examSlots}
+      initialReservations={reservations}
+      reservationError={
+        examSlotsError || reservationsError
+          ? `Could not load reservation data: ${examSlotsError?.message ?? reservationsError?.message}`
+          : null
+      }
     />
   );
 }

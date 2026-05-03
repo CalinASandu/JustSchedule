@@ -1,16 +1,26 @@
-export type SlotId = '9-11' | '11-1' | '2-4:30'
-
 export interface SlotDef {
-  id: SlotId
+  id: string
   label: string
   duration: string
+  startsAt: string
+  endsAt: string
+  capacity: number
 }
 
-export interface Booking {
-  date: string         // ISO: "2026-05-05"
-  slot: SlotId         // '9-11' | '11-1' | '2-4:30'
-  examName: string     // student-entered exam name
-  studentName: string  // student's full name
+export interface Reservation {
+  id: string
+  userId: string
+  studentName: string
+  slotId: string
+  slotName: string
+  startsAt: string
+  endsAt: string
+  capacity: number
+  reservationDate: string
+  examName: string
+  examType: ExamType
+  status: string
+  createdAt: string
 }
 
 export type AvailabilityStatus = 'available' | 'limited' | 'unavailable' | 'selected'
