@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Suspense } from "react";
 import { PostHogProvider } from "./providers";
 import { PostHogPageView } from "./PostHogPageView";
+import { Analytics } from '@vercel/analytics/next';
 
 const geist = Geist({
   subsets: ['latin'],
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </Suspense>
           {children}
         </PostHogProvider>
+        <Analytics />
       </body>
     </html>
   )
