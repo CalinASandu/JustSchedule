@@ -70,6 +70,78 @@ function statusForDatabaseError(error: { code?: string; message?: string }) {
   return 400;
 }
 
+function publicReservationError(error: { code?: string; message?: string }) {
+  const message = (error.message ?? "").toLowerCase();
+
+  if (error.code === "23505" || message.includes("already reserved")) {
+    return {
+      code: "duplicate_reservation",
+      error: "You already scheduled an exam in this time slot for that date.",
+    };
+  }
+
+  if (message.includes("full")) {
+    return {
+      code: "slot_full",
+      error: "This time slot is full. Choose another time.",
+    };
+  }
+
+  if (message.includes("only student members")) {
+    return {
+      code: "student_membership_required",
+      error: "Only student members can schedule exams.",
+    };
+  }
+
+  if (message.includes("invalid session")) {
+    return {
+      code: "invalid_session",
+      error: "Your session expired. Sign in again to schedule this exam.",
+    };
+  }
+
+  if (message.includes("weekend")) {
+    return {
+      code: "weekend_unavailable",
+      error: "Exams cannot be scheduled on weekends.",
+    };
+  }
+
+  if (message.includes("next 14 days") || message.includes("reservation date")) {
+    return {
+      code: "date_outside_window",
+      error: "Choose a date within the next 14 days.",
+    };
+  }
+
+  if (message.includes("slot is unavailable")) {
+    return {
+      code: "slot_unavailable",
+      error: "This time slot is no longer available. Choose another time.",
+    };
+  }
+
+  if (message.includes("exam name")) {
+    return {
+      code: "exam_name_required",
+      error: "Enter the exam name before scheduling.",
+    };
+  }
+
+  if (message.includes("exam type")) {
+    return {
+      code: "invalid_exam_type",
+      error: "Choose a valid exam type.",
+    };
+  }
+
+  return {
+    code: "reservation_failed",
+    error: "Could not schedule this exam. Try again in a moment.",
+  };
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -159,10 +231,14 @@ Deno.serve(async (req) => {
   });
 
   if (error) {
-    return jsonResponse(
-      { error: error.message || "Could not reserve exam slot." },
-      statusForDatabaseError(error),
-    );
+    console.error("reserve_exam_slot RPC failed", {
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+    });
+
+    return jsonResponse(publicReservationError(error), statusForDatabaseError(error));
   }
 
   const [reservation] = (data ?? []) as ReserveResult[];

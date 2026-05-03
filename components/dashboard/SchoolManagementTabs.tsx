@@ -17,6 +17,10 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import {
+  getUserFacingErrorMessage,
+  getUserFacingFunctionErrorMessage,
+} from "@/lib/user-facing-errors";
 
 type SchoolMember = {
   id: string;
@@ -319,8 +323,9 @@ export default function SchoolManagementTabs({
     });
 
     if (error) {
+      console.error("Create school invite failed", error);
       setInviteState({
-        error: error.message || "Could not create invite link.",
+        error: await getUserFacingFunctionErrorMessage("createInvite", error),
         pending: false,
       });
       return;
@@ -379,8 +384,9 @@ export default function SchoolManagementTabs({
     });
 
     if (error) {
+      console.error("Review join requests failed", error);
       setReviewState({
-        error: error.message || "Could not review join requests.",
+        error: await getUserFacingFunctionErrorMessage("reviewJoinRequests", error),
         success: null,
         pending: false,
       });
@@ -435,8 +441,9 @@ export default function SchoolManagementTabs({
     const unchangedResult = results.find((result) => result.count !== 1);
 
     if (failedResult?.error) {
+      console.error("Update member role failed", failedResult.error);
       setRoleState({
-        error: failedResult.error.message || "Could not update member roles.",
+        error: getUserFacingErrorMessage("schoolRoleUpdate", failedResult.error),
         success: null,
         pending: false,
       });
@@ -506,8 +513,9 @@ export default function SchoolManagementTabs({
       .neq("role", "admin");
 
     if (error) {
+      console.error("Kick school member failed", error);
       setKickState({
-        error: error.message || `Could not kick ${kickDialogMember.name}.`,
+        error: getUserFacingErrorMessage("schoolMemberKick", error),
         pending: false,
       });
       return;
@@ -540,8 +548,9 @@ export default function SchoolManagementTabs({
     const { error } = await supabase.from("Schools").delete().eq("id", schoolId);
 
     if (error) {
+      console.error("Delete school failed", error);
       setDeleteState({
-        error: error.message || "Could not delete this school.",
+        error: getUserFacingErrorMessage("schoolDelete", error),
         pending: false,
       });
       return;

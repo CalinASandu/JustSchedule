@@ -28,6 +28,29 @@ function createInviteToken() {
   return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
+function publicInviteError(error: { code?: string; message?: string }) {
+  const message = (error.message ?? "").toLowerCase();
+
+  if (error.code === "42501" || message.includes("row-level security")) {
+    return {
+      code: "admin_required",
+      error: "Only school admins can create invite links.",
+    };
+  }
+
+  if (error.code === "23503" || message.includes("foreign key")) {
+    return {
+      code: "school_not_found",
+      error: "This school could not be found. Refresh the page and try again.",
+    };
+  }
+
+  return {
+    code: "invite_create_failed",
+    error: "Could not create an invite link. Try again in a moment.",
+  };
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -110,10 +133,14 @@ Deno.serve(async (req) => {
   });
 
   if (error) {
-    return jsonResponse(
-      { error: error.message || "Could not create invite link." },
-      error.code === "42501" ? 403 : 400,
-    );
+    console.error("School invite insert failed", {
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+    });
+
+    return jsonResponse(publicInviteError(error), error.code === "42501" ? 403 : 400);
   }
 
   return jsonResponse({ inviteLink: `${siteUrl.origin}/invite/${token}` });

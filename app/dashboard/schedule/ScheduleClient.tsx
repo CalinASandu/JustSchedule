@@ -5,6 +5,7 @@ import { CalendarDays, UserRound } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { ExamType, Reservation, SlotDef } from "@/components/schedule/types";
 import { createClient } from "@/lib/supabase/client";
+import { getUserFacingFunctionErrorMessage } from "@/lib/user-facing-errors";
 import Navbar from "@/components/schedule/Navbar";
 import CalendarPanel from "@/components/schedule/CalendarPanel";
 import SlotPicker from "@/components/schedule/SlotPicker";
@@ -95,7 +96,8 @@ export default function ScheduleClient({
         });
 
         if (error) {
-          setReserveError(error.message || "Could not reserve this slot.");
+          console.error("Reserve exam slot failed", error);
+          setReserveError(await getUserFacingFunctionErrorMessage("reserveExamSlot", error));
           return;
         }
 
@@ -123,8 +125,9 @@ export default function ScheduleClient({
           },
         ]);
         setShowConfirmation(true);
-      } catch {
-        setReserveError("Could not reserve this slot.");
+      } catch (error) {
+        console.error("Reserve exam slot failed", error);
+        setReserveError("Could not schedule this exam. Try again in a moment.");
       } finally {
         setIsReserving(false);
       }

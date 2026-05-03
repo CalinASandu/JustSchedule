@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { getUserFacingErrorMessage } from "@/lib/user-facing-errors";
 
 export type JoinSchoolState = {
   error: string | null;
@@ -56,12 +57,7 @@ export async function requestSchoolJoin(
     });
 
     return {
-      error:
-        error.code === "23505"
-          ? "You already requested access to this school."
-          : error.message
-            ? `Could not request access: ${error.message}`
-            : "Could not request access.",
+      error: getUserFacingErrorMessage("joinRequest", error),
       success: false,
     };
   }

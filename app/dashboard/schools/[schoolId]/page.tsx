@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import DashboardSignOutButton from "@/components/dashboard/DashboardSignOutButton";
 import SchoolManagementTabs from "@/components/dashboard/SchoolManagementTabs";
 import { createClient } from "@/lib/supabase/server";
+import { getUserFacingErrorMessage } from "@/lib/user-facing-errors";
+import { getRequestOrigin } from "@/lib/urls";
 
 type SchoolMemberRow = {
   id: string;
@@ -218,12 +220,7 @@ export default async function SchoolDashboardPage({
         ]),
   ];
   const headerStore = await headers();
-  const origin =
-    headerStore.get("x-forwarded-host") || headerStore.get("host")
-      ? `${headerStore.get("x-forwarded-proto") ?? "http"}://${
-          headerStore.get("x-forwarded-host") ?? headerStore.get("host")
-        }`
-      : "http://localhost:3000";
+  const origin = getRequestOrigin(headerStore);
   const invites = ((inviteRows ?? []) as InviteRow[]).map((invite) => ({
     id: invite.id,
     token: invite.token,
@@ -339,24 +336,25 @@ export default async function SchoolDashboardPage({
           canManageMembers={isAdmin}
           memberError={
             membersError
-              ? `Could not load all member rows: ${membersError.message}`
+              ? getUserFacingErrorMessage("loadMembers", membersError)
               : null
           }
           inviteError={
             invitesError
-              ? `Could not load invite rows: ${invitesError.message}`
+              ? getUserFacingErrorMessage("loadInvites", invitesError)
               : null
           }
           joinRequestError={
             joinRequestsError
-              ? `Could not load join requests: ${joinRequestsError.message}`
+              ? getUserFacingErrorMessage("loadJoinRequests", joinRequestsError)
               : null
           }
           reservationError={
             examSlotsError || reservationsError
-              ? `Could not load reservations: ${
-                  examSlotsError?.message ?? reservationsError?.message
-                }`
+              ? getUserFacingErrorMessage(
+                  "loadReservations",
+                  examSlotsError ?? reservationsError,
+                )
               : null
           }
         />

@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "npm:@supabase/supabase-js@2.105.1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -29,6 +29,13 @@ type JoinRequestRow = {
 type SchoolMemberRow = {
   user_id: string;
 };
+
+function publicDatabaseError(fallback: string) {
+  return {
+    code: "review_failed",
+    error: fallback,
+  };
+}
 
 function jsonResponse(body: Record<string, unknown>, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -184,8 +191,15 @@ Deno.serve(async (req) => {
     .in("id", requestIds);
 
   if (requestError) {
+    console.error("Join request load failed", {
+      code: requestError.code,
+      message: requestError.message,
+      details: requestError.details,
+      hint: requestError.hint,
+    });
+
     return jsonResponse(
-      { error: requestError.message || "Could not load join requests." },
+      publicDatabaseError("Could not load join requests. Refresh the page and try again."),
       400,
     );
   }
@@ -213,8 +227,15 @@ Deno.serve(async (req) => {
       .in("user_id", approvedUserIds);
 
     if (existingError) {
+      console.error("Existing member lookup failed", {
+        code: existingError.code,
+        message: existingError.message,
+        details: existingError.details,
+        hint: existingError.hint,
+      });
+
       return jsonResponse(
-        { error: existingError.message || "Could not check members." },
+        publicDatabaseError("Could not check existing members. Try again in a moment."),
         400,
       );
     }
@@ -238,8 +259,15 @@ Deno.serve(async (req) => {
         .insert(memberRows);
 
       if (memberError) {
+        console.error("School member insert failed", {
+          code: memberError.code,
+          message: memberError.message,
+          details: memberError.details,
+          hint: memberError.hint,
+        });
+
         return jsonResponse(
-          { error: memberError.message || "Could not add school members." },
+          publicDatabaseError("Could not add approved members. Try again in a moment."),
           400,
         );
       }
@@ -252,8 +280,15 @@ Deno.serve(async (req) => {
     .in("id", requestIds);
 
   if (deleteError) {
+    console.error("Join request delete failed", {
+      code: deleteError.code,
+      message: deleteError.message,
+      details: deleteError.details,
+      hint: deleteError.hint,
+    });
+
     return jsonResponse(
-      { error: deleteError.message || "Could not clear reviewed requests." },
+      publicDatabaseError("Could not clear reviewed requests. Try again in a moment."),
       400,
     );
   }

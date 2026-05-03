@@ -1,18 +1,15 @@
 import { redirect } from "next/navigation";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { createClient } from "@/lib/supabase/server";
-
-function sanitizeNext(value: string | string[] | undefined) {
-  const next = Array.isArray(value) ? value[0] : value;
-  return next?.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
-}
+import { sanitizeRelativePath } from "@/lib/urls";
 
 export default async function Home({
   searchParams,
 }: {
   searchParams: Promise<{ next?: string | string[] }>;
 }) {
-  const next = sanitizeNext((await searchParams).next);
+  const rawNext = (await searchParams).next;
+  const next = sanitizeRelativePath(Array.isArray(rawNext) ? rawNext[0] : rawNext);
   const supabase = await createClient();
   const {
     data: { user },

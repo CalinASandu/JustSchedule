@@ -2,6 +2,7 @@ import ScheduleClient from "./ScheduleClient";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import type { ExamType, Reservation, SlotDef } from "@/components/schedule/types";
+import { getUserFacingErrorMessage } from "@/lib/user-facing-errors";
 
 type SchoolMemberRow = {
   id: string;
@@ -203,7 +204,10 @@ export default async function SchedulePage({
       initialReservations={reservations}
       reservationError={
         examSlotsError || reservationsError
-          ? `Could not load reservation data: ${examSlotsError?.message ?? reservationsError?.message}`
+          ? getUserFacingErrorMessage(
+              "loadReservations",
+              examSlotsError ?? reservationsError,
+            )
           : null
       }
     />

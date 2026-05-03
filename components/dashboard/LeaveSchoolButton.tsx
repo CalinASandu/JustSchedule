@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { LogOut, Loader2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { getUserFacingErrorMessage } from "@/lib/user-facing-errors";
 
 export default function LeaveSchoolButton({
   membershipId,
@@ -61,7 +62,8 @@ export default function LeaveSchoolButton({
       .eq("id", membershipId);
 
     if (deleteError) {
-      setError(deleteError.message || `Could not leave ${schoolName}.`);
+      console.error("Leave school failed", deleteError);
+      setError(getUserFacingErrorMessage("schoolLeave", deleteError));
       setPending(false);
       return;
     }
