@@ -7,9 +7,10 @@ import { createClient } from "@/lib/supabase/client";
 interface Props {
   onClick?: () => void;
   compact?: boolean;
+  redirectPath?: string;
 }
 
-export function GoogleSignInButton({ onClick, compact = false }: Props) {
+export function GoogleSignInButton({ onClick, compact = false, redirectPath = "/dashboard" }: Props) {
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleClick() {
@@ -22,10 +23,13 @@ export function GoogleSignInButton({ onClick, compact = false }: Props) {
 
     try {
       const supabase = createClient();
+      const origin = `${window.location.protocol}//${window.location.host}`;
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
+          redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(
+            redirectPath,
+          )}`,
         },
       });
 

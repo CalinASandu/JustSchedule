@@ -1,11 +1,12 @@
 import { createClient } from "@/lib/supabase/server";
+import { sanitizeRelativePath } from "@/lib/urls";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
   const requestUrl = request.nextUrl;
   const code = requestUrl.searchParams.get("code");
   const rawNext = requestUrl.searchParams.get("next") ?? "/dashboard";
-  const next = rawNext.startsWith("/") ? rawNext : "/dashboard";
+  const next = sanitizeRelativePath(rawNext);
 
   if (code) {
     const supabase = await createClient();
@@ -24,7 +25,9 @@ export async function GET(request: NextRequest) {
           .single();
 
         if (!profile?.name) {
-          return NextResponse.redirect(new URL("/login", requestUrl.origin));
+          return NextResponse.redirect(
+            new URL(`/login?next=${encodeURIComponent(next)}`, requestUrl.origin),
+          );
         }
       }
 

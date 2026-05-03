@@ -1,17 +1,14 @@
 'use client'
 
-import type { SlotId } from './types'
-import { SEATS_PER_SLOT } from './constants'
-
 interface SlotCardProps {
-  slotId: SlotId
   label: string
   bookedCount: number
+  capacity: number
   onClick: () => void
 }
 
-export default function SlotCard({ label, bookedCount, onClick }: SlotCardProps) {
-  const available = SEATS_PER_SLOT - bookedCount
+export default function SlotCard({ label, bookedCount, capacity, onClick }: SlotCardProps) {
+  const available = Math.max(capacity - bookedCount, 0)
   const isFull = available === 0
   const isLow = !isFull && available <= 2
 
@@ -47,7 +44,7 @@ export default function SlotCard({ label, bookedCount, onClick }: SlotCardProps)
           ].join(' ')}
           aria-hidden="true"
         >
-          {isFull ? 'Full' : `${available} / ${SEATS_PER_SLOT}`}
+          {isFull ? 'Full' : `${available} / ${capacity}`}
         </span>
       </div>
     </button>

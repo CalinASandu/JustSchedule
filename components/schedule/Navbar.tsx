@@ -51,58 +51,6 @@ export default function Navbar({ userName, userEmail }: NavbarProps) {
 
       {/* Right utilities */}
       <div className="flex items-center gap-2">
-        {/* University selector */}
-        <button
-          className="hidden sm:flex items-center gap-2.5 px-3 py-1.5 rounded-xl transition-colors duration-150 hover:bg-slate-50"
-          style={{ border: "1px solid #E4E8EF" }}
-          aria-label="Switch institution"
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            aria-hidden="true"
-          >
-            <path
-              d="M2 13.5V7.5l6-4.5 6 4.5v6M6 13.5V10h4v3.5"
-              stroke="#6B7280"
-              strokeWidth="1.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          <div className="text-left">
-            <p
-              className="text-[12px] font-semibold leading-tight"
-              style={{ color: "#1F2937" }}
-            >
-              State University
-            </p>
-            <p
-              className="text-[11px] leading-tight"
-              style={{ color: "#9CA3AF" }}
-            >
-              Computer Science
-            </p>
-          </div>
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 14 14"
-            fill="none"
-            aria-hidden="true"
-          >
-            <path
-              d="M3.5 5.5l3.5 3 3.5-3"
-              stroke="#9CA3AF"
-              strokeWidth="1.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-
         {/* Notifications */}
         <button
           className="w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-150 hover:bg-slate-100"

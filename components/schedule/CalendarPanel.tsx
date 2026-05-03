@@ -34,10 +34,18 @@ function isPast(y: number, m: number, d: number) {
   return new Date(y, m, d) < today
 }
 
+function isOutsideBookingWindow(y: number, m: number, d: number) {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const latest = new Date(today)
+  latest.setDate(latest.getDate() + 14)
+  return new Date(y, m, d) > latest
+}
+
 type DayStatus = 'unavailable' | 'limited' | 'available'
 
 function getDayStatus(y: number, m: number, d: number): DayStatus {
-  if (isWeekend(y, m, d) || isPast(y, m, d)) return 'unavailable'
+  if (isWeekend(y, m, d) || isPast(y, m, d) || isOutsideBookingWindow(y, m, d)) return 'unavailable'
   const hash = (d * 13 + m * 7 + y) % 5
   if (hash === 0 || hash === 4) return 'limited'
   return 'available'

@@ -37,10 +37,10 @@ const floatingMarks = [
   { icon: UsersRound, className: "right-[35%] bottom-[15%]", delay: "1.9s" },
 ];
 
-export function HeroSection() {
+export function HeroSection({ redirectPath = "/dashboard" }: { redirectPath?: string }) {
   return (
     <>
-      <Navbar />
+      <Navbar redirectPath={redirectPath} />
 
       <main className="relative min-h-dvh flex flex-col overflow-hidden bg-[#080b10] text-white">
         <div
@@ -116,7 +116,7 @@ export function HeroSection() {
               animate="visible"
               className="mt-8 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center lg:mt-10"
             >
-              <GoogleSignInButton />
+              <GoogleSignInButton redirectPath={redirectPath} />
               <Button
                 variant="ghost"
                 className="h-11 justify-center gap-2 px-1 text-sm font-semibold text-white/46 hover:bg-transparent hover:text-white/72 sm:justify-start sm:px-3"

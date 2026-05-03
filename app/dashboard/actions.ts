@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { getUserFacingErrorMessage } from "@/lib/user-facing-errors";
 
 export type RegisterSchoolState = {
   error: string | null;
@@ -40,12 +41,7 @@ export async function registerSchool(
     });
 
     return {
-      error:
-        schoolError?.code === "23505"
-          ? "A school with this name already exists."
-          : schoolError?.message
-            ? `Could not register this school: ${schoolError.message}`
-            : "Could not register this school.",
+      error: getUserFacingErrorMessage("registerSchool", schoolError),
       success: false,
     };
   }

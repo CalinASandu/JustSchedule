@@ -1,13 +1,13 @@
 'use client'
 
-import type { Booking, SlotId } from './types'
-import { SLOTS, SEATS_PER_SLOT } from './constants'
+import type { Reservation, SlotDef } from './types'
 
 interface SlotPickerProps {
   selectedDate: string | null
-  selectedSlotId: SlotId | null
-  onSelectSlot: (slotId: SlotId) => void
-  bookings: Booking[]
+  selectedSlotId: string | null
+  onSelectSlot: (slotId: string) => void
+  slots: SlotDef[]
+  reservations: Reservation[]
 }
 
 function formatDate(iso: string) {
@@ -20,7 +20,8 @@ export default function SlotPicker({
   selectedDate,
   selectedSlotId,
   onSelectSlot,
-  bookings,
+  slots,
+  reservations,
 }: SlotPickerProps) {
   return (
     <div className="panel p-5 flex flex-col">
@@ -46,11 +47,14 @@ export default function SlotPicker({
 
       {selectedDate ? (
         <div className="flex flex-col gap-2 mt-4 anim-slide-up" key={selectedDate}>
-          {SLOTS.map((slot, i) => {
-            const bookedCount = bookings.filter(
-              b => b.date === selectedDate && b.slot === slot.id
+          {slots.map((slot, i) => {
+            const bookedCount = reservations.filter(
+              reservation =>
+                reservation.reservationDate === selectedDate &&
+                reservation.slotId === slot.id &&
+                reservation.status === 'confirmed'
             ).length
-            const remaining = SEATS_PER_SLOT - bookedCount
+            const remaining = Math.max(slot.capacity - bookedCount, 0)
             const isFull = remaining === 0
             const isLimited = !isFull && remaining <= 2
             const isSelected = selectedSlotId === slot.id
@@ -127,6 +131,15 @@ export default function SlotPicker({
               </button>
             )
           })}
+
+          {slots.length === 0 && (
+            <div className="rounded-xl border border-[#E4E8EF] bg-[#F9FAFB] px-4 py-6 text-center">
+              <p className="text-sm font-medium" style={{ color: '#6B7280' }}>No active slots</p>
+              <p className="mt-1 text-xs" style={{ color: '#9CA3AF' }}>
+                Ask a school admin to create exam slots before booking.
+              </p>
+            </div>
+          )}
 
           {/* Helper link */}
           <div className="mt-2 pt-2" style={{ borderTop: '1px solid #F3F4F6' }}>

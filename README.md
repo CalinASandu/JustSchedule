@@ -44,6 +44,25 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Set these Vercel environment variables before building:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
+```
+
+In Supabase Auth, add the production callback URL for your Vercel domain:
+
+```text
+https://your-vercel-domain.vercel.app/auth/callback
+```
+
+Invite links are generated from the current browser origin, so links created on the Vercel deployment will use the Vercel domain automatically. After changing Edge Function source, deploy the functions before relying on the production app:
+
+```bash
+supabase functions deploy create-school-invite --project-ref your_project_ref
+supabase functions deploy review-school-join-requests --project-ref your_project_ref
+supabase functions deploy reserve-exam-slot --project-ref your_project_ref
+```
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
