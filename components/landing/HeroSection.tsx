@@ -95,7 +95,7 @@ export function HeroSection({ redirectPath = "/dashboard" }: { redirectPath?: st
               animate="visible"
               className="max-w-[560px] text-[clamp(2.35rem,11vw,3.25rem)] font-semibold leading-[1.04] text-white sm:text-[3.7rem] lg:max-w-[620px] lg:text-[4.4rem]"
             >
-              Exam scheduling, simplified.
+              Exam scheduling, simplified, This is a test.
             </motion.h1>
 
             <motion.p

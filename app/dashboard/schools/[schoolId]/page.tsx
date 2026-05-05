@@ -131,16 +131,25 @@ export default async function SchoolDashboardPage({
     redirect("/");
   }
 
-  const [{ data: membership }, { data: school }, { data: currentProfile }] = await Promise.all([
-    supabase
-      .from("SchoolMembers")
-      .select("role")
-      .eq("user_id", user.id)
-      .eq("school_id", schoolId)
-      .maybeSingle(),
-    supabase.from("Schools").select("id, name, created_at, created_by").eq("id", schoolId).maybeSingle(),
-    supabase.from("Profiles").select("id, name").eq("id", user.id).maybeSingle(),
-  ]);
+  const [{ data: membership }, { data: school }, { data: currentProfile }] =
+    await Promise.all([
+      supabase
+        .from("SchoolMembers")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("school_id", schoolId)
+        .maybeSingle(),
+      supabase
+        .from("Schools")
+        .select("id, name, created_at, created_by")
+        .eq("id", schoolId)
+        .maybeSingle(),
+      supabase
+        .from("Profiles")
+        .select("id, name")
+        .eq("id", user.id)
+        .maybeSingle(),
+    ]);
 
   if (!school) {
     redirect("/dashboard");
@@ -159,30 +168,34 @@ export default async function SchoolDashboardPage({
     { data: joinRequestRows, error: joinRequestsError },
     { data: examSlotRows, error: examSlotsError },
     { data: reservationRows, error: reservationsError },
-  ] =
-    await Promise.all([
-      supabase
-        .rpc("get_school_members_with_profiles", { target_school_id: schoolId }),
-      supabase
-        .from("SchoolInvites")
-        .select("id, token, created_at, expires_at, is_active")
-        .eq("school_id", schoolId)
-        .order("created_at", { ascending: false }),
-      supabase.rpc("get_school_join_requests_with_profiles", { target_school_id: schoolId }),
-      supabase
-        .from("ExamSlots")
-        .select("id, name, starts_at, ends_at, capacity")
-        .eq("school_id", schoolId)
-        .eq("is_active", true)
-        .order("starts_at", { ascending: true }),
-      supabase
-        .from("Reservations")
-        .select("id, user_id, slot_id, reservation_date, exam_name, exam_type, status, created_at")
-        .eq("school_id", schoolId)
-        .eq("status", "confirmed")
-        .order("reservation_date", { ascending: true })
-        .order("created_at", { ascending: true }),
-    ]);
+  ] = await Promise.all([
+    supabase.rpc("get_school_members_with_profiles", {
+      target_school_id: schoolId,
+    }),
+    supabase
+      .from("SchoolInvites")
+      .select("id, token, created_at, expires_at, is_active")
+      .eq("school_id", schoolId)
+      .order("created_at", { ascending: false }),
+    supabase.rpc("get_school_join_requests_with_profiles", {
+      target_school_id: schoolId,
+    }),
+    supabase
+      .from("ExamSlots")
+      .select("id, name, starts_at, ends_at, capacity")
+      .eq("school_id", schoolId)
+      .eq("is_active", true)
+      .order("starts_at", { ascending: true }),
+    supabase
+      .from("Reservations")
+      .select(
+        "id, user_id, slot_id, reservation_date, exam_name, exam_type, status, created_at",
+      )
+      .eq("school_id", schoolId)
+      .eq("status", "confirmed")
+      .order("reservation_date", { ascending: true })
+      .order("created_at", { ascending: true }),
+  ]);
 
   const rows = (memberRows ?? []) as SchoolMemberRow[];
   const currentProfileRow = currentProfile as ProfileRow | null;
@@ -229,22 +242,28 @@ export default async function SchoolDashboardPage({
     isActive: invite.is_active,
     url: `${origin}/invite/${invite.token}`,
   }));
-  const joinRequests = ((joinRequestRows ?? []) as JoinRequestRow[]).map((request) => ({
-    id: request.id,
-    userId: request.user_id,
-    schoolId: request.school_id,
-    name: request.profile_name || "Unnamed user",
-    email: request.email,
-    requestedAt: request.requested_at,
-  }));
-  const examSlots: ExamSlot[] = ((examSlotRows ?? []) as ExamSlotRow[]).map((slot) => ({
-    id: slot.id,
-    name: slot.name,
-    startsAt: slot.starts_at,
-    endsAt: slot.ends_at,
-    capacity: slot.capacity,
-  }));
-  const reservations: Reservation[] = ((reservationRows ?? []) as ReservationRow[]).map((reservation) => ({
+  const joinRequests = ((joinRequestRows ?? []) as JoinRequestRow[]).map(
+    (request) => ({
+      id: request.id,
+      userId: request.user_id,
+      schoolId: request.school_id,
+      name: request.profile_name || "Unnamed user",
+      email: request.email,
+      requestedAt: request.requested_at,
+    }),
+  );
+  const examSlots: ExamSlot[] = ((examSlotRows ?? []) as ExamSlotRow[]).map(
+    (slot) => ({
+      id: slot.id,
+      name: slot.name,
+      startsAt: slot.starts_at,
+      endsAt: slot.ends_at,
+      capacity: slot.capacity,
+    }),
+  );
+  const reservations: Reservation[] = (
+    (reservationRows ?? []) as ReservationRow[]
+  ).map((reservation) => ({
     id: reservation.id,
     userId: reservation.user_id,
     slotId: reservation.slot_id,
@@ -268,7 +287,10 @@ export default async function SchoolDashboardPage({
           >
             <CalendarDays size={17} color="white" strokeWidth={2} />
           </div>
-          <span className="text-[15px] font-semibold" style={{ color: "#111827" }}>
+          <span
+            className="text-[15px] font-semibold"
+            style={{ color: "#111827" }}
+          >
             JustSchedule
           </span>
         </Link>
@@ -301,7 +323,11 @@ export default async function SchoolDashboardPage({
           <div className="anim-slide-up">
             <h1
               className="text-[1.35rem] font-bold"
-              style={{ color: "#111827", letterSpacing: "-0.025em", lineHeight: 1.25 }}
+              style={{
+                color: "#111827",
+                letterSpacing: "-0.025em",
+                lineHeight: 1.25,
+              }}
             >
               {school.name}
             </h1>
@@ -314,7 +340,10 @@ export default async function SchoolDashboardPage({
             <div className="flex items-center gap-3">
               <ShieldCheck size={17} color="#2563EB" strokeWidth={1.9} />
               <div>
-                <p className="text-sm font-semibold" style={{ color: "#111827" }}>
+                <p
+                  className="text-sm font-semibold"
+                  style={{ color: "#111827" }}
+                >
                   {isAdmin ? "Admin access" : "Professor access"}
                 </p>
                 <p className="text-xs" style={{ color: "#9CA3AF" }}>

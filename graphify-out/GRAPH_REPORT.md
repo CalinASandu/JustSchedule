@@ -1,15 +1,18 @@
-# Graph Report - JustSchedule  (2026-05-02)
+# Graph Report - JustSchedule (2026-05-02)
 
 ## Corpus Check
+
 - 47 files · ~65,893 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
+
 - 149 nodes · 111 edges · 18 communities detected
 - Extraction: 85% EXTRACTED · 15% INFERRED · 0% AMBIGUOUS · INFERRED: 17 edges (avg confidence: 0.81)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
+
 - [[_COMMUNITY_Community 0|Community 0]]
 - [[_COMMUNITY_Community 2|Community 2]]
 - [[_COMMUNITY_Community 3|Community 3]]
@@ -30,6 +33,7 @@
 - [[_COMMUNITY_Community 51|Community 51]]
 
 ## God Nodes (most connected - your core abstractions)
+
 1. `createClient()` - 10 edges
 2. `GET()` - 6 edges
 3. `SchedulePage()` - 4 edges
@@ -42,92 +46,112 @@
 10. `sanitizeNext()` - 2 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `leaveSchool()` --calls--> `createClient()`  [INFERRED]
+
+- `leaveSchool()` --calls--> `createClient()` [INFERRED]
   components\dashboard\LeaveSchoolButton.tsx → lib\supabase\server.ts
-- `GET()` --calls--> `SchoolDashboardPage()`  [INFERRED]
+- `GET()` --calls--> `SchoolDashboardPage()` [INFERRED]
   app\auth\callback\route.ts → app\dashboard\schools\[schoolId]\page.tsx
-- `SchedulePage()` --calls--> `createClient()`  [INFERRED]
+- `SchedulePage()` --calls--> `createClient()` [INFERRED]
   app\dashboard\schedule\page.tsx → lib\supabase\server.ts
-- `SchoolDashboardPage()` --calls--> `createClient()`  [INFERRED]
+- `SchoolDashboardPage()` --calls--> `createClient()` [INFERRED]
   app\dashboard\schools\[schoolId]\page.tsx → lib\supabase\server.ts
-- `handleSignOut()` --calls--> `createClient()`  [INFERRED]
+- `handleSignOut()` --calls--> `createClient()` [INFERRED]
   components\schedule\Navbar.tsx → lib\supabase\server.ts
 
 ## Communities
 
 ### Community 0 - "Community 0"
+
 Cohesion: 0.17
 Nodes (8): Home(), sanitizeNext(), GET(), registerSchool(), requestSchoolJoin(), handleSubmit(), handleSignOut(), createClient()
 
 ### Community 2 - "Community 2"
+
 Cohesion: 0.36
 Nodes (4): getDayStatus(), isOutsideBookingWindow(), isPast(), isWeekend()
 
 ### Community 3 - "Community 3"
+
 Cohesion: 0.38
 Nodes (3): formatLocalDate(), getSchoolId(), SchedulePage()
 
 ### Community 8 - "Community 8"
+
 Cohesion: 0.5
 Nodes (2): getInitials(), SchoolDashboardPage()
 
 ### Community 10 - "Community 10"
+
 Cohesion: 0.5
 Nodes (1): leaveSchool()
 
 ### Community 11 - "Community 11"
+
 Cohesion: 0.5
 Nodes (2): cn(), Badge()
 
 ### Community 12 - "Community 12"
+
 Cohesion: 0.5
 Nodes (4): Google Auth Provider, JustSchedule Project, Next.js Framework, Supabase Integration
 
 ### Community 13 - "Community 13"
+
 Cohesion: 0.5
 Nodes (4): Spec: Booking Data Model, Booking Record Data Model, Row Level Security Policy, Supabase Bookings Schema
 
 ### Community 30 - "Community 30"
+
 Cohesion: 1.0
 Nodes (2): Exam Scheduler Implementation Plan, Exam Scheduler Design Spec
 
 ### Community 31 - "Community 31"
+
 Cohesion: 1.0
 Nodes (2): JustSchedule UI Mockup (Full Dashboard), JustSchedule System Overview
 
 ### Community 44 - "Community 44"
+
 Cohesion: 1.0
 Nodes (1): Next.js Agent Rules
 
 ### Community 45 - "Community 45"
+
 Cohesion: 1.0
 Nodes (1): Slot Reference (Static Config)
 
 ### Community 46 - "Community 46"
+
 Cohesion: 1.0
 Nodes (1): Swap Requests Schema (Proposed)
 
 ### Community 47 - "Community 47"
+
 Cohesion: 1.0
 Nodes (1): UI Component Structure
 
 ### Community 48 - "Community 48"
+
 Cohesion: 1.0
 Nodes (1): Schedule Page Orchestrator
 
 ### Community 49 - "Community 49"
+
 Cohesion: 1.0
 Nodes (1): Booking Flow
 
 ### Community 50 - "Community 50"
+
 Cohesion: 1.0
 Nodes (1): Design System (CSS Custom Properties)
 
 ### Community 51 - "Community 51"
+
 Cohesion: 1.0
 Nodes (1): Weekly Schedule Grid (Dark Theme Concept)
 
 ## Knowledge Gaps
+
 - **16 isolated node(s):** `Next.js Agent Rules`, `Next.js Framework`, `Google Auth Provider`, `JustSchedule System Overview`, `Slot Reference (Static Config)` (+11 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **Thin community `Community 8`** (5 nodes): `page.tsx`, `formatMemberName()`, `getInitials()`, `normalizeRole()`, `SchoolDashboardPage()`
@@ -158,6 +182,7 @@ Nodes (1): Weekly Schedule Grid (Dark Theme Concept)
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
+
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `createClient()` connect `Community 0` to `Community 8`, `Community 10`, `Community 3`?**
