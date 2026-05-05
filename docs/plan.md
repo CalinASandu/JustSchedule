@@ -12,6 +12,8 @@ This plan breaks the feature bundle into smaller implementation parts so each st
 
 ## Part 1: Student Self-Booking Permission
 
+Status: Done.
+
 ### Goal
 
 Admins and professors can mark specific students as unable to schedule their own exams. Restricted students can still view schedules and reservations, but they cannot create their own reservation.
@@ -62,6 +64,8 @@ Student schedule UI:
 Restricted students cannot schedule exams themselves. Admins and professors can manage that restriction from the member management UI.
 
 ## Part 2: Professor/Admin Booking For Students
+
+Status: Done.
 
 ### Goal
 
@@ -126,6 +130,8 @@ Professors and admins can schedule exams for restricted students and normal stud
 
 ## Part 3: Cancel Reservations With Ownership Rules
 
+Status: Mostly done. The implemented rule is stricter than the first draft: students can cancel any reservation assigned to them, and admins/professors can cancel reservations they created for students. Admins do not currently have blanket cancellation for every school reservation.
+
 ### Goal
 
 Add cancellation while preserving audit history and respecting who created the reservation.
@@ -142,6 +148,8 @@ cancelled_at timestamptz
 cancelled_by uuid references auth.users(id)
 cancel_reason text
 ```
+
+Current implementation keeps audit-safe cancelled rows by changing `Reservations.status` to `cancelled`. `cancelled_at`, `cancelled_by`, and `cancel_reason` are still left for a later audit/history pass.
 
 Supported statuses should include:
 
@@ -174,15 +182,20 @@ Validation rules:
 Add cancel actions in:
 
 - Student `BookingsPanel`, only for reservations the student is allowed to cancel.
+- Student `My Reservations` panel, for focused personal reservation management.
 - School `Reservations` tab for admins and professors.
 
 Use a confirmation dialog. It can be lighter than the school deletion flow, but it should still prevent accidental cancellation.
+
+Current implementation has inline cancel actions and server-side authorization. A dedicated confirmation dialog is still left to implement.
 
 ### Result
 
 Reservations can be cancelled safely, and cancellation history remains available for attendance, auditing, and future status board events.
 
 ## Part 4: Exam Supervisor Role And Attendance
+
+Status: Not started.
 
 ### Goal
 
@@ -258,6 +271,8 @@ Exam supervisors can mark who attended scheduled exams without receiving broader
 
 ## Part 5: Future Student Status Board
 
+Status: Not started.
+
 ### Goal
 
 Do not implement this in the first bundle, but preserve enough audit data so it is easy to add later.
@@ -304,11 +319,20 @@ That audit data can later generate status-board entries without guessing what ha
 
 ## Recommended Implementation Order
 
-1. Add `can_self_book` to `SchoolMembers`, enforce it in student booking, and add the member-list permission toggle.
-2. Add professor/admin booking for students with creator tracking.
-3. Add reservation cancellation with ownership rules.
-4. Add the `exam_supervisor` role and attendance marking.
-5. Add the student status board after the event model is clear.
+1. Done: Add `can_self_book` to `SchoolMembers`, enforce it in student booking, and add the member-list permission toggle.
+2. Done: Add professor/admin booking for students with creator tracking.
+3. Mostly done: Add reservation cancellation with ownership rules.
+4. Next: Add cancellation confirmation dialogs and optional cancellation audit fields.
+5. Next: Add the `exam_supervisor` role and attendance marking.
+6. Later: Add the student status board after the event model is clear.
+
+## Current Remaining Work
+
+- Add confirmation dialogs before cancelling reservations from student and teacher views.
+- Decide whether cancellation audit fields (`cancelled_at`, `cancelled_by`, `cancel_reason`) should be added before attendance/status-board work.
+- Decide whether admins should be able to cancel all school reservations or only reservations they created; current behavior follows the latest implemented rule for creator-scoped teacher cancellation.
+- Implement `exam_supervisor` role and attendance tracking.
+- Design and implement the future student status/news board.
 
 ## Verification Checklist For Each Part
 

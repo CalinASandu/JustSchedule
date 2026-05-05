@@ -11,6 +11,7 @@ type FunctionErrorBody = {
 };
 
 export type ErrorContext =
+  | "cancelReservation"
   | "createInvite"
   | "joinRequest"
   | "loadInvites"
@@ -28,6 +29,7 @@ export type ErrorContext =
   | "selfBookingUpdate";
 
 const fallbackMessages: Record<ErrorContext, string> = {
+  cancelReservation: "Could not cancel this reservation. Try again in a moment.",
   createInvite: "Could not create an invite link. Try again in a moment.",
   joinRequest: "Could not request access. Try again in a moment.",
   loadInvites: "Could not load invite links. Refresh the page and try again.",
@@ -224,6 +226,20 @@ export function getUserFacingErrorMessage(
 
     if (messageIncludes(message, ["exam type"])) {
       return "Choose a valid exam type.";
+    }
+  }
+
+  if (context === "cancelReservation") {
+    if (messageIncludes(message, ["only the student", "cancel_not_allowed", "permission denied"])) {
+      return "You can only cancel your own reservation or a reservation you scheduled for a student.";
+    }
+
+    if (messageIncludes(message, ["invalid session", "jwt", "authorization"])) {
+      return "Your session expired. Sign in again to cancel this reservation.";
+    }
+
+    if (messageIncludes(message, ["already cancelled", "no longer available", "reservation_unavailable"])) {
+      return "This reservation is no longer available to cancel.";
     }
   }
 

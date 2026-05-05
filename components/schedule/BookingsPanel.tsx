@@ -1,10 +1,19 @@
 'use client'
 
-import { useMemo, useState } from 'react'
-import type { Reservation, SwapStatus } from './types'
+import { useMemo } from 'react'
+import { Ban, Loader2 } from 'lucide-react'
+import type { Reservation } from './types'
 
 interface BookingsPanelProps {
   reservations: Reservation[]
+  currentUserId: string
+  cancelingReservationId: string | null
+  cancelError: string | null
+  title?: string
+  description?: string
+  emptyTitle?: string
+  emptyDescription?: string
+  onCancelReservation: (reservation: Reservation) => void
 }
 
 function getInitials(name: string) {
@@ -39,8 +48,17 @@ function formatExamType(value: Reservation['examType']) {
   return value.charAt(0).toUpperCase() + value.slice(1)
 }
 
-export default function BookingsPanel({ reservations }: BookingsPanelProps) {
-  const [swapStatus, setSwapStatus] = useState<Record<string, SwapStatus>>({})
+export default function BookingsPanel({
+  reservations,
+  currentUserId,
+  cancelingReservationId,
+  cancelError,
+  title = 'Bookings',
+  description = 'Confirmed reservations for this school.',
+  emptyTitle = 'No confirmed bookings',
+  emptyDescription = 'Reservations will appear here after students book exam slots.',
+  onCancelReservation,
+}: BookingsPanelProps) {
   const sortedReservations = useMemo(
     () =>
       [...reservations].sort((first, second) => {
@@ -54,11 +72,6 @@ export default function BookingsPanel({ reservations }: BookingsPanelProps) {
       }),
     [reservations],
   )
-
-  function handleSwap(id: string) {
-    if (swapStatus[id] === 'pending') return
-    setSwapStatus(prev => ({ ...prev, [id]: 'pending' }))
-  }
 
   return (
     <div className="panel p-5 flex flex-col">
@@ -75,19 +88,28 @@ export default function BookingsPanel({ reservations }: BookingsPanelProps) {
             </svg>
           </div>
           <div>
-            <h2 className="text-sm font-semibold" style={{ color: '#111827' }}>Bookings</h2>
+            <h2 className="text-sm font-semibold" style={{ color: '#111827' }}>{title}</h2>
             <p className="text-xs" style={{ color: '#9CA3AF' }}>
-              Confirmed reservations for this school.
+              {description}
             </p>
           </div>
         </div>
-        <button
-          className="text-xs font-medium flex-shrink-0 transition-colors duration-150 hover:underline"
-          style={{ color: '#2563EB' }}
-        >
-          How swapping works
-        </button>
       </div>
+
+      {cancelError && (
+        <p
+          className="anim-fade-in mb-4 text-[0.8125rem]"
+          style={{
+            color: '#DC2626',
+            background: '#FEF2F2',
+            border: '1px solid #FECACA',
+            borderRadius: 8,
+            padding: '0.5rem 0.75rem',
+          }}
+        >
+          {cancelError}
+        </p>
+      )}
 
       {sortedReservations.length > 0 ? (
         <div className="overflow-x-auto -mx-1 px-1">
@@ -107,8 +129,8 @@ export default function BookingsPanel({ reservations }: BookingsPanelProps) {
             </thead>
             <tbody>
               {sortedReservations.map((booking, i) => {
-                const status = swapStatus[booking.id] ?? 'idle'
-                const isPending = status === 'pending'
+                const canCancel = booking.userId === currentUserId
+                const isPending = cancelingReservationId === booking.id
                 const delayClass = ['anim-slide-up', 'anim-slide-up anim-d1', 'anim-slide-up anim-d2', 'anim-slide-up anim-d3'][i] ?? 'anim-slide-up'
 
                 return (
@@ -151,49 +173,37 @@ export default function BookingsPanel({ reservations }: BookingsPanelProps) {
                     </td>
 
                     <td className="py-3">
-                      <button
-                        onClick={() => handleSwap(booking.id)}
-                        disabled={isPending}
-                        className="text-xs font-semibold px-3 py-1.5 rounded-xl transition-all duration-200 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-                        style={
-                          isPending
-                            ? { background: '#FEF3C7', color: '#B45309', border: '1px solid #FDE68A', cursor: 'default' }
-                            : { background: 'transparent', color: '#2563EB', border: '1px solid #BFDBFE', cursor: 'pointer' }
-                        }
-                        onMouseEnter={e => {
-                          if (!isPending) {
-                            e.currentTarget.style.background = '#EFF6FF'
-                          }
-                        }}
-                        onMouseLeave={e => {
-                          if (!isPending) {
-                            e.currentTarget.style.background = 'transparent'
-                          }
-                        }}
-                        aria-label={
-                          isPending
-                            ? `Swap request pending with ${booking.studentName}`
-                            : `Request swap with ${booking.studentName}`
-                        }
-                      >
-                        {isPending ? (
-                          <span className="flex items-center gap-1.5">
-                            <svg
-                              width="10"
-                              height="10"
-                              viewBox="0 0 10 10"
-                              fill="none"
-                              aria-hidden="true"
-                              style={{ animation: 'swapSpin 1.4s linear infinite' }}
-                            >
-                              <path d="M5 1.5A3.5 3.5 0 0 1 8.5 5" stroke="#B45309" strokeWidth="1.3" strokeLinecap="round" />
-                            </svg>
-                            Pending
-                          </span>
-                        ) : (
-                          'Request swap'
-                        )}
-                      </button>
+                      {canCancel ? (
+                        <button
+                          type="button"
+                          onClick={() => onCancelReservation(booking)}
+                          disabled={!!cancelingReservationId}
+                          className="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition-all duration-200 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed"
+                          style={{ background: 'transparent', color: '#DC2626', border: '1px solid #FECACA' }}
+                          onMouseEnter={e => {
+                            if (!cancelingReservationId) {
+                              e.currentTarget.style.background = '#FEF2F2'
+                            }
+                          }}
+                          onMouseLeave={e => {
+                            if (!cancelingReservationId) {
+                              e.currentTarget.style.background = 'transparent'
+                            }
+                          }}
+                          aria-label={`Cancel ${booking.examName} for ${booking.studentName}`}
+                        >
+                          {isPending ? (
+                            <Loader2 size={13} className="animate-spin" />
+                          ) : (
+                            <Ban size={13} />
+                          )}
+                          Cancel
+                        </button>
+                      ) : (
+                        <span className="text-xs whitespace-nowrap" style={{ color: '#CBD5E1' }}>
+                          Not yours
+                        </span>
+                      )}
                     </td>
                   </tr>
                 )
@@ -203,16 +213,16 @@ export default function BookingsPanel({ reservations }: BookingsPanelProps) {
         </div>
       ) : (
         <div className="rounded-xl border border-[#E4E8EF] bg-[#F9FAFB] px-4 py-8 text-center">
-          <p className="text-sm font-medium" style={{ color: '#6B7280' }}>No confirmed bookings</p>
+          <p className="text-sm font-medium" style={{ color: '#6B7280' }}>{emptyTitle}</p>
           <p className="mt-1 text-xs" style={{ color: '#9CA3AF' }}>
-            Reservations will appear here after students book exam slots.
+            {emptyDescription}
           </p>
         </div>
       )}
 
       <div className="mt-4 pt-4 flex items-center justify-center gap-1" style={{ borderTop: '1px solid #F3F4F6' }}>
         <span className="text-xs" style={{ color: '#9CA3AF' }}>
-          Swap requests are not enabled yet.
+          You can cancel reservations assigned to you.
         </span>
       </div>
     </div>

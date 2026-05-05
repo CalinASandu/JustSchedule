@@ -2,14 +2,19 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import {
+  Ban,
   Check,
+  CalendarDays,
   CalendarPlus,
   ChevronLeft,
   ChevronRight,
+  Clock,
   Copy,
+  FileText,
   Link2,
   Loader2,
   Mail,
+  Search,
   Trash2,
   UserMinus,
   UserPlus,
@@ -79,6 +84,7 @@ type Decision = "approved" | "rejected";
 type SchoolRole = "admin" | "professor" | "student";
 type ExamType = "midterm" | "final";
 type SchoolDashboardTab = "members" | "reservations" | "requests" | "invites" | "settings";
+type ReservationViewMode = "day" | "week";
 
 const roleOptions: SchoolRole[] = ["student", "professor", "admin"];
 
@@ -140,6 +146,14 @@ function addDays(dateKey: string, days: number) {
   return `${year}-${month}-${day}`;
 }
 
+function getWeekDates(dateKey: string) {
+  const anchor = new Date(`${dateKey}T00:00:00`);
+  const day = anchor.getDay();
+  const mondayOffset = day === 0 ? -6 : 1 - day;
+
+  return Array.from({ length: 7 }, (_, index) => addDays(dateKey, mondayOffset + index));
+}
+
 function formatReservationDate(dateKey: string) {
   return new Date(`${dateKey}T00:00:00`).toLocaleDateString("en-US", {
     weekday: "short",
@@ -181,6 +195,8 @@ export default function SchoolManagementTabs({
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<SchoolDashboardTab>("members");
   const [reservationDate, setReservationDate] = useState(getTodayKey);
+  const [reservationViewMode, setReservationViewMode] = useState<ReservationViewMode>("day");
+  const [memberSearchQuery, setMemberSearchQuery] = useState("");
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
   const [expiresOn, setExpiresOn] = useState(getDefaultExpiryDate);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
@@ -225,6 +241,17 @@ export default function SchoolManagementTabs({
     success: null,
     pending: false,
   });
+  const [cancelledReservationIds, setCancelledReservationIds] = useState<Set<string>>(new Set());
+  const [cancelReservationState, setCancelReservationState] = useState<{
+    error: string | null;
+    success: string | null;
+    pendingReservationId: string | null;
+  }>({
+    error: null,
+    success: null,
+    pendingReservationId: null,
+  });
+  const [selectedWeekReservationId, setSelectedWeekReservationId] = useState<string | null>(null);
   const [kickState, setKickState] = useState<{ error: string | null; pending: boolean }>({
     error: null,
     pending: false,
@@ -268,6 +295,51 @@ export default function SchoolManagementTabs({
         })),
     [members, removedMemberIds, roleOverrides, selfBookingOverrides],
   );
+  const currentUserId = visibleMembers.find((member) => member.isCurrentUser)?.userId ?? null;
+  const filteredMembers = useMemo(() => {
+    const query = memberSearchQuery.trim().toLowerCase();
+
+    if (!query) {
+      return visibleMembers;
+    }
+
+    return visibleMembers.filter((member) =>
+      [member.name, member.email ?? "", member.role]
+        .join(" ")
+        .toLowerCase()
+        .includes(query),
+    );
+  }, [memberSearchQuery, visibleMembers]);
+  const visibleReservations = useMemo(
+    () => reservations.filter((reservation) => !cancelledReservationIds.has(reservation.id)),
+    [cancelledReservationIds, reservations],
+  );
+  const reservationWeekDates = useMemo(() => getWeekDates(reservationDate), [reservationDate]);
+  const reservationsByDate = useMemo(() => {
+    const grouped = new Map<string, Reservation[]>();
+
+    for (const reservation of visibleReservations) {
+      if (!reservationWeekDates.includes(reservation.reservationDate)) {
+        continue;
+      }
+
+      const dateReservations = grouped.get(reservation.reservationDate) ?? [];
+      dateReservations.push(reservation);
+      grouped.set(reservation.reservationDate, dateReservations);
+    }
+
+    for (const dateReservations of grouped.values()) {
+      dateReservations.sort((first, second) => {
+        const firstSlot = examSlots.find((slot) => slot.id === first.slotId);
+        const secondSlot = examSlots.find((slot) => slot.id === second.slotId);
+        const timeCompare = (firstSlot?.startsAt ?? "").localeCompare(secondSlot?.startsAt ?? "");
+        if (timeCompare !== 0) return timeCompare;
+        return first.createdAt.localeCompare(second.createdAt);
+      });
+    }
+
+    return grouped;
+  }, [examSlots, reservationWeekDates, visibleReservations]);
   const selectedDecisions = Object.entries(requestDecisions).filter(([requestId]) =>
     visibleJoinRequests.some((request) => request.id === requestId),
   );
@@ -286,6 +358,8 @@ export default function SchoolManagementTabs({
   const scheduleDialogMember = scheduleDialogMemberId
     ? visibleMembers.find((member) => member.id === scheduleDialogMemberId) ?? null
     : null;
+  const selectedScheduleSlot =
+    examSlots.find((slot) => slot.id === scheduleSlotId) ?? examSlots[0] ?? null;
   const memberNamesByUserId = useMemo(
     () => new Map(visibleMembers.map((member) => [member.userId, member.name])),
     [visibleMembers],
@@ -293,7 +367,7 @@ export default function SchoolManagementTabs({
   const reservationsBySlotId = useMemo(() => {
     const grouped = new Map<string, Reservation[]>();
 
-    for (const reservation of reservations) {
+    for (const reservation of visibleReservations) {
       if (reservation.reservationDate !== reservationDate) {
         continue;
       }
@@ -308,8 +382,24 @@ export default function SchoolManagementTabs({
     }
 
     return grouped;
-  }, [reservationDate, reservations]);
+  }, [reservationDate, visibleReservations]);
   const reservationRowCount = Math.max(8, ...examSlots.map((slot) => slot.capacity));
+  const selectedWeekReservation = selectedWeekReservationId
+    ? visibleReservations.find((r) => r.id === selectedWeekReservationId) ?? null
+    : null;
+  const selectedWeekSlot = selectedWeekReservation
+    ? examSlots.find((s) => s.id === selectedWeekReservation.slotId) ?? null
+    : null;
+  const canCancelWeekReservation =
+    !!selectedWeekReservation &&
+    !!currentUserId &&
+    (selectedWeekReservation.userId === currentUserId ||
+      (selectedWeekReservation.createdBy === currentUserId &&
+        (selectedWeekReservation.createdByRole === "admin" ||
+          selectedWeekReservation.createdByRole === "professor")));
+  const cancelWeekReservationPending =
+    !!selectedWeekReservation &&
+    cancelReservationState.pendingReservationId === selectedWeekReservation.id;
 
   useEffect(() => {
     if (!copiedUrl) {
@@ -639,6 +729,59 @@ export default function SchoolManagementTabs({
     router.refresh();
   }
 
+  async function cancelReservation(reservation: Reservation) {
+    if (cancelReservationState.pendingReservationId) {
+      return;
+    }
+
+    setCancelReservationState({
+      error: null,
+      success: null,
+      pendingReservationId: reservation.id,
+    });
+
+    const supabase = createClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.access_token) {
+      setCancelReservationState({
+        error: "Your session expired. Sign in again to cancel this reservation.",
+        success: null,
+        pendingReservationId: null,
+      });
+      return;
+    }
+
+    const { error } = await supabase.functions.invoke("cancel-reservation", {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: {
+        reservationId: reservation.id,
+      },
+    });
+
+    if (error) {
+      console.error("Cancel reservation failed", error);
+      setCancelReservationState({
+        error: await getUserFacingFunctionErrorMessage("cancelReservation", error),
+        success: null,
+        pendingReservationId: null,
+      });
+      return;
+    }
+
+    setCancelledReservationIds((current) => new Set(current).add(reservation.id));
+    setCancelReservationState({
+      error: null,
+      success: `Cancelled ${reservation.examName}.`,
+      pendingReservationId: null,
+    });
+    router.refresh();
+  }
+
   function openKickDialog(member: SchoolMember) {
     setKickDialogMemberId(member.id);
     setKickSecondsRemaining(5);
@@ -760,8 +903,35 @@ export default function SchoolManagementTabs({
               className="rounded-full px-3 py-1 text-xs font-semibold"
               style={{ background: "#DBEAFE", color: "#1D4ED8" }}
             >
-              {visibleMembers.length} total
+              {memberSearchQuery.trim()
+                ? `${filteredMembers.length} of ${visibleMembers.length}`
+                : `${visibleMembers.length} total`}
             </span>
+          </div>
+
+          <div className="relative mb-4">
+            <Search
+              size={16}
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2"
+              color="#94A3B8"
+              aria-hidden="true"
+            />
+            <input
+              type="search"
+              value={memberSearchQuery}
+              onChange={(event) => setMemberSearchQuery(event.target.value)}
+              placeholder="Search members by name, email, or role"
+              className="h-[2.625rem] w-full rounded-[10px] bg-white pl-10 pr-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
+              style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+              onFocus={(event) => {
+                event.currentTarget.style.borderColor = "#3B82F6";
+                event.currentTarget.style.boxShadow = "0 0 0 3px rgba(59,130,246,0.12)";
+              }}
+              onBlur={(event) => {
+                event.currentTarget.style.borderColor = "#E4E8EF";
+                event.currentTarget.style.boxShadow = "none";
+              }}
+            />
           </div>
 
           {(memberError || roleState.error || selfBookingState.error) && (
@@ -829,7 +999,7 @@ export default function SchoolManagementTabs({
           )}
 
           <div className="space-y-3">
-            {visibleMembers.map((member) => {
+            {filteredMembers.map((member) => {
               const selectedRole = selectedRoles[member.id] ?? member.role;
               const canManage = canManageMembers && !member.isCurrentUser && !member.id.startsWith("created-");
               const canKick = canManage && member.role !== "admin";
@@ -955,6 +1125,13 @@ export default function SchoolManagementTabs({
               </div>
               );
             })}
+
+            {filteredMembers.length === 0 && (
+              <EmptyState
+                title="No members found"
+                description="Try a different name, email, or role."
+              />
+            )}
           </div>
         </div>
       )}
@@ -967,16 +1144,47 @@ export default function SchoolManagementTabs({
                 Reservations
               </h2>
               <p className="mt-1 text-sm" style={{ color: "#6B7280" }}>
-                Confirmed student exams for {formatReservationDate(reservationDate)}.
+                {reservationViewMode === "day"
+                  ? `Confirmed student exams for ${formatReservationDate(reservationDate)}.`
+                  : `Confirmed student exams for ${formatReservationDate(
+                      reservationWeekDates[0],
+                    )} through ${formatReservationDate(reservationWeekDates[6])}.`}
               </p>
             </div>
+            <div className="flex flex-col gap-2 sm:items-end">
+              <div
+                className="flex w-fit rounded-xl p-1"
+                style={{ border: "1px solid #E4E8EF", background: "#F8FAFC" }}
+                role="group"
+                aria-label="Reservation view"
+              >
+                {(["day", "week"] as ReservationViewMode[]).map((mode) => (
+                  <button
+                    key={mode}
+                    type="button"
+                    onClick={() => setReservationViewMode(mode)}
+                    className="h-8 rounded-[10px] px-3 text-sm font-semibold capitalize transition-colors duration-150"
+                    style={
+                      reservationViewMode === mode
+                        ? { background: "#FFFFFF", color: "#1D4ED8", border: "1px solid #BFDBFE" }
+                        : { background: "transparent", color: "#6B7280", border: "1px solid transparent" }
+                    }
+                  >
+                    {mode}
+                  </button>
+                ))}
+              </div>
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => setReservationDate((current) => addDays(current, -1))}
+                onClick={() =>
+                  setReservationDate((current) =>
+                    addDays(current, reservationViewMode === "day" ? -1 : -7),
+                  )
+                }
                 className="inline-flex h-9 w-9 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50"
                 style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
-                aria-label="Previous day"
+                aria-label={reservationViewMode === "day" ? "Previous day" : "Previous week"}
               >
                 <ChevronLeft size={16} />
               </button>
@@ -984,21 +1192,40 @@ export default function SchoolManagementTabs({
                 className="min-w-[150px] rounded-xl px-3 py-2 text-center text-sm font-semibold"
                 style={{ border: "1px solid #E4E8EF", color: "#111827" }}
               >
-                {formatReservationDate(reservationDate)}
+                {reservationViewMode === "day"
+                  ? formatReservationDate(reservationDate)
+                  : `${formatReservationDate(reservationWeekDates[0])} - ${formatReservationDate(
+                      reservationWeekDates[6],
+                    )}`}
               </span>
               <button
                 type="button"
-                onClick={() => setReservationDate((current) => addDays(current, 1))}
+                onClick={() =>
+                  setReservationDate((current) =>
+                    addDays(current, reservationViewMode === "day" ? 1 : 7),
+                  )
+                }
                 className="inline-flex h-9 w-9 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50"
                 style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
-                aria-label="Next day"
+                aria-label={reservationViewMode === "day" ? "Next day" : "Next week"}
               >
                 <ChevronRight size={16} />
               </button>
             </div>
+            </div>
           </div>
 
           {reservationError && <ErrorBanner message={reservationError} />}
+
+          {cancelReservationState.error && (
+            <ErrorBanner message={cancelReservationState.error} />
+          )}
+
+          {cancelReservationState.success && (
+            <p className="anim-fade-in mb-4 text-[0.8125rem] font-medium" style={{ color: "#1D4ED8" }}>
+              {cancelReservationState.success}
+            </p>
+          )}
 
           {examSlots.length === 0 ? (
             <EmptyState
@@ -1006,6 +1233,111 @@ export default function SchoolManagementTabs({
               description="Reservations will appear here after this school has reusable exam slots."
             />
           ) : (
+            reservationViewMode === "week" ? (
+              <div className="overflow-x-auto">
+                <div
+                  className="grid min-w-[500px] gap-2"
+                  style={{ gridTemplateColumns: "repeat(5, minmax(0, 1fr))" }}
+                >
+                  {reservationWeekDates.filter((dateKey) => {
+                    const dow = new Date(`${dateKey}T00:00:00`).getDay();
+                    return dow !== 0 && dow !== 6;
+                  }).map((dateKey) => {
+                    const dayReservations = reservationsByDate.get(dateKey) ?? [];
+                    const isToday = dateKey === getTodayKey();
+                    const dayDate = new Date(`${dateKey}T00:00:00`);
+                    const dayLabel = dayDate.toLocaleDateString("en-US", { weekday: "short" });
+                    const dayNum = dayDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+
+                    return (
+                      <div
+                        key={dateKey}
+                        className="flex flex-col overflow-hidden rounded-[10px] border"
+                        style={{
+                          background: "#FFFFFF",
+                          borderColor: isToday ? "#93C5FD" : "#E4E8EF",
+                        }}
+                      >
+                        <div
+                          className="flex items-center justify-between px-2.5 py-2"
+                          style={{
+                            background: isToday ? "#EFF6FF" : "#FAFAFA",
+                            borderBottom: `1px solid ${isToday ? "#BFDBFE" : "#F3F4F6"}`,
+                          }}
+                        >
+                          <div>
+                            <p
+                              className="text-[10px] font-bold uppercase tracking-wide"
+                              style={{ color: isToday ? "#2563EB" : "#94A3B8" }}
+                            >
+                              {dayLabel}
+                            </p>
+                            <p
+                              className="text-[13px] font-semibold"
+                              style={{ color: isToday ? "#1D4ED8" : "#111827" }}
+                            >
+                              {dayNum}
+                            </p>
+                          </div>
+                          {dayReservations.length > 0 && (
+                            <span
+                              className="rounded-full px-2 py-0.5 text-[10px] font-semibold"
+                              style={{ background: "#DBEAFE", color: "#1D4ED8" }}
+                            >
+                              {dayReservations.length}
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="flex flex-1 flex-col gap-1 p-1.5">
+                          {dayReservations.length === 0 ? (
+                            <div
+                              className="flex flex-1 items-center justify-center rounded-[8px] border border-dashed py-5"
+                              style={{ borderColor: "#E4E8EF" }}
+                            >
+                              <p className="text-[10px]" style={{ color: "#94A3B8" }}>
+                                No bookings
+                              </p>
+                            </div>
+                          ) : (
+                            dayReservations.map((reservation) => {
+                              const chipSlot = examSlots.find((s) => s.id === reservation.slotId);
+                              return (
+                                <button
+                                  key={reservation.id}
+                                  type="button"
+                                  onClick={() => setSelectedWeekReservationId(reservation.id)}
+                                  className="w-full rounded-[8px] px-2 py-1.5 text-left transition-colors duration-150 hover:bg-[#DBEAFE]"
+                                  style={{
+                                    background: "#EFF6FF",
+                                    border: "1px solid #BFDBFE",
+                                  }}
+                                >
+                                  <p
+                                    className="truncate text-[12px] font-semibold leading-tight"
+                                    style={{ color: "#111827" }}
+                                  >
+                                    {memberNamesByUserId.get(reservation.userId) ?? "Unnamed"}
+                                  </p>
+                                  {chipSlot && (
+                                    <p
+                                      className="mt-0.5 text-[10px] leading-tight"
+                                      style={{ color: "#6B7280" }}
+                                    >
+                                      {formatSlotTime(chipSlot.startsAt)}
+                                    </p>
+                                  )}
+                                </button>
+                              );
+                            })
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
             <div className="overflow-x-auto">
               <div
                 className="grid min-w-[760px] gap-3"
@@ -1029,6 +1361,16 @@ export default function SchoolManagementTabs({
                   examSlots.map((slot) => {
                     const reservation = reservationsBySlotId.get(slot.id)?.[seatIndex] ?? null;
                     const isBeyondCapacity = seatIndex >= slot.capacity;
+                    const canCancelReservation =
+                      !!reservation &&
+                      !!currentUserId &&
+                      (reservation.userId === currentUserId ||
+                        (reservation.createdBy === currentUserId &&
+                          (reservation.createdByRole === "admin" ||
+                            reservation.createdByRole === "professor")));
+                    const cancelPending =
+                      !!reservation &&
+                      cancelReservationState.pendingReservationId === reservation.id;
 
                     return (
                       <div
@@ -1040,7 +1382,7 @@ export default function SchoolManagementTabs({
                         }}
                       >
                         {reservation ? (
-                          <div>
+                          <div className="flex h-full min-h-[66px] flex-col">
                             <div className="mb-2 flex items-center justify-between gap-2">
                               <p className="truncate text-sm font-semibold" style={{ color: "#111827" }}>
                                 {memberNamesByUserId.get(reservation.userId) ?? "Unnamed student"}
@@ -1058,6 +1400,22 @@ export default function SchoolManagementTabs({
                             <p className="mt-1 text-xs font-medium" style={{ color: "#9CA3AF" }}>
                               {formatExamType(reservation.examType)}
                             </p>
+                            {canCancelReservation && (
+                              <button
+                                type="button"
+                                onClick={() => cancelReservation(reservation)}
+                                disabled={!!cancelReservationState.pendingReservationId}
+                                className="mt-3 inline-flex h-8 w-fit items-center justify-center gap-1.5 rounded-[10px] px-3 text-xs font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
+                                style={{ border: "1px solid #E4E8EF", color: "#DC2626" }}
+                              >
+                                {cancelPending ? (
+                                  <Loader2 size={13} className="animate-spin" />
+                                ) : (
+                                  <Ban size={13} />
+                                )}
+                                Cancel
+                              </button>
+                            )}
                           </div>
                         ) : (
                           <div className="flex h-full min-h-[66px] items-center justify-center text-xs">
@@ -1072,6 +1430,7 @@ export default function SchoolManagementTabs({
                 )}
               </div>
             </div>
+            )
           )}
         </div>
       )}
@@ -1361,6 +1720,125 @@ export default function SchoolManagementTabs({
         </div>
       )}
 
+      {selectedWeekReservation && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="week-reservation-detail-title"
+          onClick={() => setSelectedWeekReservationId(null)}
+        >
+          <div
+            className="panel anim-scale-in w-full max-w-[400px] overflow-hidden shadow-[0_18px_60px_rgba(15,23,42,0.18)]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-4 px-5 py-4">
+              <div className="flex min-w-0 items-center gap-3">
+                <div
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+                  style={{ background: "#EFF6FF" }}
+                >
+                  <CalendarDays size={18} color="#2563EB" />
+                </div>
+                <div className="min-w-0">
+                  <h2
+                    id="week-reservation-detail-title"
+                    className="truncate text-[0.9375rem] font-semibold"
+                    style={{ color: "#111827", letterSpacing: "-0.01em" }}
+                  >
+                    {memberNamesByUserId.get(selectedWeekReservation.userId) ?? "Unnamed student"}
+                  </h2>
+                  <p className="mt-0.5 text-sm" style={{ color: "#6B7280" }}>
+                    {formatReservationDate(selectedWeekReservation.reservationDate)}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedWeekReservationId(null)}
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50"
+                style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+                aria-label="Close"
+              >
+                <X size={15} />
+              </button>
+            </div>
+
+            <div style={{ borderTop: "1px solid #E4E8EF" }}>
+              <div className="grid grid-cols-2">
+                <div
+                  className="px-4 py-3"
+                  style={{ borderRight: "1px solid #E4E8EF", borderBottom: "1px solid #E4E8EF" }}
+                >
+                  <p className="text-[11px] font-medium uppercase" style={{ color: "#94A3B8" }}>
+                    Exam
+                  </p>
+                  <p className="mt-0.5 text-sm font-semibold" style={{ color: "#111827" }}>
+                    {selectedWeekReservation.examName}
+                  </p>
+                </div>
+                <div className="px-4 py-3" style={{ borderBottom: "1px solid #E4E8EF" }}>
+                  <p className="text-[11px] font-medium uppercase" style={{ color: "#94A3B8" }}>
+                    Type
+                  </p>
+                  <span
+                    className="mt-1 inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold"
+                    style={{ background: "#DBEAFE", color: "#1D4ED8" }}
+                  >
+                    {formatExamType(selectedWeekReservation.examType)}
+                  </span>
+                </div>
+              </div>
+              {selectedWeekSlot && (
+                <div className="grid grid-cols-2">
+                  <div className="px-4 py-3" style={{ borderRight: "1px solid #E4E8EF" }}>
+                    <p className="text-[11px] font-medium uppercase" style={{ color: "#94A3B8" }}>
+                      Slot
+                    </p>
+                    <p className="mt-0.5 text-sm font-semibold" style={{ color: "#111827" }}>
+                      {selectedWeekSlot.name}
+                    </p>
+                  </div>
+                  <div className="px-4 py-3">
+                    <p className="text-[11px] font-medium uppercase" style={{ color: "#94A3B8" }}>
+                      Time
+                    </p>
+                    <p className="mt-0.5 text-sm font-semibold" style={{ color: "#111827" }}>
+                      {formatSlotTime(selectedWeekSlot.startsAt)} – {formatSlotTime(selectedWeekSlot.endsAt)}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {canCancelWeekReservation && (
+              <div
+                className="flex justify-end px-5 py-4"
+                style={{ borderTop: "1px solid #F3F4F6" }}
+              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    cancelReservation(selectedWeekReservation);
+                    setSelectedWeekReservationId(null);
+                  }}
+                  disabled={!!cancelReservationState.pendingReservationId}
+                  className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
+                  style={{ border: "1px solid #E4E8EF", color: "#DC2626" }}
+                >
+                  {cancelWeekReservationPending ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <Ban size={16} />
+                  )}
+                  Cancel reservation
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {kickDialogMember && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4"
@@ -1429,24 +1907,33 @@ export default function SchoolManagementTabs({
 
       {scheduleDialogMember && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4 py-6"
           role="dialog"
           aria-modal="true"
           aria-labelledby="schedule-student-title"
         >
-          <div className="panel w-full max-w-[520px] p-5 shadow-[0_18px_60px_rgba(15,23,42,0.18)]">
-            <div className="mb-4 flex items-start justify-between gap-4">
-              <div>
-                <h2
-                  id="schedule-student-title"
-                  className="text-sm font-semibold"
-                  style={{ color: "#111827" }}
+          <div className="panel w-full max-w-[620px] overflow-hidden shadow-[0_18px_60px_rgba(15,23,42,0.18)]">
+            <div className="flex items-start justify-between gap-4 px-5 py-4 sm:px-6">
+              <div className="flex min-w-0 items-start gap-3">
+                <div
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+                  style={{ background: "#EFF6FF", color: "#2563EB" }}
+                  aria-hidden="true"
                 >
-                  Schedule exam
-                </h2>
-                <p className="mt-1 text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
-                  Booking for {scheduleDialogMember.name}.
-                </p>
+                  <CalendarPlus size={18} />
+                </div>
+                <div className="min-w-0">
+                  <h2
+                    id="schedule-student-title"
+                    className="text-[0.9375rem] font-semibold"
+                    style={{ color: "#111827", letterSpacing: "-0.01em" }}
+                  >
+                    Schedule exam
+                  </h2>
+                  <p className="mt-1 text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
+                    Create a confirmed booking for this student.
+                  </p>
+                </div>
               </div>
               <button
                 type="button"
@@ -1460,152 +1947,229 @@ export default function SchoolManagementTabs({
               </button>
             </div>
 
-            {scheduleState.error && <ErrorBanner message={scheduleState.error} />}
+            <div className="px-5 pb-5 sm:px-6">
+              {scheduleState.error && <ErrorBanner message={scheduleState.error} />}
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div>
-                <label
-                  htmlFor="schedule-student-date"
-                  className="mb-1.5 block text-[0.8125rem] font-medium"
-                  style={{ color: "#374151" }}
-                >
-                  Date
-                </label>
-                <input
-                  id="schedule-student-date"
-                  type="date"
-                  value={scheduleDate}
-                  min={getTodayKey()}
-                  max={getMaxBookingDate()}
-                  onChange={(event) => setScheduleDate(event.target.value)}
-                  className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
-                  style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
-                  onFocus={(event) => {
-                    event.currentTarget.style.borderColor = "#3B82F6";
-                    event.currentTarget.style.boxShadow = "0 0 0 3px rgba(59,130,246,0.12)";
-                  }}
-                  onBlur={(event) => {
-                    event.currentTarget.style.borderColor = "#E4E8EF";
-                    event.currentTarget.style.boxShadow = "none";
-                  }}
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="schedule-student-slot"
-                  className="mb-1.5 block text-[0.8125rem] font-medium"
-                  style={{ color: "#374151" }}
-                >
-                  Slot
-                </label>
-                <select
-                  id="schedule-student-slot"
-                  value={scheduleSlotId}
-                  onChange={(event) => setScheduleSlotId(event.target.value)}
-                  className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
-                  style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
-                >
-                  {examSlots.length === 0 ? (
-                    <option value="">No active slots</option>
-                  ) : (
-                    examSlots.map((slot) => (
-                      <option key={slot.id} value={slot.id}>
-                        {slot.name} - {formatSlotTime(slot.startsAt)}
-                      </option>
-                    ))
-                  )}
-                </select>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="schedule-student-exam-type"
-                  className="mb-1.5 block text-[0.8125rem] font-medium"
-                  style={{ color: "#374151" }}
-                >
-                  Exam type
-                </label>
-                <select
-                  id="schedule-student-exam-type"
-                  value={scheduleExamType}
-                  onChange={(event) => setScheduleExamType(event.target.value as ExamType)}
-                  className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] capitalize outline-none transition-[border-color,box-shadow]"
-                  style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
-                >
-                  <option value="midterm">Midterm</option>
-                  <option value="final">Final</option>
-                </select>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="schedule-student-exam-name"
-                  className="mb-1.5 block text-[0.8125rem] font-medium"
-                  style={{ color: "#374151" }}
-                >
-                  Exam name
-                </label>
-                <input
-                  id="schedule-student-exam-name"
-                  type="text"
-                  value={scheduleExamName}
-                  onChange={(event) => setScheduleExamName(event.target.value)}
-                  placeholder="e.g. Algebra"
-                  className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
-                  style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
-                  onFocus={(event) => {
-                    event.currentTarget.style.borderColor = "#3B82F6";
-                    event.currentTarget.style.boxShadow = "0 0 0 3px rgba(59,130,246,0.12)";
-                  }}
-                  onBlur={(event) => {
-                    event.currentTarget.style.borderColor = "#E4E8EF";
-                    event.currentTarget.style.boxShadow = "none";
-                  }}
-                />
-              </div>
-            </div>
-
-            <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-              <button
-                type="button"
-                onClick={closeScheduleDialog}
-                disabled={scheduleState.pending}
-                className="inline-flex h-[2.625rem] items-center justify-center rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
-                style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+              <div
+                className="mb-4 grid gap-0 overflow-hidden rounded-2xl sm:grid-cols-3"
+                style={{ border: "1px solid #E4E8EF", background: "#F8FAFC" }}
               >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={scheduleForStudent}
-                disabled={
-                  scheduleState.pending ||
-                  !scheduleSlotId ||
-                  !scheduleExamName.trim() ||
-                  examSlots.length === 0
-                }
-                className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
-                style={{
-                  background:
+                <div className="flex items-center gap-3 px-4 py-3 sm:border-r sm:border-[#E4E8EF]">
+                  <div
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+                    style={{ background: "#FFFFFF", color: "#2563EB", border: "1px solid #E4E8EF" }}
+                  >
+                    <UserRound size={15} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-medium uppercase" style={{ color: "#94A3B8" }}>
+                      Student
+                    </p>
+                    <p className="truncate text-sm font-semibold" style={{ color: "#111827" }}>
+                      {scheduleDialogMember.name}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 border-t border-[#E4E8EF] px-4 py-3 sm:border-r sm:border-t-0">
+                  <div
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+                    style={{ background: "#FFFFFF", color: "#2563EB", border: "1px solid #E4E8EF" }}
+                  >
+                    <CalendarDays size={15} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-medium uppercase" style={{ color: "#94A3B8" }}>
+                      Date
+                    </p>
+                    <p className="truncate text-sm font-semibold" style={{ color: "#111827" }}>
+                      {formatReservationDate(scheduleDate)}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 border-t border-[#E4E8EF] px-4 py-3 sm:border-t-0">
+                  <div
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+                    style={{ background: "#FFFFFF", color: "#2563EB", border: "1px solid #E4E8EF" }}
+                  >
+                    <Clock size={15} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-medium uppercase" style={{ color: "#94A3B8" }}>
+                      Slot
+                    </p>
+                    <p className="truncate text-sm font-semibold" style={{ color: "#111827" }}>
+                      {selectedScheduleSlot
+                        ? `${formatSlotTime(selectedScheduleSlot.startsAt)} - ${formatSlotTime(
+                            selectedScheduleSlot.endsAt,
+                          )}`
+                        : "No active slots"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label
+                    htmlFor="schedule-student-date"
+                    className="mb-1.5 block text-[0.8125rem] font-medium"
+                    style={{ color: "#374151" }}
+                  >
+                    Date
+                  </label>
+                  <input
+                    id="schedule-student-date"
+                    type="date"
+                    value={scheduleDate}
+                    min={getTodayKey()}
+                    max={getMaxBookingDate()}
+                    onChange={(event) => setScheduleDate(event.target.value)}
+                    className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
+                    style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+                    onFocus={(event) => {
+                      event.currentTarget.style.borderColor = "#3B82F6";
+                      event.currentTarget.style.boxShadow = "0 0 0 3px rgba(59,130,246,0.12)";
+                    }}
+                    onBlur={(event) => {
+                      event.currentTarget.style.borderColor = "#E4E8EF";
+                      event.currentTarget.style.boxShadow = "none";
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="schedule-student-slot"
+                    className="mb-1.5 block text-[0.8125rem] font-medium"
+                    style={{ color: "#374151" }}
+                  >
+                    Slot
+                  </label>
+                  <select
+                    id="schedule-student-slot"
+                    value={scheduleSlotId}
+                    onChange={(event) => setScheduleSlotId(event.target.value)}
+                    className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
+                    style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+                    onFocus={(event) => {
+                      event.currentTarget.style.borderColor = "#3B82F6";
+                      event.currentTarget.style.boxShadow = "0 0 0 3px rgba(59,130,246,0.12)";
+                    }}
+                    onBlur={(event) => {
+                      event.currentTarget.style.borderColor = "#E4E8EF";
+                      event.currentTarget.style.boxShadow = "none";
+                    }}
+                  >
+                    {examSlots.length === 0 ? (
+                      <option value="">No active slots</option>
+                    ) : (
+                      examSlots.map((slot) => (
+                        <option key={slot.id} value={slot.id}>
+                          {slot.name} - {formatSlotTime(slot.startsAt)}
+                        </option>
+                      ))
+                    )}
+                  </select>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="schedule-student-exam-type"
+                    className="mb-1.5 block text-[0.8125rem] font-medium"
+                    style={{ color: "#374151" }}
+                  >
+                    Exam type
+                  </label>
+                  <select
+                    id="schedule-student-exam-type"
+                    value={scheduleExamType}
+                    onChange={(event) => setScheduleExamType(event.target.value as ExamType)}
+                    className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] capitalize outline-none transition-[border-color,box-shadow]"
+                    style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+                    onFocus={(event) => {
+                      event.currentTarget.style.borderColor = "#3B82F6";
+                      event.currentTarget.style.boxShadow = "0 0 0 3px rgba(59,130,246,0.12)";
+                    }}
+                    onBlur={(event) => {
+                      event.currentTarget.style.borderColor = "#E4E8EF";
+                      event.currentTarget.style.boxShadow = "none";
+                    }}
+                  >
+                    <option value="midterm">Midterm</option>
+                    <option value="final">Final</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="schedule-student-exam-name"
+                    className="mb-1.5 flex items-center gap-1.5 text-[0.8125rem] font-medium"
+                    style={{ color: "#374151" }}
+                  >
+                    <FileText size={14} />
+                    Exam name
+                  </label>
+                  <input
+                    id="schedule-student-exam-name"
+                    type="text"
+                    value={scheduleExamName}
+                    onChange={(event) => setScheduleExamName(event.target.value)}
+                    placeholder="e.g. Algebra"
+                    className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
+                    style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+                    onFocus={(event) => {
+                      event.currentTarget.style.borderColor = "#3B82F6";
+                      event.currentTarget.style.boxShadow = "0 0 0 3px rgba(59,130,246,0.12)";
+                    }}
+                    onBlur={(event) => {
+                      event.currentTarget.style.borderColor = "#E4E8EF";
+                      event.currentTarget.style.boxShadow = "none";
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="mt-5 flex flex-col-reverse gap-2 border-t border-[#F3F4F6] pt-4 sm:flex-row sm:justify-end">
+                <button
+                  type="button"
+                  onClick={closeScheduleDialog}
+                  disabled={scheduleState.pending}
+                  className="inline-flex h-[2.625rem] items-center justify-center rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
+                  style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={scheduleForStudent}
+                  disabled={
                     scheduleState.pending ||
                     !scheduleSlotId ||
                     !scheduleExamName.trim() ||
                     examSlots.length === 0
-                      ? "#93C5FD"
-                      : "#2563EB",
-                  boxShadow:
-                    scheduleState.pending ||
-                    !scheduleSlotId ||
-                    !scheduleExamName.trim() ||
-                    examSlots.length === 0
-                      ? "none"
-                      : "0 1px 3px rgba(37,99,235,0.25), 0 4px 12px rgba(37,99,235,0.12)",
-                }}
-              >
-                {scheduleState.pending ? <Loader2 size={16} className="animate-spin" /> : <CalendarPlus size={16} />}
-                Schedule exam
-              </button>
+                  }
+                  className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
+                  style={{
+                    background:
+                      scheduleState.pending ||
+                      !scheduleSlotId ||
+                      !scheduleExamName.trim() ||
+                      examSlots.length === 0
+                        ? "#93C5FD"
+                        : "#2563EB",
+                    boxShadow:
+                      scheduleState.pending ||
+                      !scheduleSlotId ||
+                      !scheduleExamName.trim() ||
+                      examSlots.length === 0
+                        ? "none"
+                        : "0 1px 3px rgba(37,99,235,0.25), 0 4px 12px rgba(37,99,235,0.12)",
+                  }}
+                >
+                  {scheduleState.pending ? <Loader2 size={16} className="animate-spin" /> : <CalendarPlus size={16} />}
+                  Schedule exam
+                </button>
+              </div>
             </div>
           </div>
         </div>

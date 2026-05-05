@@ -23,7 +23,8 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3001)",
       "PowerShell(Get-Command *)",
-      "PowerShell(Get-Location; Test-Path .graphify_detect.json; \\(Get-Item .graphify_detect.json\\).Length; Test-Path .graphify_python; Get-Content .graphify_python)"
+      "PowerShell(Get-Location; Test-Path .graphify_detect.json; \\(Get-Item .graphify_detect.json\\).Length; Test-Path .graphify_python; Get-Content .graphify_python)",
+      "PowerShell(python -c $script)"
     ]
   }
 }

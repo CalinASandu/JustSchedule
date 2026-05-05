@@ -9,3 +9,6 @@ verify_jwt = true
 
 [functions.schedule-exam-for-student]
 verify_jwt = true
+
+[functions.cancel-reservation]
+verify_jwt = true
