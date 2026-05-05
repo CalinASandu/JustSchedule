@@ -21,6 +21,7 @@ interface ScheduleClientProps {
   studentName: string;
   userEmail: string;
   currentUserId: string;
+  canSelfBook: boolean;
   examSlots: SlotDef[];
   initialReservations: Reservation[];
   reservationError: string | null;
@@ -33,6 +34,7 @@ export default function ScheduleClient({
   studentName: initialStudentName,
   userEmail,
   currentUserId,
+  canSelfBook,
   examSlots,
   initialReservations,
   reservationError,
@@ -159,8 +161,12 @@ export default function ScheduleClient({
     !!selectedExam.trim() &&
     !!selectedDate &&
     !!selectedSlotId &&
+    canSelfBook &&
     !showConfirmation &&
     !isReserving;
+  const reserveDisabledMessage = canSelfBook
+    ? null
+    : "A professor must schedule this exam for you.";
   const activePanel = searchParams.get("panel") === "profile" ? "profile" : "schedule";
 
   function selectPanel(panel: "schedule" | "profile") {
@@ -255,6 +261,7 @@ export default function ScheduleClient({
                   isSubmitting={isReserving}
                   isConfirmed={showConfirmation}
                   error={reserveError}
+                  reserveDisabledMessage={reserveDisabledMessage}
                   onReserve={handleReserve}
                   onReset={handleReset}
                 />

@@ -51,6 +51,10 @@ function statusForDatabaseError(error: { code?: string; message?: string }) {
     return 409;
   }
 
+  if (message.includes("self booking is disabled")) {
+    return 403;
+  }
+
   if (
     message.includes("student members") ||
     message.includes("invalid session")
@@ -91,6 +95,13 @@ function publicReservationError(error: { code?: string; message?: string }) {
     return {
       code: "student_membership_required",
       error: "Only student members can schedule exams.",
+    };
+  }
+
+  if (message.includes("self booking is disabled")) {
+    return {
+      code: "self_booking_disabled",
+      error: "A professor must schedule this exam for you.",
     };
   }
 

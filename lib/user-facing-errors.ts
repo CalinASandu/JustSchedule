@@ -23,7 +23,8 @@ export type ErrorContext =
   | "schoolDelete"
   | "schoolLeave"
   | "schoolMemberKick"
-  | "schoolRoleUpdate";
+  | "schoolRoleUpdate"
+  | "selfBookingUpdate";
 
 const fallbackMessages: Record<ErrorContext, string> = {
   createInvite: "Could not create an invite link. Try again in a moment.",
@@ -39,6 +40,7 @@ const fallbackMessages: Record<ErrorContext, string> = {
   schoolLeave: "Could not leave this school. Try again in a moment.",
   schoolMemberKick: "Could not remove this member. Try again in a moment.",
   schoolRoleUpdate: "Could not update member roles. Try again in a moment.",
+  selfBookingUpdate: "Could not update self-booking permission. Try again in a moment.",
 };
 
 function normalizeMessage(value: unknown) {
@@ -117,6 +119,10 @@ export function getUserFacingErrorMessage(
     if (context === "schoolRoleUpdate") {
       return "Only school admins can update member roles.";
     }
+
+    if (context === "selfBookingUpdate") {
+      return "Only admins and professors can update student self-booking permissions.";
+    }
   }
 
   if (context === "reserveExamSlot") {
@@ -138,6 +144,10 @@ export function getUserFacingErrorMessage(
 
     if (messageIncludes(message, ["only student members"])) {
       return "Only student members can schedule exams.";
+    }
+
+    if (messageIncludes(message, ["self booking is disabled"])) {
+      return "A professor must schedule this exam for you.";
     }
 
     if (messageIncludes(message, ["invalid session", "jwt", "authorization"])) {
@@ -186,6 +196,20 @@ export function getUserFacingErrorMessage(
 
     if (messageIncludes(message, ["no longer pending"])) {
       return "One or more join requests were already reviewed. Refresh the page and try again.";
+    }
+  }
+
+  if (context === "selfBookingUpdate") {
+    if (messageIncludes(message, ["admins and professors"])) {
+      return "Only admins and professors can update student self-booking permissions.";
+    }
+
+    if (messageIncludes(message, ["only student", "student self-booking"])) {
+      return "Only student self-booking permissions can be changed.";
+    }
+
+    if (messageIncludes(message, ["own self-booking"])) {
+      return "Students cannot update their own self-booking permission.";
     }
   }
 

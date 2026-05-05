@@ -8,6 +8,7 @@ type SchoolMemberRow = {
   id: string;
   role: string | null;
   school_id: string;
+  can_self_book: boolean | null;
 };
 
 type SchoolRow = {
@@ -108,7 +109,7 @@ export default async function SchedulePage({
     supabase.from("Profiles").select("name").eq("id", user.id).maybeSingle(),
     supabase
       .from("SchoolMembers")
-      .select("id, role, school_id")
+      .select("id, role, school_id, can_self_book")
       .eq("user_id", user.id)
       .eq("school_id", schoolId)
       .maybeSingle(),
@@ -200,6 +201,7 @@ export default async function SchedulePage({
       studentName={displayName}
       userEmail={user.email ?? "Signed in with Google"}
       currentUserId={user.id}
+      canSelfBook={membershipRow.can_self_book ?? true}
       examSlots={examSlots}
       initialReservations={reservations}
       reservationError={

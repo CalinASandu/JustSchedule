@@ -15,6 +15,9 @@ type SchoolMemberRow = {
   joined_at: string;
   profile_name: string | null;
   email: string | null;
+  can_self_book: boolean | null;
+  self_booking_disabled_at: string | null;
+  self_booking_disabled_by: string | null;
 };
 
 type ProfileRow = {
@@ -67,6 +70,9 @@ type SchoolMember = {
   email: string | null;
   role: SchoolRole;
   joinedAt: string;
+  canSelfBook: boolean;
+  selfBookingDisabledAt: string | null;
+  selfBookingDisabledBy: string | null;
   isCurrentUser: boolean;
 };
 
@@ -214,6 +220,9 @@ export default async function SchoolDashboardPage({
     email: member.email,
     role: normalizeRole(member.role),
     joinedAt: member.joined_at,
+    canSelfBook: member.can_self_book ?? true,
+    selfBookingDisabledAt: member.self_booking_disabled_at,
+    selfBookingDisabledBy: member.self_booking_disabled_by,
     isCurrentUser: member.user_id === user.id,
   }));
   const members: SchoolMember[] = [
@@ -228,6 +237,9 @@ export default async function SchoolDashboardPage({
             email: user.email ?? null,
             role: "admin" as const,
             joinedAt: school.created_at,
+            canSelfBook: true,
+            selfBookingDisabledAt: null,
+            selfBookingDisabledBy: null,
             isCurrentUser: true,
           },
         ]),
@@ -363,6 +375,7 @@ export default async function SchoolDashboardPage({
           examSlots={examSlots}
           reservations={reservations}
           canManageMembers={isAdmin}
+          canManageSelfBooking={isAdmin || isProfessor}
           memberError={
             membersError
               ? getUserFacingErrorMessage("loadMembers", membersError)

@@ -29,6 +29,9 @@ type SchoolMember = {
   email: string | null;
   role: SchoolRole;
   joinedAt: string;
+  canSelfBook: boolean;
+  selfBookingDisabledAt: string | null;
+  selfBookingDisabledBy: string | null;
   isCurrentUser: boolean;
 };
 
@@ -88,6 +91,7 @@ type Props = {
   joinRequestError: string | null;
   reservationError: string | null;
   canManageMembers: boolean;
+  canManageSelfBooking: boolean;
 };
 
 function formatDate(value: string) {
@@ -164,6 +168,7 @@ export default function SchoolManagementTabs({
   joinRequestError,
   reservationError,
   canManageMembers,
+  canManageSelfBooking,
 }: Props) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<SchoolDashboardTab>("members");
@@ -177,6 +182,16 @@ export default function SchoolManagementTabs({
   const [removedMemberIds, setRemovedMemberIds] = useState<Set<string>>(new Set());
   const [roleOverrides, setRoleOverrides] = useState<Record<string, SchoolRole>>({});
   const [selectedRoles, setSelectedRoles] = useState<Record<string, SchoolRole>>({});
+  const [selfBookingOverrides, setSelfBookingOverrides] = useState<Record<string, boolean>>({});
+  const [selfBookingState, setSelfBookingState] = useState<{
+    error: string | null;
+    success: string | null;
+    pendingMemberId: string | null;
+  }>({
+    error: null,
+    success: null,
+    pendingMemberId: null,
+  });
   const [roleState, setRoleState] = useState<{
     error: string | null;
     success: string | null;
@@ -227,8 +242,9 @@ export default function SchoolManagementTabs({
         .map((member) => ({
           ...member,
           role: roleOverrides[member.id] ?? member.role,
+          canSelfBook: selfBookingOverrides[member.id] ?? member.canSelfBook,
         })),
-    [members, removedMemberIds, roleOverrides],
+    [members, removedMemberIds, roleOverrides, selfBookingOverrides],
   );
   const selectedDecisions = Object.entries(requestDecisions).filter(([requestId]) =>
     visibleJoinRequests.some((request) => request.id === requestId),
@@ -481,6 +497,46 @@ export default function SchoolManagementTabs({
     router.refresh();
   }
 
+  async function toggleSelfBooking(member: SchoolMember) {
+    if (member.role !== "student" || selfBookingState.pendingMemberId) {
+      return;
+    }
+
+    const nextCanSelfBook = !member.canSelfBook;
+    setSelfBookingState({ error: null, success: null, pendingMemberId: member.id });
+
+    const supabase = createClient();
+    const { data, error } = await supabase.rpc("set_student_self_booking_permission", {
+      target_school_id: schoolId,
+      target_member_id: member.id,
+      target_can_self_book: nextCanSelfBook,
+    });
+
+    if (error) {
+      console.error("Update student self-booking permission failed", error);
+      setSelfBookingState({
+        error: getUserFacingErrorMessage("selfBookingUpdate", error),
+        success: null,
+        pendingMemberId: null,
+      });
+      return;
+    }
+
+    const [updatedMember] = (data ?? []) as { can_self_book: boolean }[];
+    setSelfBookingOverrides((current) => ({
+      ...current,
+      [member.id]: updatedMember?.can_self_book ?? nextCanSelfBook,
+    }));
+    setSelfBookingState({
+      error: null,
+      success: `${member.name} is now ${
+        nextCanSelfBook ? "allowed to self-book exams" : "teacher scheduled only"
+      }.`,
+      pendingMemberId: null,
+    });
+    router.refresh();
+  }
+
   function openKickDialog(member: SchoolMember) {
     setKickDialogMemberId(member.id);
     setKickSecondsRemaining(5);
@@ -606,13 +662,15 @@ export default function SchoolManagementTabs({
             </span>
           </div>
 
-          {(memberError || roleState.error) && (
-            <ErrorBanner message={roleState.error ?? memberError ?? ""} />
+          {(memberError || roleState.error || selfBookingState.error) && (
+            <ErrorBanner
+              message={selfBookingState.error ?? roleState.error ?? memberError ?? ""}
+            />
           )}
 
-          {roleState.success && (
+          {(roleState.success || selfBookingState.success) && (
             <p className="anim-fade-in mb-4 text-[0.8125rem] font-medium" style={{ color: "#1D4ED8" }}>
-              {roleState.success}
+              {selfBookingState.success ?? roleState.success}
             </p>
           )}
 
@@ -667,6 +725,12 @@ export default function SchoolManagementTabs({
               const selectedRole = selectedRoles[member.id] ?? member.role;
               const canManage = canManageMembers && !member.isCurrentUser && !member.id.startsWith("created-");
               const canKick = canManage && member.role !== "admin";
+              const canToggleSelfBooking =
+                canManageSelfBooking &&
+                member.role === "student" &&
+                !member.isCurrentUser &&
+                !member.id.startsWith("created-");
+              const selfBookingPending = selfBookingState.pendingMemberId === member.id;
 
               return (
               <div
@@ -696,9 +760,40 @@ export default function SchoolManagementTabs({
                     <p className="truncate text-xs" style={{ color: "#9CA3AF" }}>
                       {member.email ?? `Joined ${formatDate(member.joinedAt)}`}
                     </p>
+                    {member.role === "student" && (
+                      <div className="mt-2 flex flex-wrap items-center gap-2">
+                        <span
+                          className="rounded-full px-3 py-1 text-xs font-semibold"
+                          style={
+                            member.canSelfBook
+                              ? { background: "#DBEAFE", color: "#1D4ED8" }
+                              : { background: "#E2E8F0", color: "#64748B" }
+                          }
+                        >
+                          {member.canSelfBook ? "Self booking on" : "Teacher scheduled only"}
+                        </span>
+                        {!member.canSelfBook && member.selfBookingDisabledAt && (
+                          <span className="text-xs" style={{ color: "#9CA3AF" }}>
+                            Since {formatDate(member.selfBookingDisabledAt)}
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  {canToggleSelfBooking && (
+                    <button
+                      type="button"
+                      onClick={() => toggleSelfBooking(member)}
+                      disabled={!!selfBookingState.pendingMemberId}
+                      className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
+                      style={{ border: "1px solid #E4E8EF", color: "#374151" }}
+                    >
+                      {selfBookingPending && <Loader2 size={16} className="animate-spin" />}
+                      {member.canSelfBook ? "Restrict booking" : "Allow booking"}
+                    </button>
+                  )}
                   <select
                     value={selectedRole}
                     onChange={(event) => {

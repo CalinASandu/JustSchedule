@@ -160,3 +160,11 @@ All visual conventions are documented in `docs/design.md`. Read it before buildi
 - Font: Geist is already loaded globally. Do not re-import it.
 - CSS animation utilities: `anim-fade-in`, `anim-slide-up`, `anim-scale-in`, and stagger delays `anim-d1` through `anim-d4`, all defined in `globals.css`.
 - No dark mode.
+
+Before UI, React, or Next.js component work, read and follow the relevant installed design and Vercel skills in addition to `docs/design.md`:
+
+- `web-design-guidelines` for UI/accessibility/design review.
+- `vercel-react-best-practices` for React and Next.js performance patterns.
+- `vercel-composition-patterns` for reusable component architecture.
+- `vercel-react-view-transitions` when adding or changing transitions/animations between UI states or routes.
+- `build-web-apps:frontend-app-builder` for new app surfaces, dashboards, major redesigns, or visually driven UI work.

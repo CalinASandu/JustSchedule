@@ -9,7 +9,7 @@
       "source_file": "eslint.config.mjs",
       "source_location": "L1",
       "id": "eslint_config_mjs",
-      "community": 32,
+      "community": 31,
       "norm_label": "eslint.config.mjs"
     },
     {
@@ -18,7 +18,7 @@
       "source_file": "next-env.d.ts",
       "source_location": "L1",
       "id": "next_env_d_ts",
-      "community": 33,
+      "community": 32,
       "norm_label": "next-env.d.ts"
     },
     {
@@ -27,7 +27,7 @@
       "source_file": "next.config.ts",
       "source_location": "L1",
       "id": "next_config_ts",
-      "community": 34,
+      "community": 33,
       "norm_label": "next.config.ts"
     },
     {
@@ -36,7 +36,7 @@
       "source_file": "postcss.config.mjs",
       "source_location": "L1",
       "id": "postcss_config_mjs",
-      "community": 35,
+      "community": 34,
       "norm_label": "postcss.config.mjs"
     },
     {
@@ -45,16 +45,16 @@
       "source_file": "proxy.ts",
       "source_location": "L1",
       "id": "proxy_ts",
-      "community": 17,
+      "community": 4,
       "norm_label": "proxy.ts"
     },
     {
       "label": "proxy()",
       "file_type": "code",
       "source_file": "proxy.ts",
-      "source_location": "L4",
+      "source_location": "L5",
       "id": "justschedule_proxy_proxy",
-      "community": 17,
+      "community": 4,
       "norm_label": "proxy()"
     },
     {
@@ -63,17 +63,8 @@
       "source_file": "app\\layout.tsx",
       "source_location": "L1",
       "id": "app_layout_tsx",
-      "community": 18,
+      "community": 35,
       "norm_label": "layout.tsx"
-    },
-    {
-      "label": "RootLayout()",
-      "file_type": "code",
-      "source_file": "app\\layout.tsx",
-      "source_location": "L17",
-      "id": "app_layout_rootlayout",
-      "community": 18,
-      "norm_label": "rootlayout()"
     },
     {
       "label": "page.tsx",
@@ -85,22 +76,49 @@
       "norm_label": "page.tsx"
     },
     {
-      "label": "sanitizeNext()",
-      "file_type": "code",
-      "source_file": "app\\page.tsx",
-      "source_location": "L5",
-      "id": "app_page_sanitizenext",
-      "community": 0,
-      "norm_label": "sanitizenext()"
-    },
-    {
       "label": "Home()",
       "file_type": "code",
       "source_file": "app\\page.tsx",
-      "source_location": "L10",
+      "source_location": "L6",
       "id": "app_page_home",
       "community": 0,
       "norm_label": "home()"
+    },
+    {
+      "label": "PostHogPageView.tsx",
+      "file_type": "code",
+      "source_file": "app\\PostHogPageView.tsx",
+      "source_location": "L1",
+      "id": "app_posthogpageview_tsx",
+      "community": 17,
+      "norm_label": "posthogpageview.tsx"
+    },
+    {
+      "label": "PostHogPageView()",
+      "file_type": "code",
+      "source_file": "app\\PostHogPageView.tsx",
+      "source_location": "L7",
+      "id": "app_posthogpageview_posthogpageview",
+      "community": 17,
+      "norm_label": "posthogpageview()"
+    },
+    {
+      "label": "providers.tsx",
+      "file_type": "code",
+      "source_file": "app\\providers.tsx",
+      "source_location": "L1",
+      "id": "app_providers_tsx",
+      "community": 18,
+      "norm_label": "providers.tsx"
+    },
+    {
+      "label": "PostHogProvider()",
+      "file_type": "code",
+      "source_file": "app\\providers.tsx",
+      "source_location": "L31",
+      "id": "app_providers_posthogprovider",
+      "community": 18,
+      "norm_label": "posthogprovider()"
     },
     {
       "label": "route.ts",
@@ -115,7 +133,7 @@
       "label": "GET()",
       "file_type": "code",
       "source_file": "app\\auth\\callback\\route.ts",
-      "source_location": "L4",
+      "source_location": "L5",
       "id": "callback_route_get",
       "community": 0,
       "norm_label": "get()"
@@ -133,7 +151,7 @@
       "label": "registerSchool()",
       "file_type": "code",
       "source_file": "app\\dashboard\\actions.ts",
-      "source_location": "L11",
+      "source_location": "L12",
       "id": "dashboard_actions_registerschool",
       "community": 0,
       "norm_label": "registerschool()"
@@ -144,7 +162,7 @@
       "source_file": "app\\dashboard\\page.tsx",
       "source_location": "L1",
       "id": "app_dashboard_page_tsx",
-      "community": 4,
+      "community": 6,
       "norm_label": "page.tsx"
     },
     {
@@ -153,7 +171,7 @@
       "source_file": "app\\dashboard\\page.tsx",
       "source_location": "L31",
       "id": "dashboard_page_getinitials",
-      "community": 4,
+      "community": 6,
       "norm_label": "getinitials()"
     },
     {
@@ -162,7 +180,7 @@
       "source_file": "app\\dashboard\\page.tsx",
       "source_location": "L42",
       "id": "dashboard_page_normalizerole",
-      "community": 4,
+      "community": 6,
       "norm_label": "normalizerole()"
     },
     {
@@ -171,7 +189,7 @@
       "source_file": "app\\dashboard\\page.tsx",
       "source_location": "L50",
       "id": "dashboard_page_normalizememberships",
-      "community": 4,
+      "community": 6,
       "norm_label": "normalizememberships()"
     },
     {
@@ -180,7 +198,7 @@
       "source_file": "app\\dashboard\\page.tsx",
       "source_location": "L69",
       "id": "dashboard_page_mergecreatedschools",
-      "community": 4,
+      "community": 6,
       "norm_label": "mergecreatedschools()"
     },
     {
@@ -189,7 +207,7 @@
       "source_file": "app\\dashboard\\page.tsx",
       "source_location": "L90",
       "id": "dashboard_page_formatdate",
-      "community": 4,
+      "community": 6,
       "norm_label": "formatdate()"
     },
     {
@@ -198,61 +216,61 @@
       "source_file": "app\\dashboard\\schedule\\page.tsx",
       "source_location": "L1",
       "id": "app_dashboard_schedule_page_tsx",
-      "community": 3,
+      "community": 5,
       "norm_label": "page.tsx"
     },
     {
       "label": "getSchoolId()",
       "file_type": "code",
       "source_file": "app\\dashboard\\schedule\\page.tsx",
-      "source_location": "L42",
+      "source_location": "L44",
       "id": "schedule_page_getschoolid",
-      "community": 3,
+      "community": 5,
       "norm_label": "getschoolid()"
     },
     {
       "label": "formatLocalDate()",
       "file_type": "code",
       "source_file": "app\\dashboard\\schedule\\page.tsx",
-      "source_location": "L47",
+      "source_location": "L49",
       "id": "schedule_page_formatlocaldate",
-      "community": 3,
+      "community": 5,
       "norm_label": "formatlocaldate()"
     },
     {
       "label": "formatTime()",
       "file_type": "code",
       "source_file": "app\\dashboard\\schedule\\page.tsx",
-      "source_location": "L53",
+      "source_location": "L55",
       "id": "schedule_page_formattime",
-      "community": 3,
+      "community": 5,
       "norm_label": "formattime()"
     },
     {
       "label": "formatDuration()",
       "file_type": "code",
       "source_file": "app\\dashboard\\schedule\\page.tsx",
-      "source_location": "L61",
+      "source_location": "L63",
       "id": "schedule_page_formatduration",
-      "community": 3,
+      "community": 5,
       "norm_label": "formatduration()"
     },
     {
       "label": "normalizeExamType()",
       "file_type": "code",
       "source_file": "app\\dashboard\\schedule\\page.tsx",
-      "source_location": "L81",
+      "source_location": "L83",
       "id": "schedule_page_normalizeexamtype",
-      "community": 3,
+      "community": 5,
       "norm_label": "normalizeexamtype()"
     },
     {
       "label": "SchedulePage()",
       "file_type": "code",
       "source_file": "app\\dashboard\\schedule\\page.tsx",
-      "source_location": "L85",
+      "source_location": "L87",
       "id": "schedule_page_schedulepage",
-      "community": 3,
+      "community": 5,
       "norm_label": "schedulepage()"
     },
     {
@@ -261,52 +279,52 @@
       "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
       "source_location": "L1",
       "id": "app_dashboard_schedule_scheduleclient_tsx",
-      "community": 5,
+      "community": 7,
       "norm_label": "scheduleclient.tsx"
     },
     {
       "label": "handleDateSelect()",
       "file_type": "code",
       "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
-      "source_location": "L54",
+      "source_location": "L56",
       "id": "schedule_scheduleclient_handledateselect",
-      "community": 5,
+      "community": 7,
       "norm_label": "handledateselect()"
     },
     {
       "label": "handleSlotSelect()",
       "file_type": "code",
       "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
-      "source_location": "L61",
+      "source_location": "L63",
       "id": "schedule_scheduleclient_handleslotselect",
-      "community": 5,
+      "community": 7,
       "norm_label": "handleslotselect()"
     },
     {
       "label": "handleReserve()",
       "file_type": "code",
       "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
-      "source_location": "L67",
+      "source_location": "L69",
       "id": "schedule_scheduleclient_handlereserve",
-      "community": 5,
+      "community": 7,
       "norm_label": "handlereserve()"
     },
     {
       "label": "handleReset()",
       "file_type": "code",
       "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
-      "source_location": "L135",
+      "source_location": "L139",
       "id": "schedule_scheduleclient_handlereset",
-      "community": 5,
+      "community": 7,
       "norm_label": "handlereset()"
     },
     {
       "label": "selectPanel()",
       "file_type": "code",
       "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
-      "source_location": "L164",
+      "source_location": "L172",
       "id": "schedule_scheduleclient_selectpanel",
-      "community": 5,
+      "community": 7,
       "norm_label": "selectpanel()"
     },
     {
@@ -315,44 +333,35 @@
       "source_file": "app\\dashboard\\schools\\[schoolId]\\page.tsx",
       "source_location": "L1",
       "id": "app_dashboard_schools_schoolid_page_tsx",
-      "community": 8,
+      "community": 11,
       "norm_label": "page.tsx"
     },
     {
       "label": "getInitials()",
       "file_type": "code",
       "source_file": "app\\dashboard\\schools\\[schoolId]\\page.tsx",
-      "source_location": "L90",
+      "source_location": "L98",
       "id": "schoolid_page_getinitials",
-      "community": 8,
+      "community": 11,
       "norm_label": "getinitials()"
     },
     {
       "label": "formatMemberName()",
       "file_type": "code",
       "source_file": "app\\dashboard\\schools\\[schoolId]\\page.tsx",
-      "source_location": "L101",
+      "source_location": "L109",
       "id": "schoolid_page_formatmembername",
-      "community": 8,
+      "community": 11,
       "norm_label": "formatmembername()"
     },
     {
       "label": "normalizeRole()",
       "file_type": "code",
       "source_file": "app\\dashboard\\schools\\[schoolId]\\page.tsx",
-      "source_location": "L109",
-      "id": "schoolid_page_normalizerole",
-      "community": 8,
-      "norm_label": "normalizerole()"
-    },
-    {
-      "label": "SchoolDashboardPage()",
-      "file_type": "code",
-      "source_file": "app\\dashboard\\schools\\[schoolId]\\page.tsx",
       "source_location": "L117",
-      "id": "schoolid_page_schooldashboardpage",
-      "community": 8,
-      "norm_label": "schooldashboardpage()"
+      "id": "schoolid_page_normalizerole",
+      "community": 11,
+      "norm_label": "normalizerole()"
     },
     {
       "label": "actions.ts",
@@ -367,7 +376,7 @@
       "label": "requestSchoolJoin()",
       "file_type": "code",
       "source_file": "app\\invite\\actions.ts",
-      "source_location": "L11",
+      "source_location": "L12",
       "id": "invite_actions_requestschooljoin",
       "community": 0,
       "norm_label": "requestschooljoin()"
@@ -441,34 +450,34 @@
       "source_file": "components\\dashboard\\LeaveSchoolButton.tsx",
       "source_location": "L1",
       "id": "components_dashboard_leaveschoolbutton_tsx",
-      "community": 10,
+      "community": 1,
       "norm_label": "leaveschoolbutton.tsx"
     },
     {
       "label": "openDialog()",
       "file_type": "code",
       "source_file": "components\\dashboard\\LeaveSchoolButton.tsx",
-      "source_location": "L33",
+      "source_location": "L34",
       "id": "dashboard_leaveschoolbutton_opendialog",
-      "community": 10,
+      "community": 1,
       "norm_label": "opendialog()"
     },
     {
       "label": "closeDialog()",
       "file_type": "code",
       "source_file": "components\\dashboard\\LeaveSchoolButton.tsx",
-      "source_location": "L39",
+      "source_location": "L40",
       "id": "dashboard_leaveschoolbutton_closedialog",
-      "community": 10,
+      "community": 1,
       "norm_label": "closedialog()"
     },
     {
       "label": "leaveSchool()",
       "file_type": "code",
       "source_file": "components\\dashboard\\LeaveSchoolButton.tsx",
-      "source_location": "L49",
+      "source_location": "L50",
       "id": "dashboard_leaveschoolbutton_leaveschool",
-      "community": 10,
+      "community": 1,
       "norm_label": "leaveschool()"
     },
     {
@@ -486,88 +495,88 @@
       "source_file": "components\\dashboard\\SchoolManagementTabs.tsx",
       "source_location": "L1",
       "id": "components_dashboard_schoolmanagementtabs_tsx",
-      "community": 1,
+      "community": 2,
       "norm_label": "schoolmanagementtabs.tsx"
     },
     {
       "label": "formatDate()",
       "file_type": "code",
       "source_file": "components\\dashboard\\SchoolManagementTabs.tsx",
-      "source_location": "L89",
+      "source_location": "L97",
       "id": "dashboard_schoolmanagementtabs_formatdate",
-      "community": 1,
+      "community": 2,
       "norm_label": "formatdate()"
     },
     {
       "label": "getDefaultExpiryDate()",
       "file_type": "code",
       "source_file": "components\\dashboard\\SchoolManagementTabs.tsx",
-      "source_location": "L97",
+      "source_location": "L105",
       "id": "dashboard_schoolmanagementtabs_getdefaultexpirydate",
-      "community": 1,
+      "community": 2,
       "norm_label": "getdefaultexpirydate()"
     },
     {
       "label": "dateInputToEndOfDay()",
       "file_type": "code",
       "source_file": "components\\dashboard\\SchoolManagementTabs.tsx",
-      "source_location": "L103",
+      "source_location": "L111",
       "id": "dashboard_schoolmanagementtabs_dateinputtoendofday",
-      "community": 1,
+      "community": 2,
       "norm_label": "dateinputtoendofday()"
     },
     {
       "label": "getTodayKey()",
       "file_type": "code",
       "source_file": "components\\dashboard\\SchoolManagementTabs.tsx",
-      "source_location": "L108",
+      "source_location": "L116",
       "id": "dashboard_schoolmanagementtabs_gettodaykey",
-      "community": 1,
+      "community": 2,
       "norm_label": "gettodaykey()"
     },
     {
       "label": "addDays()",
       "file_type": "code",
       "source_file": "components\\dashboard\\SchoolManagementTabs.tsx",
-      "source_location": "L117",
+      "source_location": "L125",
       "id": "dashboard_schoolmanagementtabs_adddays",
-      "community": 1,
+      "community": 2,
       "norm_label": "adddays()"
     },
     {
       "label": "formatReservationDate()",
       "file_type": "code",
       "source_file": "components\\dashboard\\SchoolManagementTabs.tsx",
-      "source_location": "L127",
+      "source_location": "L135",
       "id": "dashboard_schoolmanagementtabs_formatreservationdate",
-      "community": 1,
+      "community": 2,
       "norm_label": "formatreservationdate()"
     },
     {
       "label": "formatSlotTime()",
       "file_type": "code",
       "source_file": "components\\dashboard\\SchoolManagementTabs.tsx",
-      "source_location": "L136",
+      "source_location": "L144",
       "id": "dashboard_schoolmanagementtabs_formatslottime",
-      "community": 1,
+      "community": 2,
       "norm_label": "formatslottime()"
     },
     {
       "label": "formatExamType()",
       "file_type": "code",
       "source_file": "components\\dashboard\\SchoolManagementTabs.tsx",
-      "source_location": "L146",
+      "source_location": "L154",
       "id": "dashboard_schoolmanagementtabs_formatexamtype",
-      "community": 1,
+      "community": 2,
       "norm_label": "formatexamtype()"
     },
     {
       "label": "SchoolManagementTabs()",
       "file_type": "code",
       "source_file": "components\\dashboard\\SchoolManagementTabs.tsx",
-      "source_location": "L150",
+      "source_location": "L158",
       "id": "dashboard_schoolmanagementtabs_schoolmanagementtabs",
-      "community": 1,
+      "community": 2,
       "norm_label": "schoolmanagementtabs()"
     },
     {
@@ -630,7 +639,7 @@
       "source_file": "components\\schedule\\BookingsPanel.tsx",
       "source_location": "L1",
       "id": "components_schedule_bookingspanel_tsx",
-      "community": 6,
+      "community": 8,
       "norm_label": "bookingspanel.tsx"
     },
     {
@@ -639,7 +648,7 @@
       "source_file": "components\\schedule\\BookingsPanel.tsx",
       "source_location": "L10",
       "id": "schedule_bookingspanel_getinitials",
-      "community": 6,
+      "community": 8,
       "norm_label": "getinitials()"
     },
     {
@@ -648,7 +657,7 @@
       "source_file": "components\\schedule\\BookingsPanel.tsx",
       "source_location": "L21",
       "id": "schedule_bookingspanel_formatdate",
-      "community": 6,
+      "community": 8,
       "norm_label": "formatdate()"
     },
     {
@@ -657,7 +666,7 @@
       "source_file": "components\\schedule\\BookingsPanel.tsx",
       "source_location": "L30",
       "id": "schedule_bookingspanel_formattime",
-      "community": 6,
+      "community": 8,
       "norm_label": "formattime()"
     },
     {
@@ -666,7 +675,7 @@
       "source_file": "components\\schedule\\BookingsPanel.tsx",
       "source_location": "L38",
       "id": "schedule_bookingspanel_formatexamtype",
-      "community": 6,
+      "community": 8,
       "norm_label": "formatexamtype()"
     },
     {
@@ -675,7 +684,7 @@
       "source_file": "components\\schedule\\BookingsPanel.tsx",
       "source_location": "L58",
       "id": "schedule_bookingspanel_handleswap",
-      "community": 6,
+      "community": 8,
       "norm_label": "handleswap()"
     },
     {
@@ -693,7 +702,7 @@
       "source_file": "components\\schedule\\CalendarPanel.tsx",
       "source_location": "L1",
       "id": "components_schedule_calendarpanel_tsx",
-      "community": 2,
+      "community": 3,
       "norm_label": "calendarpanel.tsx"
     },
     {
@@ -702,7 +711,7 @@
       "source_file": "components\\schedule\\CalendarPanel.tsx",
       "source_location": "L22",
       "id": "schedule_calendarpanel_toiso",
-      "community": 2,
+      "community": 3,
       "norm_label": "toiso()"
     },
     {
@@ -711,7 +720,7 @@
       "source_file": "components\\schedule\\CalendarPanel.tsx",
       "source_location": "L26",
       "id": "schedule_calendarpanel_isweekend",
-      "community": 2,
+      "community": 3,
       "norm_label": "isweekend()"
     },
     {
@@ -720,7 +729,7 @@
       "source_file": "components\\schedule\\CalendarPanel.tsx",
       "source_location": "L31",
       "id": "schedule_calendarpanel_ispast",
-      "community": 2,
+      "community": 3,
       "norm_label": "ispast()"
     },
     {
@@ -729,7 +738,7 @@
       "source_file": "components\\schedule\\CalendarPanel.tsx",
       "source_location": "L37",
       "id": "schedule_calendarpanel_isoutsidebookingwindow",
-      "community": 2,
+      "community": 3,
       "norm_label": "isoutsidebookingwindow()"
     },
     {
@@ -738,7 +747,7 @@
       "source_file": "components\\schedule\\CalendarPanel.tsx",
       "source_location": "L47",
       "id": "schedule_calendarpanel_getdaystatus",
-      "community": 2,
+      "community": 3,
       "norm_label": "getdaystatus()"
     },
     {
@@ -747,7 +756,7 @@
       "source_file": "components\\schedule\\CalendarPanel.tsx",
       "source_location": "L74",
       "id": "schedule_calendarpanel_prevmonth",
-      "community": 2,
+      "community": 3,
       "norm_label": "prevmonth()"
     },
     {
@@ -756,7 +765,7 @@
       "source_file": "components\\schedule\\CalendarPanel.tsx",
       "source_location": "L80",
       "id": "schedule_calendarpanel_nextmonth",
-      "community": 2,
+      "community": 3,
       "norm_label": "nextmonth()"
     },
     {
@@ -765,7 +774,7 @@
       "source_file": "components\\schedule\\CalendarPicker.tsx",
       "source_location": "L1",
       "id": "components_schedule_calendarpicker_tsx",
-      "community": 7,
+      "community": 9,
       "norm_label": "calendarpicker.tsx"
     },
     {
@@ -774,7 +783,7 @@
       "source_file": "components\\schedule\\CalendarPicker.tsx",
       "source_location": "L10",
       "id": "schedule_calendarpicker_toiso",
-      "community": 7,
+      "community": 9,
       "norm_label": "toiso()"
     },
     {
@@ -783,7 +792,7 @@
       "source_file": "components\\schedule\\CalendarPicker.tsx",
       "source_location": "L14",
       "id": "schedule_calendarpicker_isweekend",
-      "community": 7,
+      "community": 9,
       "norm_label": "isweekend()"
     },
     {
@@ -792,7 +801,7 @@
       "source_file": "components\\schedule\\CalendarPicker.tsx",
       "source_location": "L19",
       "id": "schedule_calendarpicker_ispast",
-      "community": 7,
+      "community": 9,
       "norm_label": "ispast()"
     },
     {
@@ -801,7 +810,7 @@
       "source_file": "components\\schedule\\CalendarPicker.tsx",
       "source_location": "L42",
       "id": "schedule_calendarpicker_prevmonth",
-      "community": 7,
+      "community": 9,
       "norm_label": "prevmonth()"
     },
     {
@@ -810,7 +819,7 @@
       "source_file": "components\\schedule\\CalendarPicker.tsx",
       "source_location": "L48",
       "id": "schedule_calendarpicker_nextmonth",
-      "community": 7,
+      "community": 9,
       "norm_label": "nextmonth()"
     },
     {
@@ -954,7 +963,7 @@
       "source_file": "components\\ui\\badge.tsx",
       "source_location": "L1",
       "id": "components_ui_badge_tsx",
-      "community": 11,
+      "community": 12,
       "norm_label": "badge.tsx"
     },
     {
@@ -963,7 +972,7 @@
       "source_file": "components\\ui\\badge.tsx",
       "source_location": "L30",
       "id": "ui_badge_badge",
-      "community": 11,
+      "community": 12,
       "norm_label": "badge()"
     },
     {
@@ -985,12 +994,102 @@
       "norm_label": "cn()"
     },
     {
+      "label": "urls.ts",
+      "file_type": "code",
+      "source_file": "lib\\urls.ts",
+      "source_location": "L1",
+      "id": "lib_urls_ts",
+      "community": 0,
+      "norm_label": "urls.ts"
+    },
+    {
+      "label": "sanitizeRelativePath()",
+      "file_type": "code",
+      "source_file": "lib\\urls.ts",
+      "source_location": "L1",
+      "id": "lib_urls_sanitizerelativepath",
+      "community": 0,
+      "norm_label": "sanitizerelativepath()"
+    },
+    {
+      "label": "getRequestOrigin()",
+      "file_type": "code",
+      "source_file": "lib\\urls.ts",
+      "source_location": "L15",
+      "id": "lib_urls_getrequestorigin",
+      "community": 0,
+      "norm_label": "getrequestorigin()"
+    },
+    {
+      "label": "user-facing-errors.ts",
+      "file_type": "code",
+      "source_file": "lib\\user-facing-errors.ts",
+      "source_location": "L1",
+      "id": "lib_user_facing_errors_ts",
+      "community": 1,
+      "norm_label": "user-facing-errors.ts"
+    },
+    {
+      "label": "normalizeMessage()",
+      "file_type": "code",
+      "source_file": "lib\\user-facing-errors.ts",
+      "source_location": "L46",
+      "id": "lib_user_facing_errors_normalizemessage",
+      "community": 1,
+      "norm_label": "normalizemessage()"
+    },
+    {
+      "label": "messageIncludes()",
+      "file_type": "code",
+      "source_file": "lib\\user-facing-errors.ts",
+      "source_location": "L50",
+      "id": "lib_user_facing_errors_messageincludes",
+      "community": 1,
+      "norm_label": "messageincludes()"
+    },
+    {
+      "label": "isResponseLike()",
+      "file_type": "code",
+      "source_file": "lib\\user-facing-errors.ts",
+      "source_location": "L55",
+      "id": "lib_user_facing_errors_isresponselike",
+      "community": 1,
+      "norm_label": "isresponselike()"
+    },
+    {
+      "label": "readFunctionErrorBody()",
+      "file_type": "code",
+      "source_file": "lib\\user-facing-errors.ts",
+      "source_location": "L64",
+      "id": "lib_user_facing_errors_readfunctionerrorbody",
+      "community": 1,
+      "norm_label": "readfunctionerrorbody()"
+    },
+    {
+      "label": "getUserFacingErrorMessage()",
+      "file_type": "code",
+      "source_file": "lib\\user-facing-errors.ts",
+      "source_location": "L85",
+      "id": "lib_user_facing_errors_getuserfacingerrormessage",
+      "community": 1,
+      "norm_label": "getuserfacingerrormessage()"
+    },
+    {
+      "label": "getUserFacingFunctionErrorMessage()",
+      "file_type": "code",
+      "source_file": "lib\\user-facing-errors.ts",
+      "source_location": "L219",
+      "id": "lib_user_facing_errors_getuserfacingfunctionerrormessage",
+      "community": 1,
+      "norm_label": "getuserfacingfunctionerrormessage()"
+    },
+    {
       "label": "utils.ts",
       "file_type": "code",
       "source_file": "lib\\utils.ts",
       "source_location": "L1",
       "id": "lib_utils_ts",
-      "community": 11,
+      "community": 12,
       "norm_label": "utils.ts"
     },
     {
@@ -999,7 +1098,7 @@
       "source_file": "lib\\utils.ts",
       "source_location": "L4",
       "id": "lib_utils_cn",
-      "community": 11,
+      "community": 12,
       "norm_label": "cn()"
     },
     {
@@ -1008,16 +1107,16 @@
       "source_file": "lib\\supabase\\client.ts",
       "source_location": "L1",
       "id": "lib_supabase_client_ts",
-      "community": 29,
+      "community": 4,
       "norm_label": "client.ts"
     },
     {
       "label": "createClient()",
       "file_type": "code",
       "source_file": "lib\\supabase\\client.ts",
-      "source_location": "L5",
+      "source_location": "L6",
       "id": "supabase_client_createclient",
-      "community": 29,
+      "community": 4,
       "norm_label": "createclient()"
     },
     {
@@ -1026,7 +1125,7 @@
       "source_file": "lib\\supabase\\env.ts",
       "source_location": "L1",
       "id": "lib_supabase_env_ts",
-      "community": 14,
+      "community": 4,
       "norm_label": "env.ts"
     },
     {
@@ -1035,7 +1134,7 @@
       "source_file": "lib\\supabase\\env.ts",
       "source_location": "L1",
       "id": "supabase_env_getsupabaseenv",
-      "community": 14,
+      "community": 4,
       "norm_label": "getsupabaseenv()"
     },
     {
@@ -1044,7 +1143,7 @@
       "source_file": "lib\\supabase\\env.ts",
       "source_location": "L16",
       "id": "supabase_env_hassupabaseenv",
-      "community": 14,
+      "community": 4,
       "norm_label": "hassupabaseenv()"
     },
     {
@@ -1060,7 +1159,7 @@
       "label": "createClient()",
       "file_type": "code",
       "source_file": "lib\\supabase\\server.ts",
-      "source_location": "L4",
+      "source_location": "L5",
       "id": "supabase_server_createclient",
       "community": 0,
       "norm_label": "createclient()"
@@ -1071,7 +1170,7 @@
       "source_file": "supabase\\functions\\create-school-invite\\index.ts",
       "source_location": "L1",
       "id": "supabase_functions_create_school_invite_index_ts",
-      "community": 15,
+      "community": 13,
       "norm_label": "index.ts"
     },
     {
@@ -1080,7 +1179,7 @@
       "source_file": "supabase\\functions\\create-school-invite\\index.ts",
       "source_location": "L15",
       "id": "create_school_invite_index_jsonresponse",
-      "community": 15,
+      "community": 13,
       "norm_label": "jsonresponse()"
     },
     {
@@ -1089,8 +1188,17 @@
       "source_file": "supabase\\functions\\create-school-invite\\index.ts",
       "source_location": "L25",
       "id": "create_school_invite_index_createinvitetoken",
-      "community": 15,
+      "community": 13,
       "norm_label": "createinvitetoken()"
+    },
+    {
+      "label": "publicInviteError()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\create-school-invite\\index.ts",
+      "source_location": "L31",
+      "id": "create_school_invite_index_publicinviteerror",
+      "community": 13,
+      "norm_label": "publicinviteerror()"
     },
     {
       "label": "index.ts",
@@ -1098,7 +1206,7 @@
       "source_file": "supabase\\functions\\reserve-exam-slot\\index.ts",
       "source_location": "L1",
       "id": "supabase_functions_reserve_exam_slot_index_ts",
-      "community": 9,
+      "community": 10,
       "norm_label": "index.ts"
     },
     {
@@ -1107,7 +1215,7 @@
       "source_file": "supabase\\functions\\reserve-exam-slot\\index.ts",
       "source_location": "L25",
       "id": "reserve_exam_slot_index_jsonresponse",
-      "community": 9,
+      "community": 10,
       "norm_label": "jsonresponse()"
     },
     {
@@ -1116,7 +1224,7 @@
       "source_file": "supabase\\functions\\reserve-exam-slot\\index.ts",
       "source_location": "L35",
       "id": "reserve_exam_slot_index_isisodate",
-      "community": 9,
+      "community": 10,
       "norm_label": "isisodate()"
     },
     {
@@ -1125,7 +1233,7 @@
       "source_file": "supabase\\functions\\reserve-exam-slot\\index.ts",
       "source_location": "L39",
       "id": "reserve_exam_slot_index_parseexamtype",
-      "community": 9,
+      "community": 10,
       "norm_label": "parseexamtype()"
     },
     {
@@ -1134,8 +1242,17 @@
       "source_file": "supabase\\functions\\reserve-exam-slot\\index.ts",
       "source_location": "L43",
       "id": "reserve_exam_slot_index_statusfordatabaseerror",
-      "community": 9,
+      "community": 10,
       "norm_label": "statusfordatabaseerror()"
+    },
+    {
+      "label": "publicReservationError()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\reserve-exam-slot\\index.ts",
+      "source_location": "L77",
+      "id": "reserve_exam_slot_index_publicreservationerror",
+      "community": 10,
+      "norm_label": "publicreservationerror()"
     },
     {
       "label": "index.ts",
@@ -1143,25 +1260,34 @@
       "source_file": "supabase\\functions\\review-school-join-requests\\index.ts",
       "source_location": "L1",
       "id": "supabase_functions_review_school_join_requests_index_ts",
-      "community": 16,
+      "community": 14,
       "norm_label": "index.ts"
+    },
+    {
+      "label": "publicDatabaseError()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\review-school-join-requests\\index.ts",
+      "source_location": "L33",
+      "id": "review_school_join_requests_index_publicdatabaseerror",
+      "community": 14,
+      "norm_label": "publicdatabaseerror()"
     },
     {
       "label": "jsonResponse()",
       "file_type": "code",
       "source_file": "supabase\\functions\\review-school-join-requests\\index.ts",
-      "source_location": "L33",
+      "source_location": "L40",
       "id": "review_school_join_requests_index_jsonresponse",
-      "community": 16,
+      "community": 14,
       "norm_label": "jsonresponse()"
     },
     {
       "label": "parseDecisions()",
       "file_type": "code",
       "source_file": "supabase\\functions\\review-school-join-requests\\index.ts",
-      "source_location": "L43",
+      "source_location": "L50",
       "id": "review_school_join_requests_index_parsedecisions",
-      "community": 16,
+      "community": 14,
       "norm_label": "parsedecisions()"
     },
     {
@@ -1177,7 +1303,7 @@
       "label": "JustSchedule Project",
       "file_type": "document",
       "source_file": "README.md",
-      "community": 12,
+      "community": 15,
       "norm_label": "justschedule project",
       "id": "readme_justschedule_project"
     },
@@ -1186,7 +1312,7 @@
       "file_type": "document",
       "source_file": "README.md",
       "source_location": "1",
-      "community": 12,
+      "community": 15,
       "norm_label": "next.js framework",
       "id": "readme_nextjs_framework"
     },
@@ -1195,7 +1321,7 @@
       "file_type": "document",
       "source_file": "README.md",
       "source_location": "5-8",
-      "community": 12,
+      "community": 15,
       "norm_label": "supabase integration",
       "id": "readme_supabase_integration"
     },
@@ -1204,7 +1330,7 @@
       "file_type": "document",
       "source_file": "README.md",
       "source_location": "13-16",
-      "community": 12,
+      "community": 15,
       "norm_label": "google auth provider",
       "id": "readme_google_auth"
     },
@@ -1213,7 +1339,7 @@
       "file_type": "document",
       "source_file": "docs/system-design.md",
       "source_location": "1-9",
-      "community": 31,
+      "community": 30,
       "norm_label": "justschedule system overview",
       "id": "sysdesign_justschedule_overview"
     },
@@ -1222,7 +1348,7 @@
       "file_type": "document",
       "source_file": "docs/system-design.md",
       "source_location": "15-27",
-      "community": 13,
+      "community": 16,
       "norm_label": "booking record data model",
       "id": "sysdesign_booking_record"
     },
@@ -1240,7 +1366,7 @@
       "file_type": "document",
       "source_file": "docs/system-design.md",
       "source_location": "38-59",
-      "community": 13,
+      "community": 16,
       "norm_label": "supabase bookings schema",
       "id": "sysdesign_supabase_schema"
     },
@@ -1249,7 +1375,7 @@
       "file_type": "document",
       "source_file": "docs/system-design.md",
       "source_location": "61-79",
-      "community": 13,
+      "community": 16,
       "norm_label": "row level security policy",
       "id": "sysdesign_row_level_security"
     },
@@ -1301,7 +1427,7 @@
       "label": "Exam Scheduler Implementation Plan",
       "file_type": "document",
       "source_file": "docs/superpowers/plans/2026-04-28-exam-scheduler.md",
-      "community": 30,
+      "community": 29,
       "norm_label": "exam scheduler implementation plan",
       "id": "plan_exam_scheduler"
     },
@@ -1309,7 +1435,7 @@
       "label": "Exam Scheduler Design Spec",
       "file_type": "document",
       "source_file": "docs/superpowers/specs/2026-04-28-exam-scheduler-design.md",
-      "community": 30,
+      "community": 29,
       "norm_label": "exam scheduler design spec",
       "id": "spec_exam_scheduler"
     },
@@ -1317,7 +1443,7 @@
       "label": "Spec: Booking Data Model",
       "file_type": "document",
       "source_file": "docs/superpowers/specs/2026-04-28-exam-scheduler-design.md",
-      "community": 13,
+      "community": 16,
       "norm_label": "spec: booking data model",
       "id": "spec_booking_data_model"
     },
@@ -1325,7 +1451,7 @@
       "label": "JustSchedule UI Mockup (Full Dashboard)",
       "file_type": "image",
       "source_file": "docs/ChatGPT Image Apr 29, 2026, 09_51_58 AM.png",
-      "community": 31,
+      "community": 30,
       "norm_label": "justschedule ui mockup (full dashboard)",
       "id": "img_ui_mockup_morning"
     },
@@ -1343,7 +1469,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "proxy.ts",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0,
       "_src": "proxy_ts",
       "_tgt": "justschedule_proxy_proxy",
@@ -1352,34 +1478,22 @@
       "confidence_score": 1.0
     },
     {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app\\layout.tsx",
-      "source_location": "L17",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "proxy.ts",
+      "source_location": "L7",
       "weight": 1.0,
-      "_src": "app_layout_tsx",
-      "_tgt": "app_layout_rootlayout",
-      "source": "app_layout_tsx",
-      "target": "app_layout_rootlayout",
-      "confidence_score": 1.0
+      "_src": "justschedule_proxy_proxy",
+      "_tgt": "supabase_env_getsupabaseenv",
+      "source": "justschedule_proxy_proxy",
+      "target": "supabase_env_getsupabaseenv"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\page.tsx",
-      "source_location": "L5",
-      "weight": 1.0,
-      "_src": "app_page_tsx",
-      "_tgt": "app_page_sanitizenext",
-      "source": "app_page_tsx",
-      "target": "app_page_sanitizenext",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app\\page.tsx",
-      "source_location": "L10",
+      "source_location": "L6",
       "weight": 1.0,
       "_src": "app_page_tsx",
       "_tgt": "app_page_home",
@@ -1389,15 +1503,15 @@
     },
     {
       "relation": "calls",
-      "confidence": "EXTRACTED",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
       "source_file": "app\\page.tsx",
-      "source_location": "L15",
+      "source_location": "L12",
       "weight": 1.0,
       "_src": "app_page_home",
-      "_tgt": "app_page_sanitizenext",
-      "source": "app_page_sanitizenext",
-      "target": "app_page_home",
-      "confidence_score": 1.0
+      "_tgt": "lib_urls_sanitizerelativepath",
+      "source": "app_page_home",
+      "target": "lib_urls_sanitizerelativepath"
     },
     {
       "relation": "calls",
@@ -1414,14 +1528,50 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "app\\PostHogPageView.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_src": "app_posthogpageview_tsx",
+      "_tgt": "app_posthogpageview_posthogpageview",
+      "source": "app_posthogpageview_tsx",
+      "target": "app_posthogpageview_posthogpageview",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app\\providers.tsx",
+      "source_location": "L31",
+      "weight": 1.0,
+      "_src": "app_providers_tsx",
+      "_tgt": "app_providers_posthogprovider",
+      "source": "app_providers_tsx",
+      "target": "app_providers_posthogprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "app\\auth\\callback\\route.ts",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0,
       "_src": "app_auth_callback_route_ts",
       "_tgt": "callback_route_get",
       "source": "app_auth_callback_route_ts",
       "target": "callback_route_get",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app\\auth\\callback\\route.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_src": "callback_route_get",
+      "_tgt": "lib_urls_sanitizerelativepath",
+      "source": "callback_route_get",
+      "target": "lib_urls_sanitizerelativepath"
     },
     {
       "relation": "calls",
@@ -1451,18 +1601,6 @@
       "relation": "calls",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
-      "source_file": "app\\dashboard\\schools\\[schoolId]\\page.tsx",
-      "source_location": "L140",
-      "weight": 1.0,
-      "_src": "callback_route_get",
-      "_tgt": "schoolid_page_schooldashboardpage",
-      "source": "callback_route_get",
-      "target": "schoolid_page_schooldashboardpage"
-    },
-    {
-      "relation": "calls",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
       "source_file": "app\\invite\\actions.ts",
       "source_location": "L15",
       "weight": 1.0,
@@ -1484,10 +1622,22 @@
       "target": "login_page_handlesubmit"
     },
     {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "lib\\urls.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_src": "callback_route_get",
+      "_tgt": "lib_urls_getrequestorigin",
+      "source": "callback_route_get",
+      "target": "lib_urls_getrequestorigin"
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\dashboard\\actions.ts",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0,
       "_src": "app_dashboard_actions_ts",
       "_tgt": "dashboard_actions_registerschool",
@@ -1506,6 +1656,18 @@
       "_tgt": "supabase_server_createclient",
       "source": "dashboard_actions_registerschool",
       "target": "supabase_server_createclient"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app\\dashboard\\actions.ts",
+      "source_location": "L44",
+      "weight": 1.0,
+      "_src": "dashboard_actions_registerschool",
+      "_tgt": "lib_user_facing_errors_getuserfacingerrormessage",
+      "source": "dashboard_actions_registerschool",
+      "target": "lib_user_facing_errors_getuserfacingerrormessage"
     },
     {
       "relation": "contains",
@@ -1571,7 +1733,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\dashboard\\schedule\\page.tsx",
-      "source_location": "L42",
+      "source_location": "L44",
       "weight": 1.0,
       "_src": "app_dashboard_schedule_page_tsx",
       "_tgt": "schedule_page_getschoolid",
@@ -1583,7 +1745,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\dashboard\\schedule\\page.tsx",
-      "source_location": "L47",
+      "source_location": "L49",
       "weight": 1.0,
       "_src": "app_dashboard_schedule_page_tsx",
       "_tgt": "schedule_page_formatlocaldate",
@@ -1595,7 +1757,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\dashboard\\schedule\\page.tsx",
-      "source_location": "L53",
+      "source_location": "L55",
       "weight": 1.0,
       "_src": "app_dashboard_schedule_page_tsx",
       "_tgt": "schedule_page_formattime",
@@ -1607,7 +1769,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\dashboard\\schedule\\page.tsx",
-      "source_location": "L61",
+      "source_location": "L63",
       "weight": 1.0,
       "_src": "app_dashboard_schedule_page_tsx",
       "_tgt": "schedule_page_formatduration",
@@ -1619,7 +1781,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\dashboard\\schedule\\page.tsx",
-      "source_location": "L81",
+      "source_location": "L83",
       "weight": 1.0,
       "_src": "app_dashboard_schedule_page_tsx",
       "_tgt": "schedule_page_normalizeexamtype",
@@ -1631,7 +1793,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\dashboard\\schedule\\page.tsx",
-      "source_location": "L85",
+      "source_location": "L87",
       "weight": 1.0,
       "_src": "app_dashboard_schedule_page_tsx",
       "_tgt": "schedule_page_schedulepage",
@@ -1643,7 +1805,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "app\\dashboard\\schedule\\page.tsx",
-      "source_location": "L91",
+      "source_location": "L93",
       "weight": 1.0,
       "_src": "schedule_page_schedulepage",
       "_tgt": "schedule_page_getschoolid",
@@ -1655,7 +1817,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "app\\dashboard\\schedule\\page.tsx",
-      "source_location": "L140",
+      "source_location": "L142",
       "weight": 1.0,
       "_src": "schedule_page_schedulepage",
       "_tgt": "schedule_page_formatlocaldate",
@@ -1679,7 +1841,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
-      "source_location": "L54",
+      "source_location": "L56",
       "weight": 1.0,
       "_src": "app_dashboard_schedule_scheduleclient_tsx",
       "_tgt": "schedule_scheduleclient_handledateselect",
@@ -1691,7 +1853,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
-      "source_location": "L61",
+      "source_location": "L63",
       "weight": 1.0,
       "_src": "app_dashboard_schedule_scheduleclient_tsx",
       "_tgt": "schedule_scheduleclient_handleslotselect",
@@ -1703,7 +1865,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
-      "source_location": "L67",
+      "source_location": "L69",
       "weight": 1.0,
       "_src": "app_dashboard_schedule_scheduleclient_tsx",
       "_tgt": "schedule_scheduleclient_handlereserve",
@@ -1715,7 +1877,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
-      "source_location": "L135",
+      "source_location": "L139",
       "weight": 1.0,
       "_src": "app_dashboard_schedule_scheduleclient_tsx",
       "_tgt": "schedule_scheduleclient_handlereset",
@@ -1727,7 +1889,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
-      "source_location": "L164",
+      "source_location": "L172",
       "weight": 1.0,
       "_src": "app_dashboard_schedule_scheduleclient_tsx",
       "_tgt": "schedule_scheduleclient_selectpanel",
@@ -1739,7 +1901,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\dashboard\\schools\\[schoolId]\\page.tsx",
-      "source_location": "L90",
+      "source_location": "L98",
       "weight": 1.0,
       "_src": "app_dashboard_schools_schoolid_page_tsx",
       "_tgt": "schoolid_page_getinitials",
@@ -1751,7 +1913,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\dashboard\\schools\\[schoolId]\\page.tsx",
-      "source_location": "L101",
+      "source_location": "L109",
       "weight": 1.0,
       "_src": "app_dashboard_schools_schoolid_page_tsx",
       "_tgt": "schoolid_page_formatmembername",
@@ -1763,7 +1925,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app\\dashboard\\schools\\[schoolId]\\page.tsx",
-      "source_location": "L109",
+      "source_location": "L117",
       "weight": 1.0,
       "_src": "app_dashboard_schools_schoolid_page_tsx",
       "_tgt": "schoolid_page_normalizerole",
@@ -1774,44 +1936,8 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "app\\dashboard\\schools\\[schoolId]\\page.tsx",
-      "source_location": "L117",
-      "weight": 1.0,
-      "_src": "app_dashboard_schools_schoolid_page_tsx",
-      "_tgt": "schoolid_page_schooldashboardpage",
-      "source": "app_dashboard_schools_schoolid_page_tsx",
-      "target": "schoolid_page_schooldashboardpage",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "app\\dashboard\\schools\\[schoolId]\\page.tsx",
-      "source_location": "L194",
-      "weight": 1.0,
-      "_src": "schoolid_page_schooldashboardpage",
-      "_tgt": "schoolid_page_getinitials",
-      "source": "schoolid_page_getinitials",
-      "target": "schoolid_page_schooldashboardpage",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "app\\dashboard\\schools\\[schoolId]\\page.tsx",
-      "source_location": "L54",
-      "weight": 1.0,
-      "_src": "schoolid_page_schooldashboardpage",
-      "_tgt": "supabase_server_createclient",
-      "source": "schoolid_page_schooldashboardpage",
-      "target": "supabase_server_createclient"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
       "source_file": "app\\invite\\actions.ts",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0,
       "_src": "app_invite_actions_ts",
       "_tgt": "invite_actions_requestschooljoin",
@@ -1830,6 +1956,18 @@
       "_tgt": "supabase_server_createclient",
       "source": "invite_actions_requestschooljoin",
       "target": "supabase_server_createclient"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app\\invite\\actions.ts",
+      "source_location": "L60",
+      "weight": 1.0,
+      "_src": "invite_actions_requestschooljoin",
+      "_tgt": "lib_user_facing_errors_getuserfacingerrormessage",
+      "source": "invite_actions_requestschooljoin",
+      "target": "lib_user_facing_errors_getuserfacingerrormessage"
     },
     {
       "relation": "contains",
@@ -1883,7 +2021,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "components\\dashboard\\LeaveSchoolButton.tsx",
-      "source_location": "L33",
+      "source_location": "L34",
       "weight": 1.0,
       "_src": "components_dashboard_leaveschoolbutton_tsx",
       "_tgt": "dashboard_leaveschoolbutton_opendialog",
@@ -1895,7 +2033,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "components\\dashboard\\LeaveSchoolButton.tsx",
-      "source_location": "L39",
+      "source_location": "L40",
       "weight": 1.0,
       "_src": "components_dashboard_leaveschoolbutton_tsx",
       "_tgt": "dashboard_leaveschoolbutton_closedialog",
@@ -1907,7 +2045,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "components\\dashboard\\LeaveSchoolButton.tsx",
-      "source_location": "L49",
+      "source_location": "L50",
       "weight": 1.0,
       "_src": "components_dashboard_leaveschoolbutton_tsx",
       "_tgt": "dashboard_leaveschoolbutton_leaveschool",
@@ -1928,10 +2066,22 @@
       "target": "supabase_server_createclient"
     },
     {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "components\\dashboard\\LeaveSchoolButton.tsx",
+      "source_location": "L66",
+      "weight": 1.0,
+      "_src": "dashboard_leaveschoolbutton_leaveschool",
+      "_tgt": "lib_user_facing_errors_getuserfacingerrormessage",
+      "source": "dashboard_leaveschoolbutton_leaveschool",
+      "target": "lib_user_facing_errors_getuserfacingerrormessage"
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "components\\dashboard\\SchoolManagementTabs.tsx",
-      "source_location": "L1032",
+      "source_location": "L1136",
       "weight": 1.0,
       "_src": "components_dashboard_schoolmanagementtabs_tsx",
       "_tgt": "dashboard_schoolmanagementtabs_formatdate",
@@ -1943,7 +2093,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "components\\dashboard\\SchoolManagementTabs.tsx",
-      "source_location": "L97",
+      "source_location": "L105",
       "weight": 1.0,
       "_src": "components_dashboard_schoolmanagementtabs_tsx",
       "_tgt": "dashboard_schoolmanagementtabs_getdefaultexpirydate",
@@ -1955,7 +2105,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "components\\dashboard\\SchoolManagementTabs.tsx",
-      "source_location": "L103",
+      "source_location": "L111",
       "weight": 1.0,
       "_src": "components_dashboard_schoolmanagementtabs_tsx",
       "_tgt": "dashboard_schoolmanagementtabs_dateinputtoendofday",
@@ -1967,7 +2117,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "components\\dashboard\\SchoolManagementTabs.tsx",
-      "source_location": "L108",
+      "source_location": "L116",
       "weight": 1.0,
       "_src": "components_dashboard_schoolmanagementtabs_tsx",
       "_tgt": "dashboard_schoolmanagementtabs_gettodaykey",
@@ -1979,7 +2129,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "components\\dashboard\\SchoolManagementTabs.tsx",
-      "source_location": "L117",
+      "source_location": "L125",
       "weight": 1.0,
       "_src": "components_dashboard_schoolmanagementtabs_tsx",
       "_tgt": "dashboard_schoolmanagementtabs_adddays",
@@ -1991,7 +2141,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "components\\dashboard\\SchoolManagementTabs.tsx",
-      "source_location": "L127",
+      "source_location": "L135",
       "weight": 1.0,
       "_src": "components_dashboard_schoolmanagementtabs_tsx",
       "_tgt": "dashboard_schoolmanagementtabs_formatreservationdate",
@@ -2003,7 +2153,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "components\\dashboard\\SchoolManagementTabs.tsx",
-      "source_location": "L795",
+      "source_location": "L899",
       "weight": 1.0,
       "_src": "components_dashboard_schoolmanagementtabs_tsx",
       "_tgt": "dashboard_schoolmanagementtabs_formatslottime",
@@ -2015,7 +2165,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "components\\dashboard\\SchoolManagementTabs.tsx",
-      "source_location": "L146",
+      "source_location": "L154",
       "weight": 1.0,
       "_src": "components_dashboard_schoolmanagementtabs_tsx",
       "_tgt": "dashboard_schoolmanagementtabs_formatexamtype",
@@ -2027,7 +2177,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "components\\dashboard\\SchoolManagementTabs.tsx",
-      "source_location": "L150",
+      "source_location": "L158",
       "weight": 1.0,
       "_src": "components_dashboard_schoolmanagementtabs_tsx",
       "_tgt": "dashboard_schoolmanagementtabs_schoolmanagementtabs",
@@ -2422,6 +2572,186 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "lib\\urls.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_src": "lib_urls_ts",
+      "_tgt": "lib_urls_sanitizerelativepath",
+      "source": "lib_urls_ts",
+      "target": "lib_urls_sanitizerelativepath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib\\urls.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_src": "lib_urls_ts",
+      "_tgt": "lib_urls_getrequestorigin",
+      "source": "lib_urls_ts",
+      "target": "lib_urls_getrequestorigin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib\\user-facing-errors.ts",
+      "source_location": "L46",
+      "weight": 1.0,
+      "_src": "lib_user_facing_errors_ts",
+      "_tgt": "lib_user_facing_errors_normalizemessage",
+      "source": "lib_user_facing_errors_ts",
+      "target": "lib_user_facing_errors_normalizemessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib\\user-facing-errors.ts",
+      "source_location": "L50",
+      "weight": 1.0,
+      "_src": "lib_user_facing_errors_ts",
+      "_tgt": "lib_user_facing_errors_messageincludes",
+      "source": "lib_user_facing_errors_ts",
+      "target": "lib_user_facing_errors_messageincludes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib\\user-facing-errors.ts",
+      "source_location": "L55",
+      "weight": 1.0,
+      "_src": "lib_user_facing_errors_ts",
+      "_tgt": "lib_user_facing_errors_isresponselike",
+      "source": "lib_user_facing_errors_ts",
+      "target": "lib_user_facing_errors_isresponselike",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib\\user-facing-errors.ts",
+      "source_location": "L64",
+      "weight": 1.0,
+      "_src": "lib_user_facing_errors_ts",
+      "_tgt": "lib_user_facing_errors_readfunctionerrorbody",
+      "source": "lib_user_facing_errors_ts",
+      "target": "lib_user_facing_errors_readfunctionerrorbody",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib\\user-facing-errors.ts",
+      "source_location": "L85",
+      "weight": 1.0,
+      "_src": "lib_user_facing_errors_ts",
+      "_tgt": "lib_user_facing_errors_getuserfacingerrormessage",
+      "source": "lib_user_facing_errors_ts",
+      "target": "lib_user_facing_errors_getuserfacingerrormessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib\\user-facing-errors.ts",
+      "source_location": "L219",
+      "weight": 1.0,
+      "_src": "lib_user_facing_errors_ts",
+      "_tgt": "lib_user_facing_errors_getuserfacingfunctionerrormessage",
+      "source": "lib_user_facing_errors_ts",
+      "target": "lib_user_facing_errors_getuserfacingfunctionerrormessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "lib\\user-facing-errors.ts",
+      "source_location": "L77",
+      "weight": 1.0,
+      "_src": "lib_user_facing_errors_readfunctionerrorbody",
+      "_tgt": "lib_user_facing_errors_normalizemessage",
+      "source": "lib_user_facing_errors_normalizemessage",
+      "target": "lib_user_facing_errors_readfunctionerrorbody",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "lib\\user-facing-errors.ts",
+      "source_location": "L89",
+      "weight": 1.0,
+      "_src": "lib_user_facing_errors_getuserfacingerrormessage",
+      "_tgt": "lib_user_facing_errors_normalizemessage",
+      "source": "lib_user_facing_errors_normalizemessage",
+      "target": "lib_user_facing_errors_getuserfacingerrormessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "lib\\user-facing-errors.ts",
+      "source_location": "L233",
+      "weight": 1.0,
+      "_src": "lib_user_facing_errors_getuserfacingfunctionerrormessage",
+      "_tgt": "lib_user_facing_errors_normalizemessage",
+      "source": "lib_user_facing_errors_normalizemessage",
+      "target": "lib_user_facing_errors_getuserfacingfunctionerrormessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "lib\\user-facing-errors.ts",
+      "source_location": "L92",
+      "weight": 1.0,
+      "_src": "lib_user_facing_errors_getuserfacingerrormessage",
+      "_tgt": "lib_user_facing_errors_messageincludes",
+      "source": "lib_user_facing_errors_messageincludes",
+      "target": "lib_user_facing_errors_getuserfacingerrormessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "lib\\user-facing-errors.ts",
+      "source_location": "L70",
+      "weight": 1.0,
+      "_src": "lib_user_facing_errors_readfunctionerrorbody",
+      "_tgt": "lib_user_facing_errors_isresponselike",
+      "source": "lib_user_facing_errors_isresponselike",
+      "target": "lib_user_facing_errors_readfunctionerrorbody",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "lib\\user-facing-errors.ts",
+      "source_location": "L223",
+      "weight": 1.0,
+      "_src": "lib_user_facing_errors_getuserfacingfunctionerrormessage",
+      "_tgt": "lib_user_facing_errors_readfunctionerrorbody",
+      "source": "lib_user_facing_errors_readfunctionerrorbody",
+      "target": "lib_user_facing_errors_getuserfacingfunctionerrormessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "lib\\user-facing-errors.ts",
+      "source_location": "L226",
+      "weight": 1.0,
+      "_src": "lib_user_facing_errors_getuserfacingfunctionerrormessage",
+      "_tgt": "lib_user_facing_errors_getuserfacingerrormessage",
+      "source": "lib_user_facing_errors_getuserfacingerrormessage",
+      "target": "lib_user_facing_errors_getuserfacingfunctionerrormessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "lib\\utils.ts",
       "source_location": "L4",
       "weight": 1.0,
@@ -2435,13 +2765,25 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "lib\\supabase\\client.ts",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0,
       "_src": "lib_supabase_client_ts",
       "_tgt": "supabase_client_createclient",
       "source": "lib_supabase_client_ts",
       "target": "supabase_client_createclient",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "lib\\supabase\\client.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_src": "supabase_client_createclient",
+      "_tgt": "supabase_env_getsupabaseenv",
+      "source": "supabase_client_createclient",
+      "target": "supabase_env_getsupabaseenv"
     },
     {
       "relation": "contains",
@@ -2468,10 +2810,22 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "lib\\supabase\\server.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_src": "supabase_env_getsupabaseenv",
+      "_tgt": "supabase_server_createclient",
+      "source": "supabase_env_getsupabaseenv",
+      "target": "supabase_server_createclient"
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "lib\\supabase\\server.ts",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0,
       "_src": "lib_supabase_server_ts",
       "_tgt": "supabase_server_createclient",
@@ -2501,6 +2855,18 @@
       "_tgt": "create_school_invite_index_createinvitetoken",
       "source": "supabase_functions_create_school_invite_index_ts",
       "target": "create_school_invite_index_createinvitetoken",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\create-school-invite\\index.ts",
+      "source_location": "L31",
+      "weight": 1.0,
+      "_src": "supabase_functions_create_school_invite_index_ts",
+      "_tgt": "create_school_invite_index_publicinviteerror",
+      "source": "supabase_functions_create_school_invite_index_ts",
+      "target": "create_school_invite_index_publicinviteerror",
       "confidence_score": 1.0
     },
     {
@@ -2554,8 +2920,32 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\reserve-exam-slot\\index.ts",
+      "source_location": "L77",
+      "weight": 1.0,
+      "_src": "supabase_functions_reserve_exam_slot_index_ts",
+      "_tgt": "reserve_exam_slot_index_publicreservationerror",
+      "source": "supabase_functions_reserve_exam_slot_index_ts",
+      "target": "reserve_exam_slot_index_publicreservationerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "supabase\\functions\\review-school-join-requests\\index.ts",
       "source_location": "L33",
+      "weight": 1.0,
+      "_src": "supabase_functions_review_school_join_requests_index_ts",
+      "_tgt": "review_school_join_requests_index_publicdatabaseerror",
+      "source": "supabase_functions_review_school_join_requests_index_ts",
+      "target": "review_school_join_requests_index_publicdatabaseerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\review-school-join-requests\\index.ts",
+      "source_location": "L40",
       "weight": 1.0,
       "_src": "supabase_functions_review_school_join_requests_index_ts",
       "_tgt": "review_school_join_requests_index_jsonresponse",
@@ -2567,7 +2957,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "supabase\\functions\\review-school-join-requests\\index.ts",
-      "source_location": "L43",
+      "source_location": "L50",
       "weight": 1.0,
       "_src": "supabase_functions_review_school_join_requests_index_ts",
       "_tgt": "review_school_join_requests_index_parsedecisions",
