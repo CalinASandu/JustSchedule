@@ -59,6 +59,8 @@ type ReservationRow = {
   exam_type: "midterm" | "final";
   status: string;
   created_at: string;
+  created_by: string;
+  created_by_role: SchoolRole;
 };
 
 type SchoolRole = "admin" | "professor" | "student";
@@ -93,6 +95,8 @@ type Reservation = {
   examType: "midterm" | "final";
   status: string;
   createdAt: string;
+  createdBy: string;
+  createdByRole: SchoolRole;
 };
 
 function getInitials(name: string) {
@@ -195,7 +199,7 @@ export default async function SchoolDashboardPage({
     supabase
       .from("Reservations")
       .select(
-        "id, user_id, slot_id, reservation_date, exam_name, exam_type, status, created_at",
+        "id, user_id, slot_id, reservation_date, exam_name, exam_type, status, created_at, created_by, created_by_role",
       )
       .eq("school_id", schoolId)
       .eq("status", "confirmed")
@@ -284,6 +288,8 @@ export default async function SchoolDashboardPage({
     examType: reservation.exam_type,
     status: reservation.status,
     createdAt: reservation.created_at,
+    createdBy: reservation.created_by,
+    createdByRole: reservation.created_by_role,
   }));
 
   return (

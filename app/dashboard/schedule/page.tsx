@@ -39,6 +39,8 @@ type ReservationRow = {
   exam_type: string;
   status: string;
   created_at: string;
+  created_by: string | null;
+  created_by_role: string | null;
 };
 
 function getSchoolId(value: string | string[] | undefined) {
@@ -183,6 +185,11 @@ export default async function SchedulePage({
       examType: normalizeExamType(reservation.exam_type),
       status: reservation.status,
       createdAt: reservation.created_at,
+      createdBy: reservation.created_by ?? reservation.user_id,
+      createdByRole:
+        reservation.created_by_role === "admin" || reservation.created_by_role === "professor"
+          ? reservation.created_by_role
+          : "student",
     }),
   );
 

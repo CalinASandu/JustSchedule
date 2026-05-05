@@ -6,3 +6,6 @@ verify_jwt = true
 
 [functions.reserve-exam-slot]
 verify_jwt = true
+
+[functions.schedule-exam-for-student]
+verify_jwt = true

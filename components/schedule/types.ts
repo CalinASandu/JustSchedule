@@ -21,8 +21,11 @@ export interface Reservation {
   examType: ExamType
   status: string
   createdAt: string
+  createdBy: string
+  createdByRole: SchoolRole
 }
 
 export type AvailabilityStatus = 'available' | 'limited' | 'unavailable' | 'selected'
 export type ExamType = 'midterm' | 'final'
+export type SchoolRole = 'admin' | 'professor' | 'student'
 export type SwapStatus = 'idle' | 'pending'

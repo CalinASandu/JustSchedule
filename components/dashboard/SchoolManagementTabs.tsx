@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import {
   Check,
+  CalendarPlus,
   ChevronLeft,
   ChevronRight,
   Copy,
@@ -70,10 +71,13 @@ type Reservation = {
   examType: "midterm" | "final";
   status: string;
   createdAt: string;
+  createdBy: string;
+  createdByRole: SchoolRole;
 };
 
 type Decision = "approved" | "rejected";
 type SchoolRole = "admin" | "professor" | "student";
+type ExamType = "midterm" | "final";
 type SchoolDashboardTab = "members" | "reservations" | "requests" | "invites" | "settings";
 
 const roleOptions: SchoolRole[] = ["student", "professor", "admin"];
@@ -106,6 +110,10 @@ function getDefaultExpiryDate() {
   const date = new Date();
   date.setDate(date.getDate() + 14);
   return date.toISOString().slice(0, 10);
+}
+
+function getMaxBookingDate() {
+  return addDays(getTodayKey(), 14);
 }
 
 function dateInputToEndOfDay(value: string) {
@@ -203,6 +211,20 @@ export default function SchoolManagementTabs({
   });
   const [kickDialogMemberId, setKickDialogMemberId] = useState<string | null>(null);
   const [kickSecondsRemaining, setKickSecondsRemaining] = useState(5);
+  const [scheduleDialogMemberId, setScheduleDialogMemberId] = useState<string | null>(null);
+  const [scheduleDate, setScheduleDate] = useState(getTodayKey);
+  const [scheduleSlotId, setScheduleSlotId] = useState("");
+  const [scheduleExamName, setScheduleExamName] = useState("");
+  const [scheduleExamType, setScheduleExamType] = useState<ExamType>("midterm");
+  const [scheduleState, setScheduleState] = useState<{
+    error: string | null;
+    success: string | null;
+    pending: boolean;
+  }>({
+    error: null,
+    success: null,
+    pending: false,
+  });
   const [kickState, setKickState] = useState<{ error: string | null; pending: boolean }>({
     error: null,
     pending: false,
@@ -260,6 +282,9 @@ export default function SchoolManagementTabs({
   });
   const kickDialogMember = kickDialogMemberId
     ? visibleMembers.find((member) => member.id === kickDialogMemberId) ?? null
+    : null;
+  const scheduleDialogMember = scheduleDialogMemberId
+    ? visibleMembers.find((member) => member.id === scheduleDialogMemberId) ?? null
     : null;
   const memberNamesByUserId = useMemo(
     () => new Map(visibleMembers.map((member) => [member.userId, member.name])),
@@ -537,6 +562,83 @@ export default function SchoolManagementTabs({
     router.refresh();
   }
 
+  function openScheduleDialog(member: SchoolMember) {
+    setScheduleDialogMemberId(member.id);
+    setScheduleDate(getTodayKey());
+    setScheduleSlotId(examSlots[0]?.id ?? "");
+    setScheduleExamName("");
+    setScheduleExamType("midterm");
+    setScheduleState({ error: null, success: null, pending: false });
+  }
+
+  function closeScheduleDialog() {
+    if (scheduleState.pending) {
+      return;
+    }
+
+    setScheduleDialogMemberId(null);
+    setScheduleState({ error: null, success: null, pending: false });
+  }
+
+  async function scheduleForStudent() {
+    if (!scheduleDialogMember || !scheduleSlotId || !scheduleExamName.trim()) {
+      setScheduleState({
+        error: "Choose a student, date, slot, and exam name before scheduling.",
+        success: null,
+        pending: false,
+      });
+      return;
+    }
+
+    setScheduleState({ error: null, success: null, pending: true });
+
+    const supabase = createClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session) {
+      setScheduleState({
+        error: "You need to sign in again.",
+        success: null,
+        pending: false,
+      });
+      return;
+    }
+
+    const { error } = await supabase.functions.invoke("schedule-exam-for-student", {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: {
+        schoolId,
+        studentUserId: scheduleDialogMember.userId,
+        slotId: scheduleSlotId,
+        reservationDate: scheduleDate,
+        examName: scheduleExamName.trim(),
+        examType: scheduleExamType,
+      },
+    });
+
+    if (error) {
+      console.error("Schedule exam for student failed", error);
+      setScheduleState({
+        error: await getUserFacingFunctionErrorMessage("scheduleForStudent", error),
+        success: null,
+        pending: false,
+      });
+      return;
+    }
+
+    setScheduleState({
+      error: null,
+      success: `Scheduled ${scheduleExamName.trim()} for ${scheduleDialogMember.name}.`,
+      pending: false,
+    });
+    setScheduleDialogMemberId(null);
+    router.refresh();
+  }
+
   function openKickDialog(member: SchoolMember) {
     setKickDialogMemberId(member.id);
     setKickSecondsRemaining(5);
@@ -674,6 +776,12 @@ export default function SchoolManagementTabs({
             </p>
           )}
 
+          {scheduleState.success && (
+            <p className="anim-fade-in mb-4 text-[0.8125rem] font-medium" style={{ color: "#1D4ED8" }}>
+              {scheduleState.success}
+            </p>
+          )}
+
           {canManageMembers && pendingRoleChanges.length > 0 && (
             <div
               className="anim-fade-in mb-4 rounded-[10px] border border-[#E4E8EF] bg-white p-4"
@@ -730,6 +838,10 @@ export default function SchoolManagementTabs({
                 member.role === "student" &&
                 !member.isCurrentUser &&
                 !member.id.startsWith("created-");
+              const canScheduleForStudent =
+                canManageSelfBooking &&
+                member.role === "student" &&
+                !member.id.startsWith("created-");
               const selfBookingPending = selfBookingState.pendingMemberId === member.id;
 
               return (
@@ -782,6 +894,18 @@ export default function SchoolManagementTabs({
                   </div>
                 </div>
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  {canScheduleForStudent && (
+                    <button
+                      type="button"
+                      onClick={() => openScheduleDialog(member)}
+                      disabled={scheduleState.pending}
+                      className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
+                      style={{ border: "1px solid #E4E8EF", color: "#2563EB" }}
+                    >
+                      <CalendarPlus size={16} />
+                      Schedule
+                    </button>
+                  )}
                   {canToggleSelfBooking && (
                     <button
                       type="button"
@@ -1297,6 +1421,190 @@ export default function SchoolManagementTabs({
               >
                 {kickState.pending && <Loader2 size={16} className="animate-spin" />}
                 {kickSecondsRemaining > 0 ? `Confirm in ${kickSecondsRemaining}s` : "Confirm Kick"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {scheduleDialogMember && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="schedule-student-title"
+        >
+          <div className="panel w-full max-w-[520px] p-5 shadow-[0_18px_60px_rgba(15,23,42,0.18)]">
+            <div className="mb-4 flex items-start justify-between gap-4">
+              <div>
+                <h2
+                  id="schedule-student-title"
+                  className="text-sm font-semibold"
+                  style={{ color: "#111827" }}
+                >
+                  Schedule exam
+                </h2>
+                <p className="mt-1 text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
+                  Booking for {scheduleDialogMember.name}.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={closeScheduleDialog}
+                disabled={scheduleState.pending}
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
+                style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+                aria-label="Close dialog"
+              >
+                <X size={15} />
+              </button>
+            </div>
+
+            {scheduleState.error && <ErrorBanner message={scheduleState.error} />}
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label
+                  htmlFor="schedule-student-date"
+                  className="mb-1.5 block text-[0.8125rem] font-medium"
+                  style={{ color: "#374151" }}
+                >
+                  Date
+                </label>
+                <input
+                  id="schedule-student-date"
+                  type="date"
+                  value={scheduleDate}
+                  min={getTodayKey()}
+                  max={getMaxBookingDate()}
+                  onChange={(event) => setScheduleDate(event.target.value)}
+                  className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
+                  style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+                  onFocus={(event) => {
+                    event.currentTarget.style.borderColor = "#3B82F6";
+                    event.currentTarget.style.boxShadow = "0 0 0 3px rgba(59,130,246,0.12)";
+                  }}
+                  onBlur={(event) => {
+                    event.currentTarget.style.borderColor = "#E4E8EF";
+                    event.currentTarget.style.boxShadow = "none";
+                  }}
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="schedule-student-slot"
+                  className="mb-1.5 block text-[0.8125rem] font-medium"
+                  style={{ color: "#374151" }}
+                >
+                  Slot
+                </label>
+                <select
+                  id="schedule-student-slot"
+                  value={scheduleSlotId}
+                  onChange={(event) => setScheduleSlotId(event.target.value)}
+                  className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
+                  style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+                >
+                  {examSlots.length === 0 ? (
+                    <option value="">No active slots</option>
+                  ) : (
+                    examSlots.map((slot) => (
+                      <option key={slot.id} value={slot.id}>
+                        {slot.name} - {formatSlotTime(slot.startsAt)}
+                      </option>
+                    ))
+                  )}
+                </select>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="schedule-student-exam-type"
+                  className="mb-1.5 block text-[0.8125rem] font-medium"
+                  style={{ color: "#374151" }}
+                >
+                  Exam type
+                </label>
+                <select
+                  id="schedule-student-exam-type"
+                  value={scheduleExamType}
+                  onChange={(event) => setScheduleExamType(event.target.value as ExamType)}
+                  className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] capitalize outline-none transition-[border-color,box-shadow]"
+                  style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+                >
+                  <option value="midterm">Midterm</option>
+                  <option value="final">Final</option>
+                </select>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="schedule-student-exam-name"
+                  className="mb-1.5 block text-[0.8125rem] font-medium"
+                  style={{ color: "#374151" }}
+                >
+                  Exam name
+                </label>
+                <input
+                  id="schedule-student-exam-name"
+                  type="text"
+                  value={scheduleExamName}
+                  onChange={(event) => setScheduleExamName(event.target.value)}
+                  placeholder="e.g. Algebra"
+                  className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
+                  style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+                  onFocus={(event) => {
+                    event.currentTarget.style.borderColor = "#3B82F6";
+                    event.currentTarget.style.boxShadow = "0 0 0 3px rgba(59,130,246,0.12)";
+                  }}
+                  onBlur={(event) => {
+                    event.currentTarget.style.borderColor = "#E4E8EF";
+                    event.currentTarget.style.boxShadow = "none";
+                  }}
+                />
+              </div>
+            </div>
+
+            <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                onClick={closeScheduleDialog}
+                disabled={scheduleState.pending}
+                className="inline-flex h-[2.625rem] items-center justify-center rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
+                style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={scheduleForStudent}
+                disabled={
+                  scheduleState.pending ||
+                  !scheduleSlotId ||
+                  !scheduleExamName.trim() ||
+                  examSlots.length === 0
+                }
+                className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
+                style={{
+                  background:
+                    scheduleState.pending ||
+                    !scheduleSlotId ||
+                    !scheduleExamName.trim() ||
+                    examSlots.length === 0
+                      ? "#93C5FD"
+                      : "#2563EB",
+                  boxShadow:
+                    scheduleState.pending ||
+                    !scheduleSlotId ||
+                    !scheduleExamName.trim() ||
+                    examSlots.length === 0
+                      ? "none"
+                      : "0 1px 3px rgba(37,99,235,0.25), 0 4px 12px rgba(37,99,235,0.12)",
+                }}
+              >
+                {scheduleState.pending ? <Loader2 size={16} className="animate-spin" /> : <CalendarPlus size={16} />}
+                Schedule exam
               </button>
             </div>
           </div>

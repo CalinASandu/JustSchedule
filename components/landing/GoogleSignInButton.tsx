@@ -24,12 +24,13 @@ export function GoogleSignInButton({ onClick, compact = false, redirectPath = "/
     try {
       const supabase = createClient();
       const origin = `${window.location.protocol}//${window.location.host}`;
+      document.cookie = `oauth_next=${encodeURIComponent(
+        redirectPath,
+      )}; Path=/; Max-Age=600; SameSite=Lax`;
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(
-            redirectPath,
-          )}`,
+          redirectTo: `${origin}/auth/callback`,
         },
       });
 

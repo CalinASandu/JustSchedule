@@ -124,6 +124,8 @@ export default function ScheduleClient({
             examType,
             status: "confirmed",
             createdAt: new Date().toISOString(),
+            createdBy: currentUserId,
+            createdByRole: "student",
           },
         ]);
         setShowConfirmation(true);

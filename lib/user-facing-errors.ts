@@ -20,6 +20,7 @@ export type ErrorContext =
   | "registerSchool"
   | "reserveExamSlot"
   | "reviewJoinRequests"
+  | "scheduleForStudent"
   | "schoolDelete"
   | "schoolLeave"
   | "schoolMemberKick"
@@ -36,6 +37,7 @@ const fallbackMessages: Record<ErrorContext, string> = {
   registerSchool: "Could not register this school. Try again in a moment.",
   reserveExamSlot: "Could not schedule this exam. Try again in a moment.",
   reviewJoinRequests: "Could not review join requests. Try again in a moment.",
+  scheduleForStudent: "Could not schedule this exam for the student. Try again in a moment.",
   schoolDelete: "Could not delete this school. Try again in a moment.",
   schoolLeave: "Could not leave this school. Try again in a moment.",
   schoolMemberKick: "Could not remove this member. Try again in a moment.",
@@ -148,6 +150,56 @@ export function getUserFacingErrorMessage(
 
     if (messageIncludes(message, ["self booking is disabled"])) {
       return "A professor must schedule this exam for you.";
+    }
+
+    if (messageIncludes(message, ["invalid session", "jwt", "authorization"])) {
+      return "Your session expired. Sign in again to schedule this exam.";
+    }
+
+    if (messageIncludes(message, ["weekend"])) {
+      return "Exams cannot be scheduled on weekends.";
+    }
+
+    if (messageIncludes(message, ["next 14 days", "reservation date"])) {
+      return "Choose a date within the next 14 days.";
+    }
+
+    if (messageIncludes(message, ["slot is unavailable", "selected slot is unavailable"])) {
+      return "This time slot is no longer available. Choose another time.";
+    }
+
+    if (messageIncludes(message, ["exam name"])) {
+      return "Enter the exam name before scheduling.";
+    }
+
+    if (messageIncludes(message, ["exam type"])) {
+      return "Choose a valid exam type.";
+    }
+  }
+
+  if (context === "scheduleForStudent") {
+    if (
+      code === "23505" ||
+      messageIncludes(message, [
+        "already reserved",
+        "already scheduled",
+        "duplicate key",
+        "reservations_user_slot_date_unique",
+      ])
+    ) {
+      return "This student already has an exam in that time slot for that date.";
+    }
+
+    if (messageIncludes(message, ["slot is full", "selected slot is full", "full"])) {
+      return "This time slot is full. Choose another time.";
+    }
+
+    if (messageIncludes(message, ["admins and professors"])) {
+      return "Only admins and professors can schedule exams for students.";
+    }
+
+    if (messageIncludes(message, ["target user must be a student", "student member"])) {
+      return "Choose a student member from this school.";
     }
 
     if (messageIncludes(message, ["invalid session", "jwt", "authorization"])) {
