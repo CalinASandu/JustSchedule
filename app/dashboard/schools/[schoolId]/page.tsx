@@ -61,9 +61,22 @@ type ReservationRow = {
   created_at: string;
   created_by: string;
   created_by_role: SchoolRole;
+  attendance_status: "present" | "absent" | null;
+  attendance_marked_by: string | null;
+  attendance_marked_at: string | null;
 };
 
-type SchoolRole = "admin" | "professor" | "student";
+type AttendanceSessionRow = {
+  id: string;
+  school_id: string;
+  slot_id: string;
+  reservation_date: string;
+  started_by: string;
+  started_at: string;
+  expires_at: string;
+};
+
+type SchoolRole = "admin" | "professor" | "exam_supervisor" | "student";
 
 type SchoolMember = {
   id: string;
@@ -97,6 +110,19 @@ type Reservation = {
   createdAt: string;
   createdBy: string;
   createdByRole: SchoolRole;
+  attendanceStatus: "present" | "absent";
+  attendanceMarkedBy: string | null;
+  attendanceMarkedAt: string | null;
+};
+
+type AttendanceSession = {
+  id: string;
+  schoolId: string;
+  slotId: string;
+  reservationDate: string;
+  startedBy: string;
+  startedAt: string;
+  expiresAt: string;
 };
 
 function getInitials(name: string) {
@@ -119,7 +145,7 @@ function formatMemberName(member: SchoolMemberRow, currentUserId: string) {
 }
 
 function normalizeRole(role: string | null): SchoolRole {
-  if (role === "admin" || role === "professor") {
+  if (role === "admin" || role === "professor" || role === "exam_supervisor") {
     return role;
   }
 
@@ -153,6 +179,7 @@ export default async function SchoolDashboardPage({
         .from("Schools")
         .select("id, name, created_at, created_by")
         .eq("id", schoolId)
+        .is("deleted_at", null)
         .maybeSingle(),
       supabase
         .from("Profiles")
@@ -167,8 +194,9 @@ export default async function SchoolDashboardPage({
 
   const isAdmin = membership?.role === "admin" || school.created_by === user.id;
   const isProfessor = membership?.role === "professor";
+  const isExamSupervisor = membership?.role === "exam_supervisor";
 
-  if (!isAdmin && !isProfessor) {
+  if (!isAdmin && !isProfessor && !isExamSupervisor) {
     redirect(`/dashboard/schedule?schoolId=${schoolId}`);
   }
 
@@ -178,6 +206,7 @@ export default async function SchoolDashboardPage({
     { data: joinRequestRows, error: joinRequestsError },
     { data: examSlotRows, error: examSlotsError },
     { data: reservationRows, error: reservationsError },
+    { data: attendanceSessionRows },
   ] = await Promise.all([
     supabase.rpc("get_school_members_with_profiles", {
       target_school_id: schoolId,
@@ -199,12 +228,17 @@ export default async function SchoolDashboardPage({
     supabase
       .from("Reservations")
       .select(
-        "id, user_id, slot_id, reservation_date, exam_name, exam_type, status, created_at, created_by, created_by_role",
+        "id, user_id, slot_id, reservation_date, exam_name, exam_type, status, created_at, created_by, created_by_role, attendance_status, attendance_marked_by, attendance_marked_at",
       )
       .eq("school_id", schoolId)
       .eq("status", "confirmed")
       .order("reservation_date", { ascending: true })
       .order("created_at", { ascending: true }),
+    supabase
+      .from("AttendanceSessions")
+      .select("id, school_id, slot_id, reservation_date, started_by, started_at, expires_at")
+      .eq("school_id", schoolId)
+      .gt("expires_at", new Date().toISOString()),
   ]);
 
   const rows = (memberRows ?? []) as SchoolMemberRow[];
@@ -290,6 +324,20 @@ export default async function SchoolDashboardPage({
     createdAt: reservation.created_at,
     createdBy: reservation.created_by,
     createdByRole: reservation.created_by_role,
+    attendanceStatus: reservation.attendance_status ?? "present",
+    attendanceMarkedBy: reservation.attendance_marked_by,
+    attendanceMarkedAt: reservation.attendance_marked_at,
+  }));
+  const attendanceSessions: AttendanceSession[] = (
+    (attendanceSessionRows ?? []) as AttendanceSessionRow[]
+  ).map((session) => ({
+    id: session.id,
+    schoolId: session.school_id,
+    slotId: session.slot_id,
+    reservationDate: session.reservation_date,
+    startedBy: session.started_by,
+    startedAt: session.started_at,
+    expiresAt: session.expires_at,
   }));
 
   return (
@@ -362,7 +410,11 @@ export default async function SchoolDashboardPage({
                   className="text-sm font-semibold"
                   style={{ color: "#111827" }}
                 >
-                  {isAdmin ? "Admin access" : "Professor access"}
+                  {isAdmin
+                    ? "Admin access"
+                    : isProfessor
+                      ? "Professor access"
+                      : "Exam supervisor access"}
                 </p>
                 <p className="text-xs" style={{ color: "#9CA3AF" }}>
                   Signed in as {displayName}
@@ -380,8 +432,14 @@ export default async function SchoolDashboardPage({
           joinRequests={joinRequests}
           examSlots={examSlots}
           reservations={reservations}
+          attendanceSessions={attendanceSessions}
+          currentUserRole={
+            isAdmin ? "admin" : isProfessor ? "professor" : "exam_supervisor"
+          }
           canManageMembers={isAdmin}
           canManageSelfBooking={isAdmin || isProfessor}
+          canViewAttendance={isAdmin || isProfessor || isExamSupervisor}
+          canMarkAttendance={isExamSupervisor}
           memberError={
             membersError
               ? getUserFacingErrorMessage("loadMembers", membersError)

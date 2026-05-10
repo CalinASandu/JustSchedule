@@ -130,7 +130,7 @@ Professors and admins can schedule exams for restricted students and normal stud
 
 ## Part 3: Cancel Reservations With Ownership Rules
 
-Status: Mostly done. The implemented rule is stricter than the first draft: students can cancel any reservation assigned to them, and admins/professors can cancel reservations they created for students. Admins do not currently have blanket cancellation for every school reservation.
+Status: Done. Students can cancel any reservation assigned to them, and admins/professors can cancel any confirmed reservation in their school. Exam supervisors cannot cancel reservations.
 
 ### Goal
 
@@ -158,8 +158,8 @@ Supported statuses should include:
 
 ### Permission Rules
 
-- Students can cancel their own eligible self-created reservations.
-- Professors can cancel reservations they created.
+- Students can cancel any reservation assigned to them.
+- Professors can cancel any confirmed reservation in their school.
 - Admins can cancel any reservation in their school.
 - Exam supervisors should not cancel reservations unless that permission is explicitly added later.
 
@@ -187,7 +187,7 @@ Add cancel actions in:
 
 Use a confirmation dialog. It can be lighter than the school deletion flow, but it should still prevent accidental cancellation.
 
-Current implementation has inline cancel actions and server-side authorization. A dedicated confirmation dialog is still left to implement.
+Current implementation uses confirmation dialogs and server-side authorization.
 
 ### Result
 
@@ -195,7 +195,7 @@ Reservations can be cancelled safely, and cancellation history remains available
 
 ## Part 4: Exam Supervisor Role And Attendance
 
-Status: Not started.
+Status: Done, with temporary attendance-session testing support.
 
 ### Goal
 
@@ -214,14 +214,13 @@ Extend the `school_role` enum with `exam_supervisor`.
 Add attendance fields to `Reservations`:
 
 ```sql
-attendance_status text not null default 'pending'
+attendance_status text not null default 'present'
 attendance_marked_by uuid references auth.users(id)
 attendance_marked_at timestamptz
 ```
 
 Supported attendance statuses:
 
-- `pending`
 - `present`
 - `absent`
 
@@ -234,9 +233,9 @@ Recommended role capabilities:
 | Role | Capabilities |
 |---|---|
 | `admin` | Full school management, reservation management, permission editing, attendance |
-| `professor` | View members, restrict student self-booking, schedule students, cancel own created reservations |
-| `exam_supervisor` | View exam-day reservations and mark attendance |
-| `student` | View schedule/bookings, self-book if allowed, cancel own eligible self-created reservations |
+| `professor` | View members, restrict student self-booking, schedule students, cancel school reservations, view attendance |
+| `exam_supervisor` | View reservations and mark attendance |
+| `student` | View schedule/bookings, self-book if allowed, cancel reservations assigned to them |
 
 ### Backend
 
@@ -245,7 +244,7 @@ Add an attendance update function or RPC.
 Validation rules:
 
 - Caller is signed in.
-- Caller is `admin`, `professor`, or `exam_supervisor` in the school.
+- Caller is `exam_supervisor` in the school for mutations. Admins and professors can view attendance read-only.
 - Reservation belongs to the caller's school.
 - Reservation is confirmed.
 - Attendance status is one of `pending`, `present`, or `absent`.
@@ -322,16 +321,14 @@ That audit data can later generate status-board entries without guessing what ha
 1. Done: Add `can_self_book` to `SchoolMembers`, enforce it in student booking, and add the member-list permission toggle.
 2. Done: Add professor/admin booking for students with creator tracking.
 3. Mostly done: Add reservation cancellation with ownership rules.
-4. Next: Add cancellation confirmation dialogs and optional cancellation audit fields.
-5. Next: Add the `exam_supervisor` role and attendance marking.
+4. Done: Add cancellation confirmation dialogs.
+5. Done: Add the `exam_supervisor` role and attendance marking.
 6. Later: Add the student status board after the event model is clear.
 
 ## Current Remaining Work
 
-- Add confirmation dialogs before cancelling reservations from student and teacher views.
 - Decide whether cancellation audit fields (`cancelled_at`, `cancelled_by`, `cancel_reason`) should be added before attendance/status-board work.
-- Decide whether admins should be able to cancel all school reservations or only reservations they created; current behavior follows the latest implemented rule for creator-scoped teacher cancellation.
-- Implement `exam_supervisor` role and attendance tracking.
+- Remove the temporary `AttendanceSessions` start override after attendance timing is verified.
 - Design and implement the future student status/news board.
 
 ## Verification Checklist For Each Part

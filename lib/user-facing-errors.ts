@@ -11,6 +11,8 @@ type FunctionErrorBody = {
 };
 
 export type ErrorContext =
+  | "attendanceStart"
+  | "attendanceUpdate"
   | "cancelReservation"
   | "createInvite"
   | "joinRequest"
@@ -29,6 +31,8 @@ export type ErrorContext =
   | "selfBookingUpdate";
 
 const fallbackMessages: Record<ErrorContext, string> = {
+  attendanceStart: "Could not start attendance for this slot. Try again in a moment.",
+  attendanceUpdate: "Could not update attendance. Try again in a moment.",
   cancelReservation: "Could not cancel this reservation. Try again in a moment.",
   createInvite: "Could not create an invite link. Try again in a moment.",
   joinRequest: "Could not request access. Try again in a moment.",
@@ -230,8 +234,8 @@ export function getUserFacingErrorMessage(
   }
 
   if (context === "cancelReservation") {
-    if (messageIncludes(message, ["only the student", "cancel_not_allowed", "permission denied"])) {
-      return "You can only cancel your own reservation or a reservation you scheduled for a student.";
+    if (messageIncludes(message, ["only students", "cancel_not_allowed", "permission denied"])) {
+      return "Only students, admins, and professors can cancel reservations.";
     }
 
     if (messageIncludes(message, ["invalid session", "jwt", "authorization"])) {
@@ -240,6 +244,24 @@ export function getUserFacingErrorMessage(
 
     if (messageIncludes(message, ["already cancelled", "no longer available", "reservation_unavailable"])) {
       return "This reservation is no longer available to cancel.";
+    }
+  }
+
+  if (context === "attendanceStart" || context === "attendanceUpdate") {
+    if (messageIncludes(message, ["only exam supervisors"])) {
+      return "Only exam supervisors can update attendance.";
+    }
+
+    if (messageIncludes(message, ["five minutes", "marking is closed"])) {
+      return "Attendance can only be marked during the active exam window.";
+    }
+
+    if (messageIncludes(message, ["invalid session", "jwt", "authorization"])) {
+      return "Your session expired. Sign in again to update attendance.";
+    }
+
+    if (messageIncludes(message, ["slot is unavailable", "reservation is unavailable"])) {
+      return "This attendance record is no longer available. Refresh and try again.";
     }
   }
 

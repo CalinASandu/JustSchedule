@@ -28,7 +28,11 @@ function jsonResponse(body: Record<string, unknown>, status = 200) {
 function statusForDatabaseError(error: { code?: string; message?: string }) {
   const message = (error.message ?? "").toLowerCase();
 
-  if (error.code === "42501" || message.includes("only the student")) {
+  if (
+    error.code === "42501" ||
+    message.includes("only the student") ||
+    message.includes("only students")
+  ) {
     return 403;
   }
 
@@ -46,10 +50,14 @@ function statusForDatabaseError(error: { code?: string; message?: string }) {
 function publicCancelError(error: { code?: string; message?: string }) {
   const message = (error.message ?? "").toLowerCase();
 
-  if (error.code === "42501" || message.includes("only the student")) {
+  if (
+    error.code === "42501" ||
+    message.includes("only the student") ||
+    message.includes("only students")
+  ) {
     return {
       code: "cancel_not_allowed",
-      error: "You can only cancel your own reservation or a reservation you scheduled for a student.",
+      error: "Only students, admins, and professors can cancel reservations.",
     };
   }
 

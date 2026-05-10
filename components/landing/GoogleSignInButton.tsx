@@ -10,7 +10,11 @@ interface Props {
   redirectPath?: string;
 }
 
-export function GoogleSignInButton({ onClick, compact = false, redirectPath = "/dashboard" }: Props) {
+export function GoogleSignInButton({
+  onClick,
+  compact = false,
+  redirectPath = "/dashboard",
+}: Props) {
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleClick() {

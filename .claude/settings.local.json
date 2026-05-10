@@ -24,7 +24,15 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3001)",
       "PowerShell(Get-Command *)",
       "PowerShell(Get-Location; Test-Path .graphify_detect.json; \\(Get-Item .graphify_detect.json\\).Length; Test-Path .graphify_python; Get-Content .graphify_python)",
-      "PowerShell(python -c $script)"
+      "PowerShell(python -c $script)",
+      "Bash(claude mcp *)",
+      "mcp__supabase__list_migrations",
+      "mcp__supabase__apply_migration",
+      "Bash(graphify update *)"
     ]
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "supabase"
+  ]
 }

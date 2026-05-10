@@ -14,6 +14,7 @@ import {
   Link2,
   Loader2,
   Mail,
+  Play,
   Search,
   Trash2,
   UserMinus,
@@ -78,15 +79,35 @@ type Reservation = {
   createdAt: string;
   createdBy: string;
   createdByRole: SchoolRole;
+  attendanceStatus: AttendanceStatus;
+  attendanceMarkedBy: string | null;
+  attendanceMarkedAt: string | null;
+};
+
+type AttendanceSession = {
+  id: string;
+  schoolId: string;
+  slotId: string;
+  reservationDate: string;
+  startedBy: string;
+  startedAt: string;
+  expiresAt: string;
 };
 
 type Decision = "approved" | "rejected";
-type SchoolRole = "admin" | "professor" | "student";
+type AttendanceStatus = "present" | "absent";
+type SchoolRole = "admin" | "professor" | "exam_supervisor" | "student";
 type ExamType = "midterm" | "final";
-type SchoolDashboardTab = "members" | "reservations" | "requests" | "invites" | "settings";
+type SchoolDashboardTab =
+  | "members"
+  | "reservations"
+  | "attendance"
+  | "requests"
+  | "invites"
+  | "settings";
 type ReservationViewMode = "day" | "week";
 
-const roleOptions: SchoolRole[] = ["student", "professor", "admin"];
+const roleOptions: SchoolRole[] = ["student", "exam_supervisor", "professor", "admin"];
 
 type Props = {
   schoolId: string;
@@ -96,12 +117,16 @@ type Props = {
   joinRequests: JoinRequest[];
   examSlots: ExamSlot[];
   reservations: Reservation[];
+  attendanceSessions: AttendanceSession[];
+  currentUserRole: Exclude<SchoolRole, "student">;
   memberError: string | null;
   inviteError: string | null;
   joinRequestError: string | null;
   reservationError: string | null;
   canManageMembers: boolean;
   canManageSelfBooking: boolean;
+  canViewAttendance: boolean;
+  canMarkAttendance: boolean;
 };
 
 function formatDate(value: string) {
@@ -177,6 +202,46 @@ function formatExamType(type: Reservation["examType"]) {
   return type[0].toUpperCase() + type.slice(1);
 }
 
+function formatRole(role: SchoolRole) {
+  return role === "exam_supervisor" ? "Exam supervisor" : role;
+}
+
+function getSlotDateTime(dateKey: string, timeValue: string) {
+  return new Date(`${dateKey}T${timeValue}`);
+}
+
+function getAttendanceWindowLabel(
+  dateKey: string,
+  slot: ExamSlot | null,
+  session: AttendanceSession | null,
+) {
+  if (!slot) {
+    return "Choose a slot";
+  }
+
+  if (session) {
+    return "Started for testing";
+  }
+
+  const now = new Date();
+  const startsAt = getSlotDateTime(dateKey, slot.startsAt);
+  const endsAt = getSlotDateTime(dateKey, slot.endsAt);
+  const opensAt = new Date(startsAt.getTime() - 5 * 60 * 1000);
+
+  if (now < opensAt) {
+    return `Opens at ${opensAt.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+    })}`;
+  }
+
+  if (now > endsAt) {
+    return "Closed";
+  }
+
+  return "Open now";
+}
+
 export default function SchoolManagementTabs({
   schoolId,
   schoolName,
@@ -185,17 +250,25 @@ export default function SchoolManagementTabs({
   joinRequests,
   examSlots,
   reservations,
+  attendanceSessions,
+  currentUserRole,
   memberError,
   inviteError,
   joinRequestError,
   reservationError,
   canManageMembers,
   canManageSelfBooking,
+  canViewAttendance,
+  canMarkAttendance,
 }: Props) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<SchoolDashboardTab>("members");
+  const [activeTab, setActiveTab] = useState<SchoolDashboardTab>(
+    currentUserRole === "exam_supervisor" ? "reservations" : "members",
+  );
   const [reservationDate, setReservationDate] = useState(getTodayKey);
   const [reservationViewMode, setReservationViewMode] = useState<ReservationViewMode>("day");
+  const [attendanceDate, setAttendanceDate] = useState(getTodayKey);
+  const [attendanceSlotId, setAttendanceSlotId] = useState(() => examSlots[0]?.id ?? "");
   const [memberSearchQuery, setMemberSearchQuery] = useState("");
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
   const [expiresOn, setExpiresOn] = useState(getDefaultExpiryDate);
@@ -250,6 +323,21 @@ export default function SchoolManagementTabs({
     error: null,
     success: null,
     pendingReservationId: null,
+  });
+  const [cancelDialogReservationId, setCancelDialogReservationId] = useState<string | null>(null);
+  const [attendanceOverrides, setAttendanceOverrides] = useState<Record<string, AttendanceStatus>>({});
+  const [startedAttendanceSessions, setStartedAttendanceSessions] =
+    useState<AttendanceSession[]>(attendanceSessions);
+  const [attendanceState, setAttendanceState] = useState<{
+    error: string | null;
+    success: string | null;
+    pendingReservationId: string | null;
+    starting: boolean;
+  }>({
+    error: null,
+    success: null,
+    pendingReservationId: null,
+    starting: false,
   });
   const [selectedWeekReservationId, setSelectedWeekReservationId] = useState<string | null>(null);
   const [kickState, setKickState] = useState<{ error: string | null; pending: boolean }>({
@@ -311,8 +399,14 @@ export default function SchoolManagementTabs({
     );
   }, [memberSearchQuery, visibleMembers]);
   const visibleReservations = useMemo(
-    () => reservations.filter((reservation) => !cancelledReservationIds.has(reservation.id)),
-    [cancelledReservationIds, reservations],
+    () =>
+      reservations
+        .filter((reservation) => !cancelledReservationIds.has(reservation.id))
+        .map((reservation) => ({
+          ...reservation,
+          attendanceStatus: attendanceOverrides[reservation.id] ?? reservation.attendanceStatus,
+        })),
+    [attendanceOverrides, cancelledReservationIds, reservations],
   );
   const reservationWeekDates = useMemo(() => getWeekDates(reservationDate), [reservationDate]);
   const reservationsByDate = useMemo(() => {
@@ -394,12 +488,35 @@ export default function SchoolManagementTabs({
     !!selectedWeekReservation &&
     !!currentUserId &&
     (selectedWeekReservation.userId === currentUserId ||
-      (selectedWeekReservation.createdBy === currentUserId &&
-        (selectedWeekReservation.createdByRole === "admin" ||
-          selectedWeekReservation.createdByRole === "professor")));
+      currentUserRole === "admin" ||
+      currentUserRole === "professor");
   const cancelWeekReservationPending =
     !!selectedWeekReservation &&
     cancelReservationState.pendingReservationId === selectedWeekReservation.id;
+  const selectedAttendanceSlot =
+    examSlots.find((slot) => slot.id === attendanceSlotId) ?? examSlots[0] ?? null;
+  const selectedAttendanceSession =
+    selectedAttendanceSlot
+      ? startedAttendanceSessions.find(
+          (session) =>
+            session.reservationDate === attendanceDate &&
+            session.slotId === selectedAttendanceSlot.id,
+        ) ?? null
+      : null;
+  const attendanceReservations = useMemo(
+    () =>
+      visibleReservations
+        .filter(
+          (reservation) =>
+            reservation.reservationDate === attendanceDate &&
+            reservation.slotId === selectedAttendanceSlot?.id,
+        )
+        .sort((first, second) => first.createdAt.localeCompare(second.createdAt)),
+    [attendanceDate, selectedAttendanceSlot?.id, visibleReservations],
+  );
+  const cancelDialogReservation = cancelDialogReservationId
+    ? visibleReservations.find((reservation) => reservation.id === cancelDialogReservationId) ?? null
+    : null;
 
   useEffect(() => {
     if (!copiedUrl) {
@@ -774,6 +891,7 @@ export default function SchoolManagementTabs({
     }
 
     setCancelledReservationIds((current) => new Set(current).add(reservation.id));
+    setCancelDialogReservationId(null);
     setCancelReservationState({
       error: null,
       success: `Cancelled ${reservation.examName}.`,
@@ -846,7 +964,9 @@ export default function SchoolManagementTabs({
     setDeleteState({ error: null, pending: true });
 
     const supabase = createClient();
-    const { error } = await supabase.from("Schools").delete().eq("id", schoolId);
+    const { error } = await supabase.rpc("soft_delete_school", {
+      target_school_id: schoolId,
+    });
 
     if (error) {
       console.error("Delete school failed", error);
@@ -858,6 +978,99 @@ export default function SchoolManagementTabs({
     }
 
     router.replace("/dashboard");
+    router.refresh();
+  }
+
+  async function startAttendanceSession() {
+    if (!selectedAttendanceSlot || attendanceState.starting) {
+      return;
+    }
+
+    setAttendanceState({
+      error: null,
+      success: null,
+      pendingReservationId: null,
+      starting: true,
+    });
+
+    const supabase = createClient();
+    const { data, error } = await supabase.rpc("start_attendance_session", {
+      target_school_id: schoolId,
+      target_slot_id: selectedAttendanceSlot.id,
+      target_reservation_date: attendanceDate,
+    });
+
+    if (error) {
+      console.error("Start attendance session failed", error);
+      setAttendanceState({
+        error: getUserFacingErrorMessage("attendanceStart", error),
+        success: null,
+        pendingReservationId: null,
+        starting: false,
+      });
+      return;
+    }
+
+    const [session] = (data ?? []) as { session_id: string; expires_at: string }[];
+    setStartedAttendanceSessions((current) => [
+      ...current.filter(
+        (item) =>
+          item.reservationDate !== attendanceDate || item.slotId !== selectedAttendanceSlot.id,
+      ),
+      {
+        id: session?.session_id ?? `local-${selectedAttendanceSlot.id}-${attendanceDate}`,
+        schoolId,
+        slotId: selectedAttendanceSlot.id,
+        reservationDate: attendanceDate,
+        startedBy: currentUserId ?? "",
+        startedAt: new Date().toISOString(),
+        expiresAt: session?.expires_at ?? new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+      },
+    ]);
+    setAttendanceState({
+      error: null,
+      success: `Attendance started for ${selectedAttendanceSlot.name}.`,
+      pendingReservationId: null,
+      starting: false,
+    });
+  }
+
+  async function updateAttendance(reservation: Reservation, status: AttendanceStatus) {
+    if (!canMarkAttendance || attendanceState.pendingReservationId) {
+      return;
+    }
+
+    setAttendanceState({
+      error: null,
+      success: null,
+      pendingReservationId: reservation.id,
+      starting: false,
+    });
+
+    const supabase = createClient();
+    const { error } = await supabase.rpc("set_reservation_attendance", {
+      target_reservation_id: reservation.id,
+      target_attendance_status: status,
+    });
+
+    if (error) {
+      console.error("Update attendance failed", error);
+      setAttendanceState({
+        error: getUserFacingErrorMessage("attendanceUpdate", error),
+        success: null,
+        pendingReservationId: null,
+        starting: false,
+      });
+      return;
+    }
+
+    setAttendanceOverrides((current) => ({ ...current, [reservation.id]: status }));
+    setAttendanceState({
+      error: null,
+      success: `${memberNamesByUserId.get(reservation.userId) ?? "Student"} marked ${status}.`,
+      pendingReservationId: null,
+      starting: false,
+    });
     router.refresh();
   }
 
@@ -881,8 +1094,9 @@ export default function SchoolManagementTabs({
   return (
     <section className="panel anim-slide-up anim-d1 overflow-hidden">
       <div className="flex border-b border-[#E4E8EF] px-2 pt-2">
-        {renderTabButton("members", "Members")}
+        {currentUserRole !== "exam_supervisor" && renderTabButton("members", "Members")}
         {renderTabButton("reservations", "Reservations")}
+        {canViewAttendance && renderTabButton("attendance", "Attendance")}
         {canManageMembers && renderTabButton("requests", "Join Requests")}
         {canManageMembers && renderTabButton("invites", "Invites")}
         {canManageMembers && renderTabButton("settings", "Settings")}
@@ -1104,7 +1318,7 @@ export default function SchoolManagementTabs({
                   >
                     {roleOptions.map((role) => (
                       <option key={role} value={role}>
-                        {role}
+                        {formatRole(role)}
                       </option>
                     ))}
                   </select>
@@ -1365,9 +1579,8 @@ export default function SchoolManagementTabs({
                       !!reservation &&
                       !!currentUserId &&
                       (reservation.userId === currentUserId ||
-                        (reservation.createdBy === currentUserId &&
-                          (reservation.createdByRole === "admin" ||
-                            reservation.createdByRole === "professor")));
+                        currentUserRole === "admin" ||
+                        currentUserRole === "professor");
                     const cancelPending =
                       !!reservation &&
                       cancelReservationState.pendingReservationId === reservation.id;
@@ -1403,7 +1616,7 @@ export default function SchoolManagementTabs({
                             {canCancelReservation && (
                               <button
                                 type="button"
-                                onClick={() => cancelReservation(reservation)}
+                                onClick={() => setCancelDialogReservationId(reservation.id)}
                                 disabled={!!cancelReservationState.pendingReservationId}
                                 className="mt-3 inline-flex h-8 w-fit items-center justify-center gap-1.5 rounded-[10px] px-3 text-xs font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
                                 style={{ border: "1px solid #E4E8EF", color: "#DC2626" }}
@@ -1431,6 +1644,241 @@ export default function SchoolManagementTabs({
               </div>
             </div>
             )
+          )}
+        </div>
+      )}
+
+      {activeTab === "attendance" && (
+        <div className="p-5">
+          {/* Header row: title left, date navigator right */}
+          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <h2 className="text-sm font-semibold" style={{ color: "#111827" }}>
+                Attendance
+              </h2>
+              <p className="mt-1 text-sm" style={{ color: "#6B7280" }}>
+                Track attendance by exam slot. Only the selected slot is shown.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setAttendanceDate((current) => addDays(current, -1))}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50"
+                style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+                aria-label="Previous attendance day"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <span
+                className="min-w-[148px] rounded-xl px-3 py-2 text-center text-sm font-semibold"
+                style={{ border: "1px solid #E4E8EF", color: "#111827" }}
+              >
+                {formatReservationDate(attendanceDate)}
+              </span>
+              <button
+                type="button"
+                onClick={() => setAttendanceDate((current) => addDays(current, 1))}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50"
+                style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+                aria-label="Next attendance day"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+
+          {/* Slot pills */}
+          {examSlots.length > 0 && (
+            <div className="mb-4 flex flex-wrap gap-2">
+              {examSlots.map((slot) => {
+                const isSelected = slot.id === (selectedAttendanceSlot?.id ?? examSlots[0]?.id);
+                return (
+                  <button
+                    key={slot.id}
+                    type="button"
+                    onClick={() => setAttendanceSlotId(slot.id)}
+                    className="inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-sm font-semibold transition-colors duration-150"
+                    style={
+                      isSelected
+                        ? { background: "#EFF6FF", color: "#2563EB", border: "1.5px solid #BFDBFE" }
+                        : { background: "#FFFFFF", color: "#6B7280", border: "1.5px solid #E4E8EF" }
+                    }
+                  >
+                    <span>{slot.name}</span>
+                    <span
+                      className="text-xs font-medium"
+                      style={{ color: isSelected ? "#93C5FD" : "#9CA3AF" }}
+                    >
+                      {formatSlotTime(slot.startsAt)}–{formatSlotTime(slot.endsAt)}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {attendanceState.error && <ErrorBanner message={attendanceState.error} />}
+          {attendanceState.success && (
+            <p className="anim-fade-in mb-4 text-[0.8125rem] font-medium" style={{ color: "#1D4ED8" }}>
+              {attendanceState.success}
+            </p>
+          )}
+
+          {/* Session status bar */}
+          <div
+            className="mb-4 flex items-center justify-between gap-3 rounded-[10px] px-4 py-3"
+            style={{ border: "1px solid #E4E8EF", background: "#FAFAFA" }}
+          >
+            <div className="flex items-center gap-3">
+              <span
+                className="rounded-full px-2.5 py-1 text-xs font-semibold"
+                style={
+                  selectedAttendanceSession
+                    ? { background: "#DBEAFE", color: "#1D4ED8" }
+                    : { background: "#E2E8F0", color: "#64748B" }
+                }
+              >
+                {getAttendanceWindowLabel(attendanceDate, selectedAttendanceSlot, selectedAttendanceSession)}
+              </span>
+              <span className="text-sm" style={{ color: "#6B7280" }}>
+                {selectedAttendanceSlot
+                  ? `${formatSlotTime(selectedAttendanceSlot.startsAt)} – ${formatSlotTime(selectedAttendanceSlot.endsAt)}`
+                  : "No slot selected"}
+              </span>
+            </div>
+            {canMarkAttendance && (
+              <button
+                type="button"
+                onClick={startAttendanceSession}
+                disabled={!selectedAttendanceSlot || attendanceState.starting}
+                className="inline-flex h-9 items-center justify-center gap-1.5 rounded-[10px] px-4 text-sm font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
+                style={{
+                  background: attendanceState.starting ? "#93C5FD" : "#2563EB",
+                  boxShadow: attendanceState.starting
+                    ? "none"
+                    : "0 1px 3px rgba(37,99,235,0.25), 0 4px 12px rgba(37,99,235,0.12)",
+                }}
+              >
+                {attendanceState.starting ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  <Play size={14} />
+                )}
+                Start
+              </button>
+            )}
+          </div>
+
+          {attendanceReservations.length === 0 ? (
+            <EmptyState
+              title="No students in this slot"
+              description="Choose another date or time slot to review attendance."
+            />
+          ) : (
+            <div className="overflow-x-auto rounded-[10px]" style={{ border: "1px solid #E4E8EF" }}>
+              <table className="w-full text-sm" style={{ borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ borderBottom: "1px solid #E4E8EF" }}>
+                    {["Student", "Exam", "Type", "Status"].map((column) => (
+                      <th
+                        key={column}
+                        className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider"
+                        style={{ color: "#9CA3AF", background: "#FAFAFA", whiteSpace: "nowrap" }}
+                      >
+                        {column}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {attendanceReservations.map((reservation, index) => {
+                    const pending = attendanceState.pendingReservationId === reservation.id;
+                    const isLast = index === attendanceReservations.length - 1;
+
+                    return (
+                      <tr
+                        key={reservation.id}
+                        className="anim-slide-up bg-white"
+                        style={isLast ? undefined : { borderBottom: "1px solid #F3F4F6" }}
+                      >
+                        <td className="px-4 py-3">
+                          <p className="font-semibold" style={{ color: "#111827" }}>
+                            {memberNamesByUserId.get(reservation.userId) ?? "Unnamed student"}
+                          </p>
+                        </td>
+                        <td className="px-4 py-3" style={{ color: "#374151" }}>
+                          {reservation.examName}
+                        </td>
+                        <td className="px-4 py-3">
+                          <span
+                            className="rounded-full px-2.5 py-1 text-xs font-semibold"
+                            style={{ background: "#EFF6FF", color: "#2563EB" }}
+                          >
+                            {formatExamType(reservation.examType)}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          {canMarkAttendance ? (
+                            <div
+                              className="inline-flex rounded-xl p-1"
+                              style={{ border: "1px solid #E4E8EF", background: "#F8FAFC" }}
+                              role="group"
+                              aria-label={`Attendance for ${
+                                memberNamesByUserId.get(reservation.userId) ?? "student"
+                              }`}
+                            >
+                              {(["present", "absent"] as AttendanceStatus[]).map((status) => (
+                                <button
+                                  key={status}
+                                  type="button"
+                                  onClick={() => updateAttendance(reservation, status)}
+                                  disabled={pending}
+                                  className="inline-flex h-8 min-w-[80px] items-center justify-center gap-1.5 rounded-[10px] px-3 text-xs font-semibold capitalize transition-colors duration-150 disabled:cursor-not-allowed"
+                                  style={
+                                    reservation.attendanceStatus === status
+                                      ? {
+                                          background: "#FFFFFF",
+                                          color: status === "absent" ? "#DC2626" : "#1D4ED8",
+                                          border: `1px solid ${status === "absent" ? "#FECACA" : "#BFDBFE"}`,
+                                        }
+                                      : {
+                                          background: "transparent",
+                                          color: "#9CA3AF",
+                                          border: "1px solid transparent",
+                                        }
+                                  }
+                                >
+                                  {pending && reservation.attendanceStatus !== status ? (
+                                    <Loader2 size={13} className="animate-spin" />
+                                  ) : status === "present" ? (
+                                    <Check size={13} />
+                                  ) : (
+                                    <X size={13} />
+                                  )}
+                                  {status}
+                                </button>
+                              ))}
+                            </div>
+                          ) : (
+                            <span
+                              className="rounded-full px-3 py-1 text-xs font-semibold capitalize"
+                              style={
+                                reservation.attendanceStatus === "absent"
+                                  ? { background: "#FEF2F2", color: "#DC2626" }
+                                  : { background: "#DBEAFE", color: "#1D4ED8" }
+                              }
+                            >
+                              {reservation.attendanceStatus}
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       )}
@@ -1819,7 +2267,7 @@ export default function SchoolManagementTabs({
                 <button
                   type="button"
                   onClick={() => {
-                    cancelReservation(selectedWeekReservation);
+                    setCancelDialogReservationId(selectedWeekReservation.id);
                     setSelectedWeekReservationId(null);
                   }}
                   disabled={!!cancelReservationState.pendingReservationId}
@@ -1835,6 +2283,63 @@ export default function SchoolManagementTabs({
                 </button>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {cancelDialogReservation && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="cancel-reservation-title"
+        >
+          <div className="panel w-full max-w-[420px] p-5 shadow-[0_18px_60px_rgba(15,23,42,0.18)]">
+            <div className="mb-4 flex items-start gap-3">
+              <div
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+                style={{ background: "#FEF2F2" }}
+              >
+                <Ban size={18} color="#DC2626" strokeWidth={1.9} />
+              </div>
+              <div>
+                <h3 id="cancel-reservation-title" className="text-sm font-semibold" style={{ color: "#111827" }}>
+                  Cancel reservation
+                </h3>
+                <p className="mt-1 text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
+                  This will cancel {cancelDialogReservation.examName} for{" "}
+                  {memberNamesByUserId.get(cancelDialogReservation.userId) ?? "this student"}.
+                </p>
+              </div>
+            </div>
+
+            {cancelReservationState.error && <ErrorBanner message={cancelReservationState.error} />}
+
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setCancelDialogReservationId(null)}
+                disabled={!!cancelReservationState.pendingReservationId}
+                className="inline-flex h-10 items-center justify-center rounded-[10px] px-4 text-sm font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
+                style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+              >
+                Keep
+              </button>
+              <button
+                type="button"
+                onClick={() => cancelReservation(cancelDialogReservation)}
+                disabled={!!cancelReservationState.pendingReservationId}
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-[10px] px-4 text-sm font-semibold transition-colors duration-150 hover:bg-red-50 disabled:cursor-not-allowed"
+                style={{ border: "1px solid #FECACA", color: "#DC2626" }}
+              >
+                {cancelReservationState.pendingReservationId === cancelDialogReservation.id ? (
+                  <Loader2 size={15} className="animate-spin" />
+                ) : (
+                  <Ban size={15} />
+                )}
+                Cancel reservation
+              </button>
+            </div>
           </div>
         </div>
       )}

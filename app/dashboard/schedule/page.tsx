@@ -41,6 +41,9 @@ type ReservationRow = {
   created_at: string;
   created_by: string | null;
   created_by_role: string | null;
+  attendance_status: "present" | "absent" | null;
+  attendance_marked_by: string | null;
+  attendance_marked_at: string | null;
 };
 
 function getSchoolId(value: string | string[] | undefined) {
@@ -115,7 +118,12 @@ export default async function SchedulePage({
       .eq("user_id", user.id)
       .eq("school_id", schoolId)
       .maybeSingle(),
-    supabase.from("Schools").select("id, name, created_by").eq("id", schoolId).maybeSingle(),
+    supabase
+      .from("Schools")
+      .select("id, name, created_by")
+      .eq("id", schoolId)
+      .is("deleted_at", null)
+      .maybeSingle(),
   ]);
 
   const membershipRow = membership as SchoolMemberRow | null;
@@ -190,6 +198,9 @@ export default async function SchedulePage({
         reservation.created_by_role === "admin" || reservation.created_by_role === "professor"
           ? reservation.created_by_role
           : "student",
+      attendanceStatus: reservation.attendance_status ?? "present",
+      attendanceMarkedBy: reservation.attendance_marked_by,
+      attendanceMarkedAt: reservation.attendance_marked_at,
     }),
   );
 

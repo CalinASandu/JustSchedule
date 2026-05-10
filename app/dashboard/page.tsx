@@ -5,7 +5,7 @@ import DashboardSignOutButton from "@/components/dashboard/DashboardSignOutButto
 import RegisterSchoolForm from "@/components/dashboard/RegisterSchoolForm";
 import { createClient } from "@/lib/supabase/server";
 
-type SchoolRole = "admin" | "professor" | "student";
+type SchoolRole = "admin" | "professor" | "exam_supervisor" | "student";
 
 type SchoolMembership = {
   id: string;
@@ -39,8 +39,13 @@ function getInitials(name: string) {
   );
 }
 
+function displayRole(role: SchoolRole): string {
+  if (role === "exam_supervisor") return "Exam Supervisor";
+  return role.charAt(0).toUpperCase() + role.slice(1);
+}
+
 function normalizeRole(role: string | null): SchoolRole {
-  if (role === "admin" || role === "professor") {
+  if (role === "admin" || role === "professor" || role === "exam_supervisor") {
     return role;
   }
 
@@ -116,6 +121,7 @@ export default async function DashboardPage() {
       .from("Schools")
       .select("id, name, created_at, created_by")
       .eq("created_by", user.id)
+      .is("deleted_at", null)
       .order("created_at", { ascending: true }),
   ]);
 
@@ -129,6 +135,7 @@ export default async function DashboardPage() {
           .from("Schools")
           .select("id, name, created_at, created_by")
           .in("id", schoolIds)
+          .is("deleted_at", null)
       : { data: [] };
 
   const displayName =
@@ -243,7 +250,10 @@ export default async function DashboardPage() {
           <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {memberships.map((membership, index) => {
               const isAdmin = membership.role === "admin";
-              const opensSchoolDashboard = isAdmin || membership.role === "professor";
+              const opensSchoolDashboard =
+                isAdmin ||
+                membership.role === "professor" ||
+                membership.role === "exam_supervisor";
               const href = opensSchoolDashboard
                 ? `/dashboard/schools/${membership.school.id}`
                 : `/dashboard/schedule?schoolId=${membership.school.id}`;
@@ -293,13 +303,15 @@ export default async function DashboardPage() {
                         }
                       >
                         {isAdmin && <ShieldCheck size={13} strokeWidth={1.8} />}
-                        {membership.role}
+                        {displayRole(membership.role)}
                       </span>
                       <span className="text-xs font-medium" style={{ color: "#6B7280" }}>
                         {isAdmin
                           ? "Manage school"
                           : membership.role === "professor"
                             ? "View members"
+                            : membership.role === "exam_supervisor"
+                              ? "Track attendance"
                             : "Schedule exam"}
                       </span>
                     </div>

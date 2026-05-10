@@ -78,7 +78,7 @@ Admins review pending join requests in the `Join Requests` tab of `components/da
 
 The student schedule workspace uses a panel switcher above the content, not navbar tabs. The current panels are `Schedule`, `My Reservations`, and `School Profile`; `School Profile` currently shows membership details and a `Leave school` action. Keep school-specific panels in this workspace switcher rather than adding school selectors or school tabs to the global navbar. The `Schedule` panel still includes the broad `BookingsPanel` overview for school reservations; use `My Reservations` for the student's own detailed reservation management and cancellation.
 
-`app/dashboard/schools/[schoolId]/page.tsx` is the school management shell for admins and professors. It verifies the signed-in user's `SchoolMembers` row or `Schools.created_by` ownership for the selected school before rendering. Admins can manage members, invites, join requests, and settings; professors can view members, search the member list, and schedule exams for students.
+`app/dashboard/schools/[schoolId]/page.tsx` is the school management shell for admins, professors, and exam supervisors. It verifies the signed-in user's `SchoolMembers` row or `Schools.created_by` ownership for the selected active school before rendering. Admins can manage members, invites, join requests, and settings; professors can view members, search the member list, schedule exams for students, and cancel school reservations; exam supervisors can view reservations and use attendance only.
 
 The schedule UI is split into panels: `CalendarPanel`, `SlotPicker`, `BookingSummaryCard`, `SeatAvailabilityOverview`, and `BookingsPanel`. All live in `components/schedule/`. The student schedule UI computes slot availability from database `Reservations`, not local mock booking state.
 
@@ -88,7 +88,7 @@ The schedule UI is split into panels: `CalendarPanel`, `SlotPicker`, `BookingSum
 
 Admin/professor reservation visibility is implemented in the school dashboard, not the student schedule workspace. `app/dashboard/schools/[schoolId]/page.tsx` loads active `ExamSlots` plus confirmed `Reservations` for the selected school and passes them into `components/dashboard/SchoolManagementTabs.tsx`.
 
-`SchoolManagementTabs` has a `Reservations` tab for admins and professors. It renders a day/week reservation panel with previous/next arrows. Day view uses `ExamSlots` as columns and seat rows based on slot `capacity` with a minimum visual height of 8 rows. Week view shows Mon–Fri only (weekends are filtered out since no exams can be scheduled then) as a 5-column grid; each day column shows compact clickable chips — student name and slot start time — and clicking a chip opens a detail modal with exam name, type, slot, time, and an optional cancel button. Admins/professors can cancel only reservations they created for students.
+`SchoolManagementTabs` has a `Reservations` tab for admins, professors, and exam supervisors. It renders a day/week reservation panel with previous/next arrows. Day view uses `ExamSlots` as columns and seat rows based on slot `capacity` with a minimum visual height of 8 rows. Week view shows Mon–Fri only (weekends are filtered out since no exams can be scheduled then) as a 5-column grid; each day column shows compact clickable chips — student name and slot start time — and clicking a chip opens a detail modal with exam name, type, slot, time, and an optional cancel button. Admins/professors can cancel any confirmed reservation in their school; exam supervisors cannot cancel reservations.
 
 The current database model is:
 
@@ -109,6 +109,7 @@ Relevant migrations:
 - `supabase/migrations/20260502202249_consolidate_reservation_read_policy.sql` replaces overlapping reservation read policies with one member-scoped confirmed-reservation read policy.
 - `supabase/migrations/20260502202326_add_reservations_slot_fk_index.sql` adds the plain `Reservations.slot_id` foreign-key index requested by Supabase advisors.
 - `supabase/migrations/20260505144142_cancel_reservations.sql` replaces all-row reservation uniqueness with a confirmed-only unique index and adds the `cancel_reservation` RPC.
+- `supabase/migrations/20260508114018_attendance_supervisor_soft_delete.sql` adds school soft delete, the `exam_supervisor` role, attendance fields/session override support, broad admin/professor reservation cancellation, and attendance RPCs.
 
 ### Reservation Write Flow
 
@@ -118,13 +119,23 @@ Server-side checks are authoritative. The RPC verifies the caller is signed in, 
 
 Duplicate rule: one student cannot hold two confirmed reservations for the same slot on the same date, but can book another slot on the same date. Cancelling a reservation changes `Reservations.status` to `cancelled`, which frees both the seat and that student's ability to book the same date/slot again.
 
-Reservation cancellation is implemented through the deployed Supabase Edge Function `cancel-reservation` (`supabase/functions/cancel-reservation/index.ts`) with JWT verification enabled in `supabase/config.toml`. The client calls it with `{ reservationId }`. The RPC allows cancellation when the caller is the reservation's `user_id`, or when the caller is the current admin/professor who originally created the reservation (`created_by`). Do not implement cancellation as a direct client-side table update.
+Reservation cancellation is implemented through the deployed Supabase Edge Function `cancel-reservation` (`supabase/functions/cancel-reservation/index.ts`) with JWT verification enabled in `supabase/config.toml`. The client calls it with `{ reservationId }`. The RPC allows cancellation when the caller is the reservation's `user_id`, or when the caller is an admin/professor member of the reservation's school. Do not implement cancellation as a direct client-side table update.
+
+### Attendance
+
+Attendance is stored on `Reservations` with `attendance_status`, `attendance_marked_by`, and `attendance_marked_at`. New reservations default to `attendance_status = 'present'`; exam supervisors only change a student to `absent` when the student did not attend.
+
+The `Attendance` tab in `SchoolManagementTabs` is visible to admins, professors, and exam supervisors. Admins/professors have read-only attendance visibility. Only `exam_supervisor` members can mark attendance through the `set_reservation_attendance` RPC. Attendance is slot-scoped: the selected slot determines which reservations are shown.
+
+The attendance UI has a date navigator (prev/next arrows + date label) in the header, a row of clickable slot pill buttons below it (one per active slot, showing name + time range), a status bar showing the current session state and an inline Start button for exam supervisors, and a bordered table of students with present/absent toggle buttons. Read-only viewers see a badge instead of the toggle.
+
+Production timing is enforced server-side: attendance can be marked only from five minutes before the slot start until the slot ends. The `AttendanceSessions` table and `start_attendance_session` RPC let exam supervisors unlock a slot early for testing via the Start button. Remove that table/RPC/button after real timing is verified.
 
 ### Delete and Leave Flows
 
-School deletion and student leave use normal Supabase database calls guarded by RLS, not Edge Functions. The relevant policies live in `supabase/migrations/20260501140000_school_delete_leave_policies.sql`.
+School deletion is now soft delete through the `soft_delete_school` RPC, not a direct table delete. Student leave still uses normal Supabase database calls guarded by RLS. The old delete policies started in `supabase/migrations/20260501140000_school_delete_leave_policies.sql`, and the current soft-delete behavior is in `supabase/migrations/20260508114018_attendance_supervisor_soft_delete.sql`.
 
-Admins delete schools from the `Settings` tab in `SchoolManagementTabs`. The UI requires typing the exact school name before enabling the delete button. The live foreign keys use `ON DELETE CASCADE` from `Schools` to `SchoolMembers`, `SchoolInvites`, and `JoinRequests`, so deleting a school cleans up those dependent rows.
+Admins delete schools from the `Settings` tab in `SchoolManagementTabs`. The UI requires typing the exact school name before enabling the delete button. Deleting a school sets `Schools.deleted_at` and `Schools.deleted_by`; dependent rows are preserved for audit/history, and active school queries must filter `deleted_at is null`.
 
 Admins kick non-admin members from the `Members` tab in `SchoolManagementTabs`. The UI shows a `Kick` button on each non-admin member card, opens a confirmation dialog, and requires a 5-second cooldown before confirmation. Professors can be listed but cannot manage members, and admins must be able to update roles through the staged dropdown plus confirm panel before members are updated.
 
@@ -150,9 +161,13 @@ Do not move authorization decisions into `proxy.ts`. Keep it focused on keeping 
 
 - Use `supabase.auth.getUser()` for server-side auth decisions. `user_metadata` is allowed only for display fallbacks, never authorization.
 - Do not expose Supabase service-role keys or private secrets to client components. Public client code may only use `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
-- Dashboard authorization depends on Supabase RLS for `Profiles`, `Schools`, `SchoolMembers`, `SchoolInvites`, and `JoinRequests`; frontend filters are not a substitute for policies. The `school_role` enum now includes `admin`, `professor`, and `student`, and member-management policies must match that three-role model.
+- Dashboard authorization depends on Supabase RLS for `Profiles`, `Schools`, `SchoolMembers`, `SchoolInvites`, and `JoinRequests`; frontend filters are not a substitute for policies. The `school_role` enum now includes `admin`, `professor`, `exam_supervisor`, and `student`, and member-management policies must match that four-role model.
 - Edge Functions that perform privileged writes must first verify the caller with the user's JWT before using service-role access.
 - `npm audit` currently reports a moderate PostCSS advisory through `next@16.2.4`; do not run `npm audit fix --force` because npm suggests downgrading Next to `9.3.3`. Re-check after a Next release updates the transitive PostCSS version.
+
+## Keeping AGENTS.md Current
+
+When making a change, update the relevant section of this file in place — replace outdated information rather than appending. Do not accumulate a changelog. The goal is a compact, always-accurate reference.
 
 ## UI Design System
 

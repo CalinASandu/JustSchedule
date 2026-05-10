@@ -42,6 +42,17 @@ export async function requestSchoolJoin(
     return { error: "This invite link has expired.", success: false };
   }
 
+  const { data: school } = await supabase
+    .from("Schools")
+    .select("id")
+    .eq("id", invite.school_id)
+    .is("deleted_at", null)
+    .maybeSingle();
+
+  if (!school) {
+    return { error: "This invite link is not available.", success: false };
+  }
+
   const { error } = await supabase.from("JoinRequests").insert({
     school_id: invite.school_id,
     invite_id: invite.id,
