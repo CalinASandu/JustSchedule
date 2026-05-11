@@ -28,7 +28,15 @@
       "Bash(claude mcp *)",
       "mcp__supabase__list_migrations",
       "mcp__supabase__apply_migration",
-      "Bash(graphify update *)"
+      "Bash(graphify update *)",
+      "Bash(gh api *)",
+      "Bash(where jq *)",
+      "Bash(where curl *)",
+      "Bash(where git *)",
+      "Bash(where bash *)",
+      "Bash(bash *)",
+      "Bash(winget install *)",
+      "PowerShell(Get-ChildItem *)"
     ]
   },
   "enableAllProjectMcpServers": true,

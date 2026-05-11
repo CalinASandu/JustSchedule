@@ -230,12 +230,12 @@ A separate attendance table is probably unnecessary at first. Keep attendance on
 
 Recommended role capabilities:
 
-| Role | Capabilities |
-|---|---|
-| `admin` | Full school management, reservation management, permission editing, attendance |
-| `professor` | View members, restrict student self-booking, schedule students, cancel school reservations, view attendance |
-| `exam_supervisor` | View reservations and mark attendance |
-| `student` | View schedule/bookings, self-book if allowed, cancel reservations assigned to them |
+| Role              | Capabilities                                                                                                |
+| ----------------- | ----------------------------------------------------------------------------------------------------------- |
+| `admin`           | Full school management, reservation management, permission editing, attendance                              |
+| `professor`       | View members, restrict student self-booking, schedule students, cancel school reservations, view attendance |
+| `exam_supervisor` | View reservations and mark attendance                                                                       |
+| `student`         | View schedule/bookings, self-book if allowed, cancel reservations assigned to them                          |
 
 ### Backend
 

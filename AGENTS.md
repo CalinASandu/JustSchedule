@@ -129,7 +129,7 @@ The `Attendance` tab in `SchoolManagementTabs` is visible to admins, professors,
 
 The attendance UI has a date navigator (prev/next arrows + date label) in the header, a row of clickable slot pill buttons below it (one per active slot, showing name + time range), a status bar showing the current session state and an inline Start button for exam supervisors, and a bordered table of students with present/absent toggle buttons. Read-only viewers see a badge instead of the toggle.
 
-Production timing is enforced server-side: attendance can be marked only from five minutes before the slot start until the slot ends. The `AttendanceSessions` table and `start_attendance_session` RPC let exam supervisors unlock a slot early for testing via the Start button. Remove that table/RPC/button after real timing is verified.
+Production timing is enforced server-side in `private.set_reservation_attendance`: attendance can be marked only from five minutes before the slot start until twenty-five minutes after the slot start (`supabase/migrations/20260511172234_attendance_close_window.sql`). The attendance UI mirrors this — present/absent toggles are disabled outside that window and the status bar shows "Opens at …", "Open until …", or "Closed". The `AttendanceSessions` table and `start_attendance_session` RPC let exam supervisors unlock a slot early/longer for testing via the Start button (an active session overrides the timing window in both the RPC and the UI). Remove that table/RPC/button after real timing is verified.
 
 ### Delete and Leave Flows
 

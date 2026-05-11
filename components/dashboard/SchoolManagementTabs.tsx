@@ -210,6 +210,31 @@ function getSlotDateTime(dateKey: string, timeValue: string) {
   return new Date(`${dateKey}T${timeValue}`);
 }
 
+const ATTENDANCE_OPEN_BEFORE_MS = 5 * 60 * 1000;
+const ATTENDANCE_CLOSE_AFTER_MS = 25 * 60 * 1000;
+
+function isAttendanceMarkingOpen(
+  dateKey: string,
+  slot: ExamSlot | null,
+  session: AttendanceSession | null,
+) {
+  if (!slot) {
+    return false;
+  }
+
+  const now = new Date();
+
+  if (session && new Date(session.expiresAt) > now) {
+    return true;
+  }
+
+  const startsAt = getSlotDateTime(dateKey, slot.startsAt);
+  const opensAt = new Date(startsAt.getTime() - ATTENDANCE_OPEN_BEFORE_MS);
+  const closesAt = new Date(startsAt.getTime() + ATTENDANCE_CLOSE_AFTER_MS);
+
+  return now >= opensAt && now <= closesAt;
+}
+
 function getAttendanceWindowLabel(
   dateKey: string,
   slot: ExamSlot | null,
@@ -219,14 +244,14 @@ function getAttendanceWindowLabel(
     return "Choose a slot";
   }
 
-  if (session) {
+  if (session && new Date(session.expiresAt) > new Date()) {
     return "Started for testing";
   }
 
   const now = new Date();
   const startsAt = getSlotDateTime(dateKey, slot.startsAt);
-  const endsAt = getSlotDateTime(dateKey, slot.endsAt);
-  const opensAt = new Date(startsAt.getTime() - 5 * 60 * 1000);
+  const opensAt = new Date(startsAt.getTime() - ATTENDANCE_OPEN_BEFORE_MS);
+  const closesAt = new Date(startsAt.getTime() + ATTENDANCE_CLOSE_AFTER_MS);
 
   if (now < opensAt) {
     return `Opens at ${opensAt.toLocaleTimeString("en-US", {
@@ -235,11 +260,14 @@ function getAttendanceWindowLabel(
     })}`;
   }
 
-  if (now > endsAt) {
+  if (now > closesAt) {
     return "Closed";
   }
 
-  return "Open now";
+  return `Open until ${closesAt.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  })}`;
 }
 
 export default function SchoolManagementTabs({
@@ -513,6 +541,11 @@ export default function SchoolManagementTabs({
         )
         .sort((first, second) => first.createdAt.localeCompare(second.createdAt)),
     [attendanceDate, selectedAttendanceSlot?.id, visibleReservations],
+  );
+  const attendanceMarkingOpen = isAttendanceMarkingOpen(
+    attendanceDate,
+    selectedAttendanceSlot,
+    selectedAttendanceSession,
   );
   const cancelDialogReservation = cancelDialogReservationId
     ? visibleReservations.find((reservation) => reservation.id === cancelDialogReservationId) ?? null
@@ -1833,8 +1866,13 @@ export default function SchoolManagementTabs({
                                   key={status}
                                   type="button"
                                   onClick={() => updateAttendance(reservation, status)}
-                                  disabled={pending}
-                                  className="inline-flex h-8 min-w-[80px] items-center justify-center gap-1.5 rounded-[10px] px-3 text-xs font-semibold capitalize transition-colors duration-150 disabled:cursor-not-allowed"
+                                  disabled={pending || !attendanceMarkingOpen}
+                                  title={
+                                    attendanceMarkingOpen
+                                      ? undefined
+                                      : "Attendance marking is closed for this slot."
+                                  }
+                                  className="inline-flex h-8 min-w-[80px] items-center justify-center gap-1.5 rounded-[10px] px-3 text-xs font-semibold capitalize transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-60"
                                   style={
                                     reservation.attendanceStatus === status
                                       ? {
