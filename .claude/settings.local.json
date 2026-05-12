@@ -36,7 +36,8 @@
       "Bash(where bash *)",
       "Bash(bash *)",
       "Bash(winget install *)",
-      "PowerShell(Get-ChildItem *)"
+      "PowerShell(Get-ChildItem *)",
+      "mcp__supabase__execute_sql"
     ]
   },
   "enableAllProjectMcpServers": true,

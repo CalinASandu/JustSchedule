@@ -131,6 +131,8 @@ The attendance UI has a date navigator (prev/next arrows + date label) in the he
 
 Production timing is enforced server-side in `private.set_reservation_attendance`: attendance can be marked only from five minutes before the slot start until twenty-five minutes after the slot start (`supabase/migrations/20260511172234_attendance_close_window.sql`). The attendance UI mirrors this — present/absent toggles are disabled outside that window and the status bar shows "Opens at …", "Open until …", or "Closed". The `AttendanceSessions` table and `start_attendance_session` RPC let exam supervisors unlock a slot early/longer for testing via the Start button (an active session overrides the timing window in both the RPC and the UI). Remove that table/RPC/button after real timing is verified.
 
+Slot times (`starts_at`, `ends_at`) are stored as `time without time zone` representing local wall-clock time. The RPC converts them to UTC using `(date + time) AT TIME ZONE school_timezone` where `school_timezone` comes from `Schools.timezone` (default `'Europe/Bucharest'`). Without this, the DB (UTC) would treat an 11:00 AM local slot as 11:00 UTC, making the attendance window 3 hours off. The migration is `supabase/migrations/20260512000000_attendance_timezone_fix.sql`.
+
 ### Delete and Leave Flows
 
 School deletion is now soft delete through the `soft_delete_school` RPC, not a direct table delete. Student leave still uses normal Supabase database calls guarded by RLS. The old delete policies started in `supabase/migrations/20260501140000_school_delete_leave_policies.sql`, and the current soft-delete behavior is in `supabase/migrations/20260508114018_attendance_supervisor_soft_delete.sql`.
