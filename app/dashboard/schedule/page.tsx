@@ -155,6 +155,7 @@ export default async function SchedulePage({
   const [
     { data: examSlotRows, error: examSlotsError },
     { data: reservationRows, error: reservationsError },
+    { data: schoolSubjectRows },
   ] = await Promise.all([
     supabase
       .from("ExamSlots")
@@ -167,6 +168,12 @@ export default async function SchedulePage({
       start_date: startDate,
       end_date: endDate,
     }),
+    supabase
+      .from("SchoolSubjects")
+      .select("id, name")
+      .eq("school_id", schoolId)
+      .is("deleted_at", null)
+      .order("name", { ascending: true }),
   ]);
 
   const examSlots: SlotDef[] = ((examSlotRows ?? []) as ExamSlotRow[]).map((slot) => ({
@@ -211,6 +218,10 @@ export default async function SchedulePage({
       : user.email?.split("@")[0]) ||
     "Student";
 
+  const schoolSubjects = ((schoolSubjectRows ?? []) as { id: string; name: string }[]).map(
+    (s) => ({ id: s.id, name: s.name }),
+  );
+
   return (
     <ScheduleClient
       schoolId={schoolRow.id}
@@ -222,6 +233,7 @@ export default async function SchedulePage({
       canSelfBook={membershipRow.can_self_book ?? true}
       examSlots={examSlots}
       initialReservations={reservations}
+      schoolSubjects={schoolSubjects}
       reservationError={
         examSlotsError || reservationsError
           ? getUserFacingErrorMessage(

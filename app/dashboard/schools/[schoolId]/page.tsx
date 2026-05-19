@@ -50,6 +50,11 @@ type ExamSlotRow = {
   capacity: number;
 };
 
+type SchoolSubjectRow = {
+  id: string;
+  name: string;
+};
+
 type ReservationRow = {
   id: string;
   user_id: string;
@@ -207,6 +212,7 @@ export default async function SchoolDashboardPage({
     { data: examSlotRows, error: examSlotsError },
     { data: reservationRows, error: reservationsError },
     { data: attendanceSessionRows },
+    { data: schoolSubjectRows },
   ] = await Promise.all([
     supabase.rpc("get_school_members_with_profiles", {
       target_school_id: schoolId,
@@ -236,9 +242,17 @@ export default async function SchoolDashboardPage({
       .order("created_at", { ascending: true }),
     supabase
       .from("AttendanceSessions")
-      .select("id, school_id, slot_id, reservation_date, started_by, started_at, expires_at")
+      .select(
+        "id, school_id, slot_id, reservation_date, started_by, started_at, expires_at",
+      )
       .eq("school_id", schoolId)
       .gt("expires_at", new Date().toISOString()),
+    supabase
+      .from("SchoolSubjects")
+      .select("id, name")
+      .eq("school_id", schoolId)
+      .is("deleted_at", null)
+      .order("name", { ascending: true }),
   ]);
 
   const rows = (memberRows ?? []) as SchoolMemberRow[];
@@ -433,6 +447,9 @@ export default async function SchoolDashboardPage({
           examSlots={examSlots}
           reservations={reservations}
           attendanceSessions={attendanceSessions}
+          schoolSubjects={((schoolSubjectRows ?? []) as SchoolSubjectRow[]).map(
+            (s) => ({ id: s.id, name: s.name }),
+          )}
           currentUserRole={
             isAdmin ? "admin" : isProfessor ? "professor" : "exam_supervisor"
           }

@@ -2,9 +2,9 @@
 
 ## Supabase Client Usage
 
-| Context | Import |
-|---|---|
-| Client components (`"use client"`) | `createClient` from `@/lib/supabase/client` — uses `createBrowserClient` |
+| Context                              | Import                                                                                   |
+| ------------------------------------ | ---------------------------------------------------------------------------------------- |
+| Client components (`"use client"`)   | `createClient` from `@/lib/supabase/client` — uses `createBrowserClient`                 |
 | Server components and route handlers | `createClient` from `@/lib/supabase/server` — async, uses `createServerClient` + cookies |
 
 The env helper at `lib/supabase/env.ts` validates `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. Note: publishable key, not anon key — different variable name from standard Supabase setups.
@@ -56,9 +56,9 @@ The schedule UI panels (`CalendarPanel`, `SlotPicker`, `BookingSummaryCard`, `Se
 
 ## Reservation Data Model
 
-| Table | Purpose |
-|---|---|
-| `ExamSlots` | Per-school slot template: `name`, `starts_at`, `ends_at`, `capacity`, `is_active`. No date stored. |
+| Table          | Purpose                                                                                                     |
+| -------------- | ----------------------------------------------------------------------------------------------------------- |
+| `ExamSlots`    | Per-school slot template: `name`, `starts_at`, `ends_at`, `capacity`, `is_active`. No date stored.          |
 | `Reservations` | Actual bookings: `school_id`, `user_id`, `slot_id`, `reservation_date`, `exam_name`, `exam_type`, `status`. |
 
 `Reservations.slot_id` references `ExamSlots.id`. `Reservations.reservation_date` is the calendar day. Uniqueness: one confirmed reservation per `(user_id, slot_id, reservation_date)`. Cancelled rows do not block rebooking.

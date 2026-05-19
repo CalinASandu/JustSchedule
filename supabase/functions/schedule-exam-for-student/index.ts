@@ -237,6 +237,21 @@ Deno.serve(async (req) => {
     return jsonResponse({ error: "Invalid session." }, 401);
   }
 
+  const { data: subjectData } = await supabase
+    .from("SchoolSubjects")
+    .select("id")
+    .eq("school_id", schoolId)
+    .is("deleted_at", null)
+    .ilike("name", examName)
+    .maybeSingle();
+
+  if (!subjectData) {
+    return jsonResponse(
+      { code: "invalid_subject", error: "Select a valid subject from the list." },
+      400,
+    );
+  }
+
   const { data, error } = await supabase.rpc("schedule_exam_for_student", {
     target_school_id: schoolId,
     target_student_user_id: studentUserId,

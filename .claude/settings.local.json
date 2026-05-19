@@ -37,7 +37,14 @@
       "Bash(bash *)",
       "Bash(winget install *)",
       "PowerShell(Get-ChildItem *)",
-      "mcp__supabase__execute_sql"
+      "mcp__supabase__execute_sql",
+      "Bash(Remove-Item *)",
+      "mcp__plugin_context-mode_context-mode__ctx_batch_execute",
+      "mcp__plugin_context-mode_context-mode__ctx_execute_file",
+      "mcp__plugin_context-mode_context-mode__ctx_execute",
+      "Bash(xargs grep -l \"Schools\")",
+      "Bash(xargs head -200)",
+      "mcp__supabase__deploy_edge_function"
     ]
   },
   "enableAllProjectMcpServers": true,

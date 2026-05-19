@@ -15,6 +15,7 @@ import {
   Loader2,
   Mail,
   Play,
+  Plus,
   Search,
   Trash2,
   UserMinus,
@@ -22,6 +23,7 @@ import {
   UserRound,
   X,
 } from "lucide-react";
+import SubjectCommandPalette from "@/components/schedule/SubjectCommandPalette";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -109,6 +111,11 @@ type ReservationViewMode = "day" | "week";
 
 const roleOptions: SchoolRole[] = ["student", "exam_supervisor", "professor", "admin"];
 
+type SchoolSubject = {
+  id: string;
+  name: string;
+};
+
 type Props = {
   schoolId: string;
   schoolName: string;
@@ -118,6 +125,7 @@ type Props = {
   examSlots: ExamSlot[];
   reservations: Reservation[];
   attendanceSessions: AttendanceSession[];
+  schoolSubjects: SchoolSubject[];
   currentUserRole: Exclude<SchoolRole, "student">;
   memberError: string | null;
   inviteError: string | null;
@@ -279,6 +287,7 @@ export default function SchoolManagementTabs({
   examSlots,
   reservations,
   attendanceSessions,
+  schoolSubjects: initialSchoolSubjects,
   currentUserRole,
   memberError,
   inviteError,
@@ -326,6 +335,13 @@ export default function SchoolManagementTabs({
     success: null,
     pending: false,
   });
+  const [subjects, setSubjects] = useState<SchoolSubject[]>(initialSchoolSubjects);
+  const [newSubjectName, setNewSubjectName] = useState("");
+  const [subjectState, setSubjectState] = useState<{
+    error: string | null;
+    success: string | null;
+    pending: boolean;
+  }>({ error: null, success: null, pending: false });
   const [kickDialogMemberId, setKickDialogMemberId] = useState<string | null>(null);
   const [kickSecondsRemaining, setKickSecondsRemaining] = useState(5);
   const [scheduleDialogMemberId, setScheduleDialogMemberId] = useState<string | null>(null);
@@ -800,6 +816,45 @@ export default function SchoolManagementTabs({
       pendingMemberId: null,
     });
     router.refresh();
+  }
+
+  async function addSubject() {
+    const name = newSubjectName.trim();
+    if (!name) return;
+    setSubjectState({ error: null, success: null, pending: true });
+    const supabase = createClient();
+    const { data, error } = await supabase.rpc("upsert_school_subject", {
+      target_school_id: schoolId,
+      subject_name: name,
+    });
+    if (error) {
+      setSubjectState({ error: "Could not add subject. Try again.", success: null, pending: false });
+      return;
+    }
+    const added = data as SchoolSubject;
+    setSubjects((prev) =>
+      [...prev.filter((s) => s.id !== added.id), added].sort((a, b) =>
+        a.name.localeCompare(b.name),
+      ),
+    );
+    setNewSubjectName("");
+    setSubjectState({ error: null, success: null, pending: false });
+  }
+
+  async function removeSubject(id: string) {
+    setSubjectState({ error: null, success: null, pending: true });
+    const supabase = createClient();
+    const { error } = await supabase
+      .from("SchoolSubjects")
+      .update({ deleted_at: new Date().toISOString() })
+      .eq("id", id)
+      .eq("school_id", schoolId);
+    if (error) {
+      setSubjectState({ error: "Could not remove subject. Try again.", success: null, pending: false });
+      return;
+    }
+    setSubjects((prev) => prev.filter((s) => s.id !== id));
+    setSubjectState({ error: null, success: null, pending: false });
   }
 
   function openScheduleDialog(member: SchoolMember) {
@@ -2130,8 +2185,107 @@ export default function SchoolManagementTabs({
               School settings
             </h2>
             <p className="mt-1 text-sm" style={{ color: "#6B7280" }}>
-              Delete this school and all related memberships, invites, and join requests.
+              Manage subjects and school configuration.
             </p>
+          </div>
+
+          {/* Manage subjects */}
+          <div
+            className="mb-5 rounded-[10px] border p-4"
+            style={{ background: "#FFFFFF", borderColor: "#E4E8EF" }}
+          >
+            <p className="mb-1 text-sm font-semibold" style={{ color: "#111827" }}>
+              Subjects
+            </p>
+            <p className="mb-4 text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
+              Students select from these subjects when scheduling an exam.
+            </p>
+
+            {/* Subject chips */}
+            {subjects.length > 0 ? (
+              <div className="mb-4 flex flex-wrap gap-2">
+                {subjects.map((subject) => (
+                  <span
+                    key={subject.id}
+                    className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium"
+                    style={{ background: "#F0F5FF", color: "#1D4ED8", border: "1px solid #DBEAFE" }}
+                  >
+                    {subject.name}
+                    <button
+                      type="button"
+                      onClick={() => removeSubject(subject.id)}
+                      disabled={subjectState.pending}
+                      className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full transition-colors duration-150 hover:bg-blue-200 disabled:cursor-not-allowed"
+                      aria-label={`Remove ${subject.name}`}
+                    >
+                      <X size={10} strokeWidth={2.5} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="mb-4 text-sm" style={{ color: "#9CA3AF" }}>
+                No subjects yet. Add one below.
+              </p>
+            )}
+
+            {/* Add subject */}
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newSubjectName}
+                onChange={(e) => setNewSubjectName(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addSubject(); } }}
+                placeholder="Add a subject…"
+                disabled={subjectState.pending}
+                className="h-[2.625rem] flex-1 rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed"
+                style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = "#3B82F6";
+                  e.currentTarget.style.boxShadow = "0 0 0 3px rgba(59,130,246,0.12)";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = "#E4E8EF";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              />
+              <button
+                type="button"
+                onClick={addSubject}
+                disabled={subjectState.pending || !newSubjectName.trim()}
+                className="inline-flex h-[2.625rem] items-center gap-1.5 rounded-[10px] px-4 text-[0.9375rem] font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
+                style={{
+                  background: subjectState.pending || !newSubjectName.trim() ? "#93C5FD" : "#2563EB",
+                  boxShadow: "0 1px 3px rgba(37,99,235,0.25), 0 4px 12px rgba(37,99,235,0.12)",
+                }}
+                onMouseEnter={(e) => {
+                  if (!subjectState.pending && newSubjectName.trim()) {
+                    e.currentTarget.style.background = "#1D4ED8";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!subjectState.pending && newSubjectName.trim()) {
+                    e.currentTarget.style.background = "#2563EB";
+                  }
+                }}
+              >
+                {subjectState.pending ? (
+                  <Loader2 size={15} className="animate-spin" />
+                ) : (
+                  <Plus size={15} strokeWidth={2.2} />
+                )}
+                Add
+              </button>
+            </div>
+
+            {subjectState.error && (
+              <p
+                className="mt-3 rounded-lg px-3 py-2 text-[0.8125rem] anim-fade-in"
+                style={{ background: "#FEF2F2", border: "1px solid #FECACA", color: "#DC2626" }}
+              >
+                {subjectState.error}
+              </p>
+            )}
           </div>
 
           <div
@@ -2613,6 +2767,28 @@ export default function SchoolManagementTabs({
                       ))
                     )}
                   </select>
+                  {(() => {
+                    const slot = examSlots.find((s) => s.id === scheduleSlotId);
+                    if (!slot) return null;
+                    const booked = visibleReservations.filter(
+                      (r) => r.slotId === scheduleSlotId && r.reservationDate === scheduleDate,
+                    ).length;
+                    const remaining = slot.capacity - booked;
+                    const bg = remaining <= 0 ? "#FEF2F2" : remaining <= 2 ? "#FEF3C7" : "#DBEAFE";
+                    const color = remaining <= 0 ? "#DC2626" : remaining <= 2 ? "#B45309" : "#1D4ED8";
+                    const label =
+                      remaining <= 0
+                        ? "No spots left"
+                        : `${remaining} of ${slot.capacity} spot${slot.capacity !== 1 ? "s" : ""} left`;
+                    return (
+                      <p
+                        className="mt-1.5 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold anim-fade-in"
+                        style={{ background: bg, color }}
+                      >
+                        {label}
+                      </p>
+                    );
+                  })()}
                 </div>
 
                 <div>
@@ -2652,22 +2828,12 @@ export default function SchoolManagementTabs({
                     <FileText size={14} />
                     Exam name
                   </label>
-                  <input
-                    id="schedule-student-exam-name"
-                    type="text"
+                  <SubjectCommandPalette
+                    subjects={subjects}
                     value={scheduleExamName}
-                    onChange={(event) => setScheduleExamName(event.target.value)}
-                    placeholder="e.g. Algebra"
-                    className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
-                    style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
-                    onFocus={(event) => {
-                      event.currentTarget.style.borderColor = "#3B82F6";
-                      event.currentTarget.style.boxShadow = "0 0 0 3px rgba(59,130,246,0.12)";
-                    }}
-                    onBlur={(event) => {
-                      event.currentTarget.style.borderColor = "#E4E8EF";
-                      event.currentTarget.style.boxShadow = "none";
-                    }}
+                    onChange={setScheduleExamName}
+                    placeholder="Search subject…"
+                    disabled={scheduleState.pending}
                   />
                 </div>
               </div>

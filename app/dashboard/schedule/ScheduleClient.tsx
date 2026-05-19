@@ -24,6 +24,7 @@ interface ScheduleClientProps {
   canSelfBook: boolean;
   examSlots: SlotDef[];
   initialReservations: Reservation[];
+  schoolSubjects: { id: string; name: string }[];
   reservationError: string | null;
 }
 
@@ -37,6 +38,7 @@ export default function ScheduleClient({
   canSelfBook,
   examSlots,
   initialReservations,
+  schoolSubjects,
   reservationError,
 }: ScheduleClientProps) {
   const router = useRouter();
@@ -303,6 +305,7 @@ export default function ScheduleClient({
                   onExamTypeChange={setExamType}
                   selectedDate={selectedDate}
                   onSelectDate={handleDateSelect}
+                  subjects={schoolSubjects}
                 />
               </div>
 
