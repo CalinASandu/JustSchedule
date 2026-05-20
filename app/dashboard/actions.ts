@@ -50,3 +50,52 @@ export async function registerSchool(
 
   return { error: null, success: true };
 }
+
+export type DirectJoinState = {
+  error: string | null;
+  success: boolean;
+};
+
+export async function requestDirectJoin(
+  _state: DirectJoinState,
+  formData: FormData,
+): Promise<DirectJoinState> {
+  const schoolId = String(formData.get("schoolId") ?? "").trim();
+
+  if (!schoolId) {
+    return { error: "Invalid school.", success: false };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "You need to sign in again.", success: false };
+  }
+
+  const { error } = await supabase.from("JoinRequests").insert({
+    school_id: schoolId,
+    user_id: user.id,
+    status: "pending",
+    invite_id: null,
+  });
+
+  if (error) {
+    console.error("Direct join request failed", {
+      code: error?.code,
+      message: error?.message,
+    });
+    if (error.code === "23505") {
+      return { error: "You already have a pending request for this school.", success: false };
+    }
+    return {
+      error: getUserFacingErrorMessage("requestDirectJoin", error),
+      success: false,
+    };
+  }
+
+  revalidatePath("/dashboard");
+  return { error: null, success: true };
+}
