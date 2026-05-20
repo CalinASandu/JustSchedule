@@ -21,6 +21,7 @@ export type ErrorContext =
   | "loadMembers"
   | "loadReservations"
   | "registerSchool"
+  | "requestDirectJoin"
   | "reserveExamSlot"
   | "reviewJoinRequests"
   | "scheduleForStudent"
@@ -41,6 +42,7 @@ const fallbackMessages: Record<ErrorContext, string> = {
   loadMembers: "Could not load all school members. Refresh the page and try again.",
   loadReservations: "Could not load reservations. Refresh the page and try again.",
   registerSchool: "Could not register this school. Try again in a moment.",
+  requestDirectJoin: "Could not send your join request. Try again in a moment.",
   reserveExamSlot: "Could not schedule this exam. Try again in a moment.",
   reviewJoinRequests: "Could not review join requests. Try again in a moment.",
   scheduleForStudent: "Could not schedule this exam for the student. Try again in a moment.",
