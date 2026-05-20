@@ -162,6 +162,7 @@ Deno.serve(async (req) => {
       .from("Schools")
       .select("created_by")
       .eq("id", schoolId)
+      .is("deleted_at", null)
       .maybeSingle(),
   ]);
 

@@ -14,6 +14,7 @@ interface BookingSummaryCardProps {
   isSubmitting: boolean
   isConfirmed: boolean
   error: string | null
+  reserveDisabledMessage?: string | null
   onReserve: () => void
   onReset: () => void
 }
@@ -47,6 +48,7 @@ export default function BookingSummaryCard({
   isSubmitting,
   isConfirmed,
   error,
+  reserveDisabledMessage,
   onReserve,
   onReset,
 }: BookingSummaryCardProps) {
@@ -186,6 +188,21 @@ export default function BookingSummaryCard({
               </p>
             )}
 
+            {reserveDisabledMessage && !error && (
+              <p
+                className="anim-fade-in text-[0.8125rem]"
+                style={{
+                  color: '#374151',
+                  background: '#F8FAFC',
+                  border: '1px solid #E4E8EF',
+                  borderRadius: 8,
+                  padding: '0.5rem 0.75rem',
+                }}
+              >
+                {reserveDisabledMessage}
+              </p>
+            )}
+
             <button
               onClick={onReserve}
               disabled={!canReserve}
@@ -234,6 +251,8 @@ export default function BookingSummaryCard({
                 ? 'Select a date to continue'
                 : !time
                 ? 'Select a time slot to continue'
+                : reserveDisabledMessage
+                ? reserveDisabledMessage
                 : ''}
             </p>
           )}

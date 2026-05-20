@@ -74,11 +74,11 @@ Admins review pending join requests in the `Join Requests` tab of `components/da
 
 `app/dashboard/page.tsx` is the authenticated dashboard overview. It lists the schools the signed-in user belongs to, shows a profile panel, and includes a ghost card with `RegisterSchoolForm` for creating another school. Admin and professor school cards link to `/dashboard/schools/[schoolId]`; student school cards link to `/dashboard/schedule?schoolId=...`.
 
-`app/dashboard/schedule/page.tsx` is the schedule server component that fetches the session, validates the `schoolId` query param, redirects admins and professors to `/dashboard/schools/[schoolId]`, loads active `ExamSlots` plus confirmed school `Reservations` for today through today + 14 days, and passes the current non-admin membership down. `app/dashboard/schedule/ScheduleClient.tsx` is the client component that owns all interactive schedule state (`handleDateSelect`, `handleReserve`, `handleReset`) plus the URL-backed workspace panel switcher. There is no `/schedule` route; schedule lives at `/dashboard/schedule`.
+`app/dashboard/schedule/page.tsx` is the schedule server component that fetches the session, validates the `schoolId` query param, redirects admins and professors to `/dashboard/schools/[schoolId]`, loads active `ExamSlots` plus confirmed school `Reservations` for today through today + 14 days, and passes the current non-admin membership down. `app/dashboard/schedule/ScheduleClient.tsx` is the client component that owns all interactive schedule state (`handleDateSelect`, `handleReserve`, `handleReset`) plus the URL-backed workspace panel switcher. Student names are read from `Profiles`/auth fallback and shown as locked profile data in the reservation form; students must not edit the booking owner name in the schedule form. There is no `/schedule` route; schedule lives at `/dashboard/schedule`.
 
-The student schedule workspace uses a panel switcher above the content, not navbar tabs. The current panels are `Schedule` and `School Profile`; `School Profile` currently shows membership details and a `Leave school` action. Keep school-specific panels in this workspace switcher rather than adding school selectors or school tabs to the global navbar.
+The student schedule workspace uses a panel switcher above the content, not navbar tabs. The current panels are `Schedule`, `My Reservations`, and `School Profile`; `School Profile` currently shows membership details and a `Leave school` action. Keep school-specific panels in this workspace switcher rather than adding school selectors or school tabs to the global navbar. The `Schedule` panel still includes the broad `BookingsPanel` overview for school reservations; use `My Reservations` for the student's own detailed reservation management and cancellation.
 
-`app/dashboard/schools/[schoolId]/page.tsx` is the school management shell for admins and professors. It verifies the signed-in user's `SchoolMembers` row or `Schools.created_by` ownership for the selected school before rendering. Admins can manage members, invites, join requests, and settings; professors can only view the members list.
+`app/dashboard/schools/[schoolId]/page.tsx` is the school management shell for admins, professors, and exam supervisors. It verifies the signed-in user's `SchoolMembers` row or `Schools.created_by` ownership for the selected active school before rendering. Admins can manage members, invites, join requests, and settings; professors can view members, search the member list, schedule exams for students, and cancel school reservations; exam supervisors can view reservations and use attendance only.
 
 The schedule UI is split into panels: `CalendarPanel`, `SlotPicker`, `BookingSummaryCard`, `SeatAvailabilityOverview`, and `BookingsPanel`. All live in `components/schedule/`. The student schedule UI computes slot availability from database `Reservations`, not local mock booking state.
 
@@ -88,7 +88,7 @@ The schedule UI is split into panels: `CalendarPanel`, `SlotPicker`, `BookingSum
 
 Admin/professor reservation visibility is implemented in the school dashboard, not the student schedule workspace. `app/dashboard/schools/[schoolId]/page.tsx` loads active `ExamSlots` plus confirmed `Reservations` for the selected school and passes them into `components/dashboard/SchoolManagementTabs.tsx`.
 
-`SchoolManagementTabs` has a `Reservations` tab for admins and professors. It renders a day-based reservations panel with previous/next day arrows. The grid uses `ExamSlots` as columns and seat rows based on slot `capacity` with a minimum visual height of 8 rows. Reservation cells show student name, exam name, and exam type.
+`SchoolManagementTabs` has a `Reservations` tab for admins, professors, and exam supervisors. It renders a day/week reservation panel with previous/next arrows. Day view uses `ExamSlots` as columns and seat rows based on slot `capacity` with a minimum visual height of 8 rows. Week view shows Mon–Fri only (weekends are filtered out since no exams can be scheduled then) as a 5-column grid; each day column shows compact clickable chips — student name and slot start time — and clicking a chip opens a detail modal with exam name, type, slot, time, and an optional cancel button. Admins/professors can cancel any confirmed reservation in their school; exam supervisors cannot cancel reservations.
 
 The current database model is:
 
@@ -97,9 +97,9 @@ The current database model is:
 | `ExamSlots` | Reusable per-school slot template: `name`, `starts_at`, `ends_at`, `capacity`, `is_active`. Does not store a date. |
 | `Reservations` | Actual bookings: `school_id`, `user_id`, `slot_id`, `reservation_date`, `exam_name`, `exam_type`, `status`. |
 
-`Reservations.slot_id` references `ExamSlots.id`. `Reservations.reservation_date` stores the actual calendar day. The uniqueness constraint is date-aware: one user cannot reserve the same slot twice on the same date, but the same reusable slot can be booked again on a different date.
+`Reservations.slot_id` references `ExamSlots.id`. `Reservations.reservation_date` stores the actual calendar day. The uniqueness rule is date-aware and confirmed-only: one user cannot hold two confirmed reservations for the same slot on the same date, but cancelled historical rows do not block rebooking.
 
-Students can view full confirmed reservations for schools where they are members. The student bookings panel intentionally shows student name, exam name, exam type, reservation date, and slot times for confirmed school reservations, because this read model supports visibility and future swap flows.
+Students can view full confirmed reservations for schools where they are members. The student bookings panel intentionally shows student name, exam name, exam type, reservation date, and slot times for confirmed school reservations, because this read model supports visibility and future swap flows. Students can cancel reservations assigned to them, regardless of whether the booking was created by the student or by an admin/professor.
 
 Relevant migrations:
 
@@ -108,6 +108,8 @@ Relevant migrations:
 - `supabase/migrations/20260502202056_reserve_exam_slot.sql` adds member-scoped confirmed reservation listing RPCs and transactional reservation RPCs with a per-school/date/slot advisory transaction lock.
 - `supabase/migrations/20260502202249_consolidate_reservation_read_policy.sql` replaces overlapping reservation read policies with one member-scoped confirmed-reservation read policy.
 - `supabase/migrations/20260502202326_add_reservations_slot_fk_index.sql` adds the plain `Reservations.slot_id` foreign-key index requested by Supabase advisors.
+- `supabase/migrations/20260505144142_cancel_reservations.sql` replaces all-row reservation uniqueness with a confirmed-only unique index and adds the `cancel_reservation` RPC.
+- `supabase/migrations/20260508114018_attendance_supervisor_soft_delete.sql` adds school soft delete, the `exam_supervisor` role, attendance fields/session override support, broad admin/professor reservation cancellation, and attendance RPCs.
 
 ### Reservation Write Flow
 
@@ -115,13 +117,27 @@ Reservation creation is implemented through the deployed Supabase Edge Function 
 
 Server-side checks are authoritative. The RPC verifies the caller is signed in, is a `student` member of the target school, the slot is active and belongs to that school, the date is today through today + 14 calendar days, the date is not a weekend, the exam type is `midterm` or `final`, and the exam name is non-empty. It locks `school_id + reservation_date + slot_id`, counts confirmed reservations after acquiring the lock, compares that count with `ExamSlots.capacity`, and inserts a confirmed reservation only if capacity remains. Do not trust a frontend-only seat availability check for booking enforcement.
 
-Duplicate rule: one student cannot reserve the same slot on the same date twice, but can book another slot on the same date.
+Duplicate rule: one student cannot hold two confirmed reservations for the same slot on the same date, but can book another slot on the same date. Cancelling a reservation changes `Reservations.status` to `cancelled`, which frees both the seat and that student's ability to book the same date/slot again.
+
+Reservation cancellation is implemented through the deployed Supabase Edge Function `cancel-reservation` (`supabase/functions/cancel-reservation/index.ts`) with JWT verification enabled in `supabase/config.toml`. The client calls it with `{ reservationId }`. The RPC allows cancellation when the caller is the reservation's `user_id`, or when the caller is an admin/professor member of the reservation's school. Do not implement cancellation as a direct client-side table update.
+
+### Attendance
+
+Attendance is stored on `Reservations` with `attendance_status`, `attendance_marked_by`, and `attendance_marked_at`. New reservations default to `attendance_status = 'present'`; exam supervisors only change a student to `absent` when the student did not attend.
+
+The `Attendance` tab in `SchoolManagementTabs` is visible to admins, professors, and exam supervisors. Admins/professors have read-only attendance visibility. Only `exam_supervisor` members can mark attendance through the `set_reservation_attendance` RPC. Attendance is slot-scoped: the selected slot determines which reservations are shown.
+
+The attendance UI has a date navigator (prev/next arrows + date label) in the header, a row of clickable slot pill buttons below it (one per active slot, showing name + time range), a status bar showing the current session state and an inline Start button for exam supervisors, and a bordered table of students with present/absent toggle buttons. Read-only viewers see a badge instead of the toggle.
+
+Production timing is enforced server-side in `private.set_reservation_attendance`: attendance can be marked only from five minutes before the slot start until twenty-five minutes after the slot start (`supabase/migrations/20260511172234_attendance_close_window.sql`). The attendance UI mirrors this — present/absent toggles are disabled outside that window and the status bar shows "Opens at …", "Open until …", or "Closed". The `AttendanceSessions` table and `start_attendance_session` RPC let exam supervisors unlock a slot early/longer for testing via the Start button (an active session overrides the timing window in both the RPC and the UI). Remove that table/RPC/button after real timing is verified.
+
+Slot times (`starts_at`, `ends_at`) are stored as `time without time zone` representing local wall-clock time. The RPC converts them to UTC using `(date + time) AT TIME ZONE school_timezone` where `school_timezone` comes from `Schools.timezone` (default `'Europe/Bucharest'`). Without this, the DB (UTC) would treat an 11:00 AM local slot as 11:00 UTC, making the attendance window 3 hours off. The migration is `supabase/migrations/20260512000000_attendance_timezone_fix.sql`.
 
 ### Delete and Leave Flows
 
-School deletion and student leave use normal Supabase database calls guarded by RLS, not Edge Functions. The relevant policies live in `supabase/migrations/20260501140000_school_delete_leave_policies.sql`.
+School deletion is now soft delete through the `soft_delete_school` RPC, not a direct table delete. Student leave still uses normal Supabase database calls guarded by RLS. The old delete policies started in `supabase/migrations/20260501140000_school_delete_leave_policies.sql`, and the current soft-delete behavior is in `supabase/migrations/20260508114018_attendance_supervisor_soft_delete.sql`.
 
-Admins delete schools from the `Settings` tab in `SchoolManagementTabs`. The UI requires typing the exact school name before enabling the delete button. The live foreign keys use `ON DELETE CASCADE` from `Schools` to `SchoolMembers`, `SchoolInvites`, and `JoinRequests`, so deleting a school cleans up those dependent rows.
+Admins delete schools from the `Settings` tab in `SchoolManagementTabs`. The UI requires typing the exact school name before enabling the delete button. Deleting a school sets `Schools.deleted_at` and `Schools.deleted_by`; dependent rows are preserved for audit/history, and active school queries must filter `deleted_at is null`.
 
 Admins kick non-admin members from the `Members` tab in `SchoolManagementTabs`. The UI shows a `Kick` button on each non-admin member card, opens a confirmation dialog, and requires a 5-second cooldown before confirmation. Professors can be listed but cannot manage members, and admins must be able to update roles through the staged dropdown plus confirm panel before members are updated.
 
@@ -147,9 +163,59 @@ Do not move authorization decisions into `proxy.ts`. Keep it focused on keeping 
 
 - Use `supabase.auth.getUser()` for server-side auth decisions. `user_metadata` is allowed only for display fallbacks, never authorization.
 - Do not expose Supabase service-role keys or private secrets to client components. Public client code may only use `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
-- Dashboard authorization depends on Supabase RLS for `Profiles`, `Schools`, `SchoolMembers`, `SchoolInvites`, and `JoinRequests`; frontend filters are not a substitute for policies. The `school_role` enum now includes `admin`, `professor`, and `student`, and member-management policies must match that three-role model.
+- Dashboard authorization depends on Supabase RLS for `Profiles`, `Schools`, `SchoolMembers`, `SchoolInvites`, and `JoinRequests`; frontend filters are not a substitute for policies. The `school_role` enum now includes `admin`, `professor`, `exam_supervisor`, and `student`, and member-management policies must match that four-role model.
 - Edge Functions that perform privileged writes must first verify the caller with the user's JWT before using service-role access.
 - `npm audit` currently reports a moderate PostCSS advisory through `next@16.2.4`; do not run `npm audit fix --force` because npm suggests downgrading Next to `9.3.3`. Re-check after a Next release updates the transitive PostCSS version.
+
+## Disaster Recovery
+
+The full recovery plan is documented in `docs/free-database-backup-and-recovery.md`. Layers 1, 2, and 4 are implemented; Layers 3, 5, and 6 are not yet implemented.
+
+Layer 1 (soft delete): `SchoolSubjects` uses `deleted_at`. Schools use `soft_delete_school` RPC. Hard-delete RLS policy on `Schools` was dropped in `20260508114018`.
+
+Layer 2 (audit history): `ReservationHistory` table with insert/update/delete trigger (`reservations_history_trigger` → `record_reservation_history()`). Migration: `20260517000000_reservation_history.sql`. Admins and professors can read history for their schools; no client writes allowed.
+
+### Automated Backups
+
+A cron job on the development machine runs `~/Documents/programming/JustScheduleBackups/backup.sh` at 00:00, 08:00, and 16:00 every day. It uses `supabase db dump --linked` (Supabase CLI v2.98.2, linked to project ref `trklyoutnojcdnxordhv`) and produces two gzip-compressed files per run:
+
+- `<timestamp>_schema.sql.gz` — table definitions, functions, triggers, RLS policies
+- `<timestamp>_data.sql.gz` — all row data
+
+Retention policy:
+
+| Folder | Contents | Kept |
+|---|---|---|
+| `rolling/` | Every 8-hour dump | Last 9 (3 days) |
+| `weekly/` | Sunday's dump | Last 4 (4 weeks) |
+| `monthly/` | 1st-of-month dump | Last 2 (2 months) |
+
+All backups live in `~/Documents/programming/JustScheduleBackups/`. Do not commit dumps to Git — they contain user data. A log of every run is at `JustScheduleBackups/backup.log`.
+
+### Restoring Data
+
+For partial recovery (e.g. a day of reservations lost): decompress the nearest dump before the loss, extract the relevant `INSERT` statements for the affected table, and run them in the Supabase SQL editor.
+
+```bash
+gunzip -k rolling/<timestamp>_data.sql.gz
+grep 'INSERT INTO "Reservations"' rolling/<timestamp>_data.sql | grep '<date-to-restore>'
+# paste matching rows into Supabase SQL editor
+```
+
+For full recovery (total database loss): create a new Supabase project, then restore:
+
+```bash
+gunzip -k <timestamp>_schema.sql.gz <timestamp>_data.sql.gz
+psql "postgres://postgres:<password>@db.<new-ref>.supabase.co:5432/postgres" -f <timestamp>_schema.sql
+psql "postgres://postgres:<password>@db.<new-ref>.supabase.co:5432/postgres" -f <timestamp>_data.sql
+# update NEXT_PUBLIC_SUPABASE_URL and keys in .env.local
+```
+
+Do not restore into an existing live Supabase project without manually clearing it first — Supabase internal schemas (`auth`, `storage`, `realtime`) make that unsafe.
+
+## Keeping AGENTS.md Current
+
+When making a change, update the relevant section of this file in place — replace outdated information rather than appending. Do not accumulate a changelog. The goal is a compact, always-accurate reference.
 
 ## UI Design System
 
@@ -160,3 +226,11 @@ All visual conventions are documented in `docs/design.md`. Read it before buildi
 - Font: Geist is already loaded globally. Do not re-import it.
 - CSS animation utilities: `anim-fade-in`, `anim-slide-up`, `anim-scale-in`, and stagger delays `anim-d1` through `anim-d4`, all defined in `globals.css`.
 - No dark mode.
+
+Before UI, React, or Next.js component work, read and follow the relevant installed design and Vercel skills in addition to `docs/design.md`:
+
+- `web-design-guidelines` for UI/accessibility/design review.
+- `vercel-react-best-practices` for React and Next.js performance patterns.
+- `vercel-composition-patterns` for reusable component architecture.
+- `vercel-react-view-transitions` when adding or changing transitions/animations between UI states or routes.
+- `build-web-apps:frontend-app-builder` for new app surfaces, dashboards, major redesigns, or visually driven UI work.

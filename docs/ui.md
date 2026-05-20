@@ -278,15 +278,6 @@ Wrap in `className="anim-fade-in"` so it appears smoothly.
 
 ---
 
-## Supabase Client Usage
-
-- **Client components** (`"use client"`): import `createClient` from `@/lib/supabase/client`
-- **Server components / route handlers**: import `createClient` from `@/lib/supabase/server` (async)
-
-Always call `supabase.auth.getUser()` to get the session user — never trust `getSession()` alone on the server.
-
----
-
 ## Don'ts
 
 - No dark mode — build light only.

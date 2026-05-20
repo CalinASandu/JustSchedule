@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CalendarDays, UserRound } from "lucide-react";
+import { Ban, CalendarDays, ClipboardList, Loader2, UserRound } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { ExamType, Reservation, SlotDef } from "@/components/schedule/types";
 import { createClient } from "@/lib/supabase/client";
@@ -21,8 +21,10 @@ interface ScheduleClientProps {
   studentName: string;
   userEmail: string;
   currentUserId: string;
+  canSelfBook: boolean;
   examSlots: SlotDef[];
   initialReservations: Reservation[];
+  schoolSubjects: { id: string; name: string }[];
   reservationError: string | null;
 }
 
@@ -33,8 +35,10 @@ export default function ScheduleClient({
   studentName: initialStudentName,
   userEmail,
   currentUserId,
+  canSelfBook,
   examSlots,
   initialReservations,
+  schoolSubjects,
   reservationError,
 }: ScheduleClientProps) {
   const router = useRouter();
@@ -42,7 +46,7 @@ export default function ScheduleClient({
   const searchParams = useSearchParams();
   const supabase = useMemo(() => createClient(), []);
   const [isReserving, setIsReserving] = useState(false);
-  const [studentName, setStudentName] = useState(initialStudentName);
+  const studentName = initialStudentName;
   const [selectedExam, setSelectedExam] = useState("");
   const [examType, setExamType] = useState<ExamType>("midterm");
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -50,6 +54,9 @@ export default function ScheduleClient({
   const [reservations, setReservations] = useState<Reservation[]>(initialReservations);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [reserveError, setReserveError] = useState<string | null>(reservationError);
+  const [cancelingReservationId, setCancelingReservationId] = useState<string | null>(null);
+  const [cancelReservationError, setCancelReservationError] = useState<string | null>(null);
+  const [cancelDialogReservation, setCancelDialogReservation] = useState<Reservation | null>(null);
 
   function handleDateSelect(date: string) {
     setSelectedDate(date);
@@ -122,6 +129,11 @@ export default function ScheduleClient({
             examType,
             status: "confirmed",
             createdAt: new Date().toISOString(),
+            createdBy: currentUserId,
+            createdByRole: "student",
+            attendanceStatus: "present",
+            attendanceMarkedBy: null,
+            attendanceMarkedAt: null,
           },
         ]);
         setShowConfirmation(true);
@@ -139,6 +151,54 @@ export default function ScheduleClient({
     setSelectedSlotId(null);
     setShowConfirmation(false);
     setReserveError(reservationError);
+  }
+
+  async function handleCancelReservation(reservation: Reservation) {
+    if (cancelingReservationId || reservation.userId !== currentUserId) {
+      return;
+    }
+
+    setCancelingReservationId(reservation.id);
+    setCancelReservationError(null);
+
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session?.access_token) {
+        setCancelReservationError("Your session expired. Sign in again to cancel this reservation.");
+        return;
+      }
+
+      const { error } = await supabase.functions.invoke("cancel-reservation", {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: {
+          reservationId: reservation.id,
+        },
+      });
+
+      if (error) {
+        console.error("Cancel reservation failed", error);
+        setCancelReservationError(
+          await getUserFacingFunctionErrorMessage("cancelReservation", error),
+        );
+        return;
+      }
+
+      setReservations((current) =>
+        current.filter((item) => item.id !== reservation.id),
+      );
+      setCancelDialogReservation(null);
+      router.refresh();
+    } catch (error) {
+      console.error("Cancel reservation failed", error);
+      setCancelReservationError("Could not cancel this reservation. Try again in a moment.");
+    } finally {
+      setCancelingReservationId(null);
+    }
   }
 
   const selectedSlotDef = selectedSlotId
@@ -159,18 +219,28 @@ export default function ScheduleClient({
     !!selectedExam.trim() &&
     !!selectedDate &&
     !!selectedSlotId &&
+    canSelfBook &&
     !showConfirmation &&
     !isReserving;
-  const activePanel = searchParams.get("panel") === "profile" ? "profile" : "schedule";
+  const reserveDisabledMessage = canSelfBook
+    ? null
+    : "A professor must schedule this exam for you.";
+  const ownReservations = useMemo(
+    () => reservations.filter((reservation) => reservation.userId === currentUserId),
+    [currentUserId, reservations],
+  );
+  const panelParam = searchParams.get("panel");
+  const activePanel =
+    panelParam === "profile" || panelParam === "reservations" ? panelParam : "schedule";
 
-  function selectPanel(panel: "schedule" | "profile") {
+  function selectPanel(panel: "schedule" | "reservations" | "profile") {
     const params = new URLSearchParams(searchParams);
     params.set("schoolId", schoolId);
 
-    if (panel === "profile") {
-      params.set("panel", "profile");
-    } else {
+    if (panel === "schedule") {
       params.delete("panel");
+    } else {
+      params.set("panel", panel);
     }
 
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
@@ -209,6 +279,12 @@ export default function ScheduleClient({
               onClick={() => selectPanel("schedule")}
             />
             <PanelTab
+              active={activePanel === "reservations"}
+              icon={<ClipboardList size={15} aria-hidden="true" />}
+              label="My Reservations"
+              onClick={() => selectPanel("reservations")}
+            />
+            <PanelTab
               active={activePanel === "profile"}
               icon={<UserRound size={15} aria-hidden="true" />}
               label="School Profile"
@@ -223,13 +299,13 @@ export default function ScheduleClient({
               <div className="anim-slide-up anim-d1">
                 <CalendarPanel
                   studentName={studentName}
-                  onStudentNameChange={setStudentName}
                   selectedExam={selectedExam}
                   onExamChange={setSelectedExam}
                   examType={examType}
                   onExamTypeChange={setExamType}
                   selectedDate={selectedDate}
                   onSelectDate={handleDateSelect}
+                  subjects={schoolSubjects}
                 />
               </div>
 
@@ -255,6 +331,7 @@ export default function ScheduleClient({
                   isSubmitting={isReserving}
                   isConfirmed={showConfirmation}
                   error={reserveError}
+                  reserveDisabledMessage={reserveDisabledMessage}
                   onReserve={handleReserve}
                   onReset={handleReset}
                 />
@@ -271,10 +348,30 @@ export default function ScheduleClient({
               </div>
 
               <div className="anim-slide-up anim-d3">
-                <BookingsPanel reservations={reservations} />
+                <BookingsPanel
+                  reservations={reservations}
+                  currentUserId={currentUserId}
+                  cancelingReservationId={cancelingReservationId}
+                  cancelError={cancelReservationError}
+                  onCancelReservation={setCancelDialogReservation}
+                />
               </div>
             </div>
           </>
+        ) : activePanel === "reservations" ? (
+          <div className="anim-slide-up anim-d1">
+            <BookingsPanel
+              reservations={ownReservations}
+              currentUserId={currentUserId}
+              cancelingReservationId={cancelingReservationId}
+              cancelError={cancelReservationError}
+              title="My Reservations"
+              description="Your confirmed exams across this school."
+              emptyTitle="No reservations yet"
+              emptyDescription="Your scheduled exams will appear here."
+              onCancelReservation={setCancelDialogReservation}
+            />
+          </div>
         ) : (
           <SchoolProfilePanel
             schoolName={schoolName}
@@ -284,6 +381,80 @@ export default function ScheduleClient({
           />
         )}
       </main>
+
+      {cancelDialogReservation && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="cancel-reservation-title"
+        >
+          <div className="panel w-full max-w-[420px] p-5 shadow-[0_18px_60px_rgba(15,23,42,0.18)]">
+            <div className="mb-4 flex items-start gap-3">
+              <div
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+                style={{ background: "#FEF2F2" }}
+              >
+                <Ban size={18} color="#DC2626" strokeWidth={1.9} />
+              </div>
+              <div>
+                <h3 id="cancel-reservation-title" className="text-sm font-semibold" style={{ color: "#111827" }}>
+                  Cancel reservation
+                </h3>
+                <p className="mt-1 text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
+                  This will cancel {cancelDialogReservation.examName} on{" "}
+                  {new Date(`${cancelDialogReservation.reservationDate}T00:00:00`).toLocaleDateString(
+                    "en-US",
+                    { month: "short", day: "numeric", year: "numeric" },
+                  )}
+                  .
+                </p>
+              </div>
+            </div>
+
+            {cancelReservationError && (
+              <p
+                className="anim-fade-in mb-4 text-[0.8125rem]"
+                style={{
+                  color: "#DC2626",
+                  background: "#FEF2F2",
+                  border: "1px solid #FECACA",
+                  borderRadius: 8,
+                  padding: "0.5rem 0.75rem",
+                }}
+              >
+                {cancelReservationError}
+              </p>
+            )}
+
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setCancelDialogReservation(null)}
+                disabled={!!cancelingReservationId}
+                className="inline-flex h-10 items-center justify-center rounded-[10px] px-4 text-sm font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
+                style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+              >
+                Keep
+              </button>
+              <button
+                type="button"
+                onClick={() => handleCancelReservation(cancelDialogReservation)}
+                disabled={!!cancelingReservationId}
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-[10px] px-4 text-sm font-semibold transition-colors duration-150 hover:bg-red-50 disabled:cursor-not-allowed"
+                style={{ border: "1px solid #FECACA", color: "#DC2626" }}
+              >
+                {cancelingReservationId === cancelDialogReservation.id ? (
+                  <Loader2 size={15} className="animate-spin" />
+                ) : (
+                  <Ban size={15} />
+                )}
+                Cancel reservation
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -48,7 +48,12 @@ export default async function InvitePage({
     .maybeSingle();
   const inviteRow = invite as InviteRow | null;
   const { data: school } = inviteRow
-    ? await supabase.from("Schools").select("id, name").eq("id", inviteRow.school_id).maybeSingle()
+    ? await supabase
+        .from("Schools")
+        .select("id, name")
+        .eq("id", inviteRow.school_id)
+        .is("deleted_at", null)
+        .maybeSingle()
     : { data: null };
   const schoolRow = school as SchoolRow | null;
   const isAvailable = Boolean(inviteRow?.is_active && schoolRow);

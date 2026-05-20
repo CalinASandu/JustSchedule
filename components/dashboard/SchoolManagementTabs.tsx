@@ -2,19 +2,28 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import {
+  Ban,
   Check,
+  CalendarDays,
+  CalendarPlus,
   ChevronLeft,
   ChevronRight,
+  Clock,
   Copy,
+  FileText,
   Link2,
   Loader2,
   Mail,
+  Play,
+  Plus,
+  Search,
   Trash2,
   UserMinus,
   UserPlus,
   UserRound,
   X,
 } from "lucide-react";
+import SubjectCommandPalette from "@/components/schedule/SubjectCommandPalette";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -29,6 +38,9 @@ type SchoolMember = {
   email: string | null;
   role: SchoolRole;
   joinedAt: string;
+  canSelfBook: boolean;
+  selfBookingDisabledAt: string | null;
+  selfBookingDisabledBy: string | null;
   isCurrentUser: boolean;
 };
 
@@ -67,13 +79,42 @@ type Reservation = {
   examType: "midterm" | "final";
   status: string;
   createdAt: string;
+  createdBy: string;
+  createdByRole: SchoolRole;
+  attendanceStatus: AttendanceStatus;
+  attendanceMarkedBy: string | null;
+  attendanceMarkedAt: string | null;
+};
+
+type AttendanceSession = {
+  id: string;
+  schoolId: string;
+  slotId: string;
+  reservationDate: string;
+  startedBy: string;
+  startedAt: string;
+  expiresAt: string;
 };
 
 type Decision = "approved" | "rejected";
-type SchoolRole = "admin" | "professor" | "student";
-type SchoolDashboardTab = "members" | "reservations" | "requests" | "invites" | "settings";
+type AttendanceStatus = "present" | "absent";
+type SchoolRole = "admin" | "professor" | "exam_supervisor" | "student";
+type ExamType = "midterm" | "final";
+type SchoolDashboardTab =
+  | "members"
+  | "reservations"
+  | "attendance"
+  | "requests"
+  | "invites"
+  | "settings";
+type ReservationViewMode = "day" | "week";
 
-const roleOptions: SchoolRole[] = ["student", "professor", "admin"];
+const roleOptions: SchoolRole[] = ["student", "exam_supervisor", "professor", "admin"];
+
+type SchoolSubject = {
+  id: string;
+  name: string;
+};
 
 type Props = {
   schoolId: string;
@@ -83,11 +124,17 @@ type Props = {
   joinRequests: JoinRequest[];
   examSlots: ExamSlot[];
   reservations: Reservation[];
+  attendanceSessions: AttendanceSession[];
+  schoolSubjects: SchoolSubject[];
+  currentUserRole: Exclude<SchoolRole, "student">;
   memberError: string | null;
   inviteError: string | null;
   joinRequestError: string | null;
   reservationError: string | null;
   canManageMembers: boolean;
+  canManageSelfBooking: boolean;
+  canViewAttendance: boolean;
+  canMarkAttendance: boolean;
 };
 
 function formatDate(value: string) {
@@ -102,6 +149,10 @@ function getDefaultExpiryDate() {
   const date = new Date();
   date.setDate(date.getDate() + 14);
   return date.toISOString().slice(0, 10);
+}
+
+function getMaxBookingDate() {
+  return addDays(getTodayKey(), 14);
 }
 
 function dateInputToEndOfDay(value: string) {
@@ -128,6 +179,14 @@ function addDays(dateKey: string, days: number) {
   return `${year}-${month}-${day}`;
 }
 
+function getWeekDates(dateKey: string) {
+  const anchor = new Date(`${dateKey}T00:00:00`);
+  const day = anchor.getDay();
+  const mondayOffset = day === 0 ? -6 : 1 - day;
+
+  return Array.from({ length: 7 }, (_, index) => addDays(dateKey, mondayOffset + index));
+}
+
 function formatReservationDate(dateKey: string) {
   return new Date(`${dateKey}T00:00:00`).toLocaleDateString("en-US", {
     weekday: "short",
@@ -151,6 +210,74 @@ function formatExamType(type: Reservation["examType"]) {
   return type[0].toUpperCase() + type.slice(1);
 }
 
+function formatRole(role: SchoolRole) {
+  return role === "exam_supervisor" ? "Exam supervisor" : role;
+}
+
+function getSlotDateTime(dateKey: string, timeValue: string) {
+  return new Date(`${dateKey}T${timeValue}`);
+}
+
+const ATTENDANCE_OPEN_BEFORE_MS = 5 * 60 * 1000;
+const ATTENDANCE_CLOSE_AFTER_MS = 25 * 60 * 1000;
+
+function isAttendanceMarkingOpen(
+  dateKey: string,
+  slot: ExamSlot | null,
+  session: AttendanceSession | null,
+) {
+  if (!slot) {
+    return false;
+  }
+
+  const now = new Date();
+
+  if (session && new Date(session.expiresAt) > now) {
+    return true;
+  }
+
+  const startsAt = getSlotDateTime(dateKey, slot.startsAt);
+  const opensAt = new Date(startsAt.getTime() - ATTENDANCE_OPEN_BEFORE_MS);
+  const closesAt = new Date(startsAt.getTime() + ATTENDANCE_CLOSE_AFTER_MS);
+
+  return now >= opensAt && now <= closesAt;
+}
+
+function getAttendanceWindowLabel(
+  dateKey: string,
+  slot: ExamSlot | null,
+  session: AttendanceSession | null,
+) {
+  if (!slot) {
+    return "Choose a slot";
+  }
+
+  if (session && new Date(session.expiresAt) > new Date()) {
+    return "Started for testing";
+  }
+
+  const now = new Date();
+  const startsAt = getSlotDateTime(dateKey, slot.startsAt);
+  const opensAt = new Date(startsAt.getTime() - ATTENDANCE_OPEN_BEFORE_MS);
+  const closesAt = new Date(startsAt.getTime() + ATTENDANCE_CLOSE_AFTER_MS);
+
+  if (now < opensAt) {
+    return `Opens at ${opensAt.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+    })}`;
+  }
+
+  if (now > closesAt) {
+    return "Closed";
+  }
+
+  return `Open until ${closesAt.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  })}`;
+}
+
 export default function SchoolManagementTabs({
   schoolId,
   schoolName,
@@ -159,15 +286,27 @@ export default function SchoolManagementTabs({
   joinRequests,
   examSlots,
   reservations,
+  attendanceSessions,
+  schoolSubjects: initialSchoolSubjects,
+  currentUserRole,
   memberError,
   inviteError,
   joinRequestError,
   reservationError,
   canManageMembers,
+  canManageSelfBooking,
+  canViewAttendance,
+  canMarkAttendance,
 }: Props) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<SchoolDashboardTab>("members");
+  const [activeTab, setActiveTab] = useState<SchoolDashboardTab>(
+    currentUserRole === "exam_supervisor" ? "reservations" : "members",
+  );
   const [reservationDate, setReservationDate] = useState(getTodayKey);
+  const [reservationViewMode, setReservationViewMode] = useState<ReservationViewMode>("day");
+  const [attendanceDate, setAttendanceDate] = useState(getTodayKey);
+  const [attendanceSlotId, setAttendanceSlotId] = useState(() => examSlots[0]?.id ?? "");
+  const [memberSearchQuery, setMemberSearchQuery] = useState("");
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
   const [expiresOn, setExpiresOn] = useState(getDefaultExpiryDate);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
@@ -177,6 +316,16 @@ export default function SchoolManagementTabs({
   const [removedMemberIds, setRemovedMemberIds] = useState<Set<string>>(new Set());
   const [roleOverrides, setRoleOverrides] = useState<Record<string, SchoolRole>>({});
   const [selectedRoles, setSelectedRoles] = useState<Record<string, SchoolRole>>({});
+  const [selfBookingOverrides, setSelfBookingOverrides] = useState<Record<string, boolean>>({});
+  const [selfBookingState, setSelfBookingState] = useState<{
+    error: string | null;
+    success: string | null;
+    pendingMemberId: string | null;
+  }>({
+    error: null,
+    success: null,
+    pendingMemberId: null,
+  });
   const [roleState, setRoleState] = useState<{
     error: string | null;
     success: string | null;
@@ -186,8 +335,55 @@ export default function SchoolManagementTabs({
     success: null,
     pending: false,
   });
+  const [subjects, setSubjects] = useState<SchoolSubject[]>(initialSchoolSubjects);
+  const [newSubjectName, setNewSubjectName] = useState("");
+  const [subjectState, setSubjectState] = useState<{
+    error: string | null;
+    success: string | null;
+    pending: boolean;
+  }>({ error: null, success: null, pending: false });
   const [kickDialogMemberId, setKickDialogMemberId] = useState<string | null>(null);
   const [kickSecondsRemaining, setKickSecondsRemaining] = useState(5);
+  const [scheduleDialogMemberId, setScheduleDialogMemberId] = useState<string | null>(null);
+  const [scheduleDate, setScheduleDate] = useState(getTodayKey);
+  const [scheduleSlotId, setScheduleSlotId] = useState("");
+  const [scheduleExamName, setScheduleExamName] = useState("");
+  const [scheduleExamType, setScheduleExamType] = useState<ExamType>("midterm");
+  const [scheduleState, setScheduleState] = useState<{
+    error: string | null;
+    success: string | null;
+    pending: boolean;
+  }>({
+    error: null,
+    success: null,
+    pending: false,
+  });
+  const [cancelledReservationIds, setCancelledReservationIds] = useState<Set<string>>(new Set());
+  const [cancelReservationState, setCancelReservationState] = useState<{
+    error: string | null;
+    success: string | null;
+    pendingReservationId: string | null;
+  }>({
+    error: null,
+    success: null,
+    pendingReservationId: null,
+  });
+  const [cancelDialogReservationId, setCancelDialogReservationId] = useState<string | null>(null);
+  const [attendanceOverrides, setAttendanceOverrides] = useState<Record<string, AttendanceStatus>>({});
+  const [startedAttendanceSessions, setStartedAttendanceSessions] =
+    useState<AttendanceSession[]>(attendanceSessions);
+  const [attendanceState, setAttendanceState] = useState<{
+    error: string | null;
+    success: string | null;
+    pendingReservationId: string | null;
+    starting: boolean;
+  }>({
+    error: null,
+    success: null,
+    pendingReservationId: null,
+    starting: false,
+  });
+  const [selectedWeekReservationId, setSelectedWeekReservationId] = useState<string | null>(null);
   const [kickState, setKickState] = useState<{ error: string | null; pending: boolean }>({
     error: null,
     pending: false,
@@ -227,9 +423,61 @@ export default function SchoolManagementTabs({
         .map((member) => ({
           ...member,
           role: roleOverrides[member.id] ?? member.role,
+          canSelfBook: selfBookingOverrides[member.id] ?? member.canSelfBook,
         })),
-    [members, removedMemberIds, roleOverrides],
+    [members, removedMemberIds, roleOverrides, selfBookingOverrides],
   );
+  const currentUserId = visibleMembers.find((member) => member.isCurrentUser)?.userId ?? null;
+  const filteredMembers = useMemo(() => {
+    const query = memberSearchQuery.trim().toLowerCase();
+
+    if (!query) {
+      return visibleMembers;
+    }
+
+    return visibleMembers.filter((member) =>
+      [member.name, member.email ?? "", member.role]
+        .join(" ")
+        .toLowerCase()
+        .includes(query),
+    );
+  }, [memberSearchQuery, visibleMembers]);
+  const visibleReservations = useMemo(
+    () =>
+      reservations
+        .filter((reservation) => !cancelledReservationIds.has(reservation.id))
+        .map((reservation) => ({
+          ...reservation,
+          attendanceStatus: attendanceOverrides[reservation.id] ?? reservation.attendanceStatus,
+        })),
+    [attendanceOverrides, cancelledReservationIds, reservations],
+  );
+  const reservationWeekDates = useMemo(() => getWeekDates(reservationDate), [reservationDate]);
+  const reservationsByDate = useMemo(() => {
+    const grouped = new Map<string, Reservation[]>();
+
+    for (const reservation of visibleReservations) {
+      if (!reservationWeekDates.includes(reservation.reservationDate)) {
+        continue;
+      }
+
+      const dateReservations = grouped.get(reservation.reservationDate) ?? [];
+      dateReservations.push(reservation);
+      grouped.set(reservation.reservationDate, dateReservations);
+    }
+
+    for (const dateReservations of grouped.values()) {
+      dateReservations.sort((first, second) => {
+        const firstSlot = examSlots.find((slot) => slot.id === first.slotId);
+        const secondSlot = examSlots.find((slot) => slot.id === second.slotId);
+        const timeCompare = (firstSlot?.startsAt ?? "").localeCompare(secondSlot?.startsAt ?? "");
+        if (timeCompare !== 0) return timeCompare;
+        return first.createdAt.localeCompare(second.createdAt);
+      });
+    }
+
+    return grouped;
+  }, [examSlots, reservationWeekDates, visibleReservations]);
   const selectedDecisions = Object.entries(requestDecisions).filter(([requestId]) =>
     visibleJoinRequests.some((request) => request.id === requestId),
   );
@@ -245,6 +493,11 @@ export default function SchoolManagementTabs({
   const kickDialogMember = kickDialogMemberId
     ? visibleMembers.find((member) => member.id === kickDialogMemberId) ?? null
     : null;
+  const scheduleDialogMember = scheduleDialogMemberId
+    ? visibleMembers.find((member) => member.id === scheduleDialogMemberId) ?? null
+    : null;
+  const selectedScheduleSlot =
+    examSlots.find((slot) => slot.id === scheduleSlotId) ?? examSlots[0] ?? null;
   const memberNamesByUserId = useMemo(
     () => new Map(visibleMembers.map((member) => [member.userId, member.name])),
     [visibleMembers],
@@ -252,7 +505,7 @@ export default function SchoolManagementTabs({
   const reservationsBySlotId = useMemo(() => {
     const grouped = new Map<string, Reservation[]>();
 
-    for (const reservation of reservations) {
+    for (const reservation of visibleReservations) {
       if (reservation.reservationDate !== reservationDate) {
         continue;
       }
@@ -267,8 +520,52 @@ export default function SchoolManagementTabs({
     }
 
     return grouped;
-  }, [reservationDate, reservations]);
+  }, [reservationDate, visibleReservations]);
   const reservationRowCount = Math.max(8, ...examSlots.map((slot) => slot.capacity));
+  const selectedWeekReservation = selectedWeekReservationId
+    ? visibleReservations.find((r) => r.id === selectedWeekReservationId) ?? null
+    : null;
+  const selectedWeekSlot = selectedWeekReservation
+    ? examSlots.find((s) => s.id === selectedWeekReservation.slotId) ?? null
+    : null;
+  const canCancelWeekReservation =
+    !!selectedWeekReservation &&
+    !!currentUserId &&
+    (selectedWeekReservation.userId === currentUserId ||
+      currentUserRole === "admin" ||
+      currentUserRole === "professor");
+  const cancelWeekReservationPending =
+    !!selectedWeekReservation &&
+    cancelReservationState.pendingReservationId === selectedWeekReservation.id;
+  const selectedAttendanceSlot =
+    examSlots.find((slot) => slot.id === attendanceSlotId) ?? examSlots[0] ?? null;
+  const selectedAttendanceSession =
+    selectedAttendanceSlot
+      ? startedAttendanceSessions.find(
+          (session) =>
+            session.reservationDate === attendanceDate &&
+            session.slotId === selectedAttendanceSlot.id,
+        ) ?? null
+      : null;
+  const attendanceReservations = useMemo(
+    () =>
+      visibleReservations
+        .filter(
+          (reservation) =>
+            reservation.reservationDate === attendanceDate &&
+            reservation.slotId === selectedAttendanceSlot?.id,
+        )
+        .sort((first, second) => first.createdAt.localeCompare(second.createdAt)),
+    [attendanceDate, selectedAttendanceSlot?.id, visibleReservations],
+  );
+  const attendanceMarkingOpen = isAttendanceMarkingOpen(
+    attendanceDate,
+    selectedAttendanceSlot,
+    selectedAttendanceSession,
+  );
+  const cancelDialogReservation = cancelDialogReservationId
+    ? visibleReservations.find((reservation) => reservation.id === cancelDialogReservationId) ?? null
+    : null;
 
   useEffect(() => {
     if (!copiedUrl) {
@@ -481,6 +778,216 @@ export default function SchoolManagementTabs({
     router.refresh();
   }
 
+  async function toggleSelfBooking(member: SchoolMember) {
+    if (member.role !== "student" || selfBookingState.pendingMemberId) {
+      return;
+    }
+
+    const nextCanSelfBook = !member.canSelfBook;
+    setSelfBookingState({ error: null, success: null, pendingMemberId: member.id });
+
+    const supabase = createClient();
+    const { data, error } = await supabase.rpc("set_student_self_booking_permission", {
+      target_school_id: schoolId,
+      target_member_id: member.id,
+      target_can_self_book: nextCanSelfBook,
+    });
+
+    if (error) {
+      console.error("Update student self-booking permission failed", error);
+      setSelfBookingState({
+        error: getUserFacingErrorMessage("selfBookingUpdate", error),
+        success: null,
+        pendingMemberId: null,
+      });
+      return;
+    }
+
+    const [updatedMember] = (data ?? []) as { can_self_book: boolean }[];
+    setSelfBookingOverrides((current) => ({
+      ...current,
+      [member.id]: updatedMember?.can_self_book ?? nextCanSelfBook,
+    }));
+    setSelfBookingState({
+      error: null,
+      success: `${member.name} is now ${
+        nextCanSelfBook ? "allowed to self-book exams" : "teacher scheduled only"
+      }.`,
+      pendingMemberId: null,
+    });
+    router.refresh();
+  }
+
+  async function addSubject() {
+    const name = newSubjectName.trim();
+    if (!name) return;
+    setSubjectState({ error: null, success: null, pending: true });
+    const supabase = createClient();
+    const { data, error } = await supabase.rpc("upsert_school_subject", {
+      target_school_id: schoolId,
+      subject_name: name,
+    });
+    if (error) {
+      setSubjectState({ error: "Could not add subject. Try again.", success: null, pending: false });
+      return;
+    }
+    const added = data as SchoolSubject;
+    setSubjects((prev) =>
+      [...prev.filter((s) => s.id !== added.id), added].sort((a, b) =>
+        a.name.localeCompare(b.name),
+      ),
+    );
+    setNewSubjectName("");
+    setSubjectState({ error: null, success: null, pending: false });
+  }
+
+  async function removeSubject(id: string) {
+    setSubjectState({ error: null, success: null, pending: true });
+    const supabase = createClient();
+    const { error } = await supabase
+      .from("SchoolSubjects")
+      .update({ deleted_at: new Date().toISOString() })
+      .eq("id", id)
+      .eq("school_id", schoolId);
+    if (error) {
+      setSubjectState({ error: "Could not remove subject. Try again.", success: null, pending: false });
+      return;
+    }
+    setSubjects((prev) => prev.filter((s) => s.id !== id));
+    setSubjectState({ error: null, success: null, pending: false });
+  }
+
+  function openScheduleDialog(member: SchoolMember) {
+    setScheduleDialogMemberId(member.id);
+    setScheduleDate(getTodayKey());
+    setScheduleSlotId(examSlots[0]?.id ?? "");
+    setScheduleExamName("");
+    setScheduleExamType("midterm");
+    setScheduleState({ error: null, success: null, pending: false });
+  }
+
+  function closeScheduleDialog() {
+    if (scheduleState.pending) {
+      return;
+    }
+
+    setScheduleDialogMemberId(null);
+    setScheduleState({ error: null, success: null, pending: false });
+  }
+
+  async function scheduleForStudent() {
+    if (!scheduleDialogMember || !scheduleSlotId || !scheduleExamName.trim()) {
+      setScheduleState({
+        error: "Choose a student, date, slot, and exam name before scheduling.",
+        success: null,
+        pending: false,
+      });
+      return;
+    }
+
+    setScheduleState({ error: null, success: null, pending: true });
+
+    const supabase = createClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session) {
+      setScheduleState({
+        error: "You need to sign in again.",
+        success: null,
+        pending: false,
+      });
+      return;
+    }
+
+    const { error } = await supabase.functions.invoke("schedule-exam-for-student", {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: {
+        schoolId,
+        studentUserId: scheduleDialogMember.userId,
+        slotId: scheduleSlotId,
+        reservationDate: scheduleDate,
+        examName: scheduleExamName.trim(),
+        examType: scheduleExamType,
+      },
+    });
+
+    if (error) {
+      console.error("Schedule exam for student failed", error);
+      setScheduleState({
+        error: await getUserFacingFunctionErrorMessage("scheduleForStudent", error),
+        success: null,
+        pending: false,
+      });
+      return;
+    }
+
+    setScheduleState({
+      error: null,
+      success: `Scheduled ${scheduleExamName.trim()} for ${scheduleDialogMember.name}.`,
+      pending: false,
+    });
+    setScheduleDialogMemberId(null);
+    router.refresh();
+  }
+
+  async function cancelReservation(reservation: Reservation) {
+    if (cancelReservationState.pendingReservationId) {
+      return;
+    }
+
+    setCancelReservationState({
+      error: null,
+      success: null,
+      pendingReservationId: reservation.id,
+    });
+
+    const supabase = createClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.access_token) {
+      setCancelReservationState({
+        error: "Your session expired. Sign in again to cancel this reservation.",
+        success: null,
+        pendingReservationId: null,
+      });
+      return;
+    }
+
+    const { error } = await supabase.functions.invoke("cancel-reservation", {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: {
+        reservationId: reservation.id,
+      },
+    });
+
+    if (error) {
+      console.error("Cancel reservation failed", error);
+      setCancelReservationState({
+        error: await getUserFacingFunctionErrorMessage("cancelReservation", error),
+        success: null,
+        pendingReservationId: null,
+      });
+      return;
+    }
+
+    setCancelledReservationIds((current) => new Set(current).add(reservation.id));
+    setCancelDialogReservationId(null);
+    setCancelReservationState({
+      error: null,
+      success: `Cancelled ${reservation.examName}.`,
+      pendingReservationId: null,
+    });
+    router.refresh();
+  }
+
   function openKickDialog(member: SchoolMember) {
     setKickDialogMemberId(member.id);
     setKickSecondsRemaining(5);
@@ -545,7 +1052,9 @@ export default function SchoolManagementTabs({
     setDeleteState({ error: null, pending: true });
 
     const supabase = createClient();
-    const { error } = await supabase.from("Schools").delete().eq("id", schoolId);
+    const { error } = await supabase.rpc("soft_delete_school", {
+      target_school_id: schoolId,
+    });
 
     if (error) {
       console.error("Delete school failed", error);
@@ -557,6 +1066,99 @@ export default function SchoolManagementTabs({
     }
 
     router.replace("/dashboard");
+    router.refresh();
+  }
+
+  async function startAttendanceSession() {
+    if (!selectedAttendanceSlot || attendanceState.starting) {
+      return;
+    }
+
+    setAttendanceState({
+      error: null,
+      success: null,
+      pendingReservationId: null,
+      starting: true,
+    });
+
+    const supabase = createClient();
+    const { data, error } = await supabase.rpc("start_attendance_session", {
+      target_school_id: schoolId,
+      target_slot_id: selectedAttendanceSlot.id,
+      target_reservation_date: attendanceDate,
+    });
+
+    if (error) {
+      console.error("Start attendance session failed", error);
+      setAttendanceState({
+        error: getUserFacingErrorMessage("attendanceStart", error),
+        success: null,
+        pendingReservationId: null,
+        starting: false,
+      });
+      return;
+    }
+
+    const [session] = (data ?? []) as { session_id: string; expires_at: string }[];
+    setStartedAttendanceSessions((current) => [
+      ...current.filter(
+        (item) =>
+          item.reservationDate !== attendanceDate || item.slotId !== selectedAttendanceSlot.id,
+      ),
+      {
+        id: session?.session_id ?? `local-${selectedAttendanceSlot.id}-${attendanceDate}`,
+        schoolId,
+        slotId: selectedAttendanceSlot.id,
+        reservationDate: attendanceDate,
+        startedBy: currentUserId ?? "",
+        startedAt: new Date().toISOString(),
+        expiresAt: session?.expires_at ?? new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+      },
+    ]);
+    setAttendanceState({
+      error: null,
+      success: `Attendance started for ${selectedAttendanceSlot.name}.`,
+      pendingReservationId: null,
+      starting: false,
+    });
+  }
+
+  async function updateAttendance(reservation: Reservation, status: AttendanceStatus) {
+    if (!canMarkAttendance || attendanceState.pendingReservationId) {
+      return;
+    }
+
+    setAttendanceState({
+      error: null,
+      success: null,
+      pendingReservationId: reservation.id,
+      starting: false,
+    });
+
+    const supabase = createClient();
+    const { error } = await supabase.rpc("set_reservation_attendance", {
+      target_reservation_id: reservation.id,
+      target_attendance_status: status,
+    });
+
+    if (error) {
+      console.error("Update attendance failed", error);
+      setAttendanceState({
+        error: getUserFacingErrorMessage("attendanceUpdate", error),
+        success: null,
+        pendingReservationId: null,
+        starting: false,
+      });
+      return;
+    }
+
+    setAttendanceOverrides((current) => ({ ...current, [reservation.id]: status }));
+    setAttendanceState({
+      error: null,
+      success: `${memberNamesByUserId.get(reservation.userId) ?? "Student"} marked ${status}.`,
+      pendingReservationId: null,
+      starting: false,
+    });
     router.refresh();
   }
 
@@ -580,8 +1182,9 @@ export default function SchoolManagementTabs({
   return (
     <section className="panel anim-slide-up anim-d1 overflow-hidden">
       <div className="flex border-b border-[#E4E8EF] px-2 pt-2">
-        {renderTabButton("members", "Members")}
+        {currentUserRole !== "exam_supervisor" && renderTabButton("members", "Members")}
         {renderTabButton("reservations", "Reservations")}
+        {canViewAttendance && renderTabButton("attendance", "Attendance")}
         {canManageMembers && renderTabButton("requests", "Join Requests")}
         {canManageMembers && renderTabButton("invites", "Invites")}
         {canManageMembers && renderTabButton("settings", "Settings")}
@@ -602,17 +1205,52 @@ export default function SchoolManagementTabs({
               className="rounded-full px-3 py-1 text-xs font-semibold"
               style={{ background: "#DBEAFE", color: "#1D4ED8" }}
             >
-              {visibleMembers.length} total
+              {memberSearchQuery.trim()
+                ? `${filteredMembers.length} of ${visibleMembers.length}`
+                : `${visibleMembers.length} total`}
             </span>
           </div>
 
-          {(memberError || roleState.error) && (
-            <ErrorBanner message={roleState.error ?? memberError ?? ""} />
+          <div className="relative mb-4">
+            <Search
+              size={16}
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2"
+              color="#94A3B8"
+              aria-hidden="true"
+            />
+            <input
+              type="search"
+              value={memberSearchQuery}
+              onChange={(event) => setMemberSearchQuery(event.target.value)}
+              placeholder="Search members by name, email, or role"
+              className="h-[2.625rem] w-full rounded-[10px] bg-white pl-10 pr-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
+              style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+              onFocus={(event) => {
+                event.currentTarget.style.borderColor = "#3B82F6";
+                event.currentTarget.style.boxShadow = "0 0 0 3px rgba(59,130,246,0.12)";
+              }}
+              onBlur={(event) => {
+                event.currentTarget.style.borderColor = "#E4E8EF";
+                event.currentTarget.style.boxShadow = "none";
+              }}
+            />
+          </div>
+
+          {(memberError || roleState.error || selfBookingState.error) && (
+            <ErrorBanner
+              message={selfBookingState.error ?? roleState.error ?? memberError ?? ""}
+            />
           )}
 
-          {roleState.success && (
+          {(roleState.success || selfBookingState.success) && (
             <p className="anim-fade-in mb-4 text-[0.8125rem] font-medium" style={{ color: "#1D4ED8" }}>
-              {roleState.success}
+              {selfBookingState.success ?? roleState.success}
+            </p>
+          )}
+
+          {scheduleState.success && (
+            <p className="anim-fade-in mb-4 text-[0.8125rem] font-medium" style={{ color: "#1D4ED8" }}>
+              {scheduleState.success}
             </p>
           )}
 
@@ -663,10 +1301,20 @@ export default function SchoolManagementTabs({
           )}
 
           <div className="space-y-3">
-            {visibleMembers.map((member) => {
+            {filteredMembers.map((member) => {
               const selectedRole = selectedRoles[member.id] ?? member.role;
               const canManage = canManageMembers && !member.isCurrentUser && !member.id.startsWith("created-");
               const canKick = canManage && member.role !== "admin";
+              const canToggleSelfBooking =
+                canManageSelfBooking &&
+                member.role === "student" &&
+                !member.isCurrentUser &&
+                !member.id.startsWith("created-");
+              const canScheduleForStudent =
+                canManageSelfBooking &&
+                member.role === "student" &&
+                !member.id.startsWith("created-");
+              const selfBookingPending = selfBookingState.pendingMemberId === member.id;
 
               return (
               <div
@@ -696,9 +1344,52 @@ export default function SchoolManagementTabs({
                     <p className="truncate text-xs" style={{ color: "#9CA3AF" }}>
                       {member.email ?? `Joined ${formatDate(member.joinedAt)}`}
                     </p>
+                    {member.role === "student" && (
+                      <div className="mt-2 flex flex-wrap items-center gap-2">
+                        <span
+                          className="rounded-full px-3 py-1 text-xs font-semibold"
+                          style={
+                            member.canSelfBook
+                              ? { background: "#DBEAFE", color: "#1D4ED8" }
+                              : { background: "#E2E8F0", color: "#64748B" }
+                          }
+                        >
+                          {member.canSelfBook ? "Self booking on" : "Teacher scheduled only"}
+                        </span>
+                        {!member.canSelfBook && member.selfBookingDisabledAt && (
+                          <span className="text-xs" style={{ color: "#9CA3AF" }}>
+                            Since {formatDate(member.selfBookingDisabledAt)}
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  {canScheduleForStudent && (
+                    <button
+                      type="button"
+                      onClick={() => openScheduleDialog(member)}
+                      disabled={scheduleState.pending}
+                      className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
+                      style={{ border: "1px solid #E4E8EF", color: "#2563EB" }}
+                    >
+                      <CalendarPlus size={16} />
+                      Schedule
+                    </button>
+                  )}
+                  {canToggleSelfBooking && (
+                    <button
+                      type="button"
+                      onClick={() => toggleSelfBooking(member)}
+                      disabled={!!selfBookingState.pendingMemberId}
+                      className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
+                      style={{ border: "1px solid #E4E8EF", color: "#374151" }}
+                    >
+                      {selfBookingPending && <Loader2 size={16} className="animate-spin" />}
+                      {member.canSelfBook ? "Restrict booking" : "Allow booking"}
+                    </button>
+                  )}
                   <select
                     value={selectedRole}
                     onChange={(event) => {
@@ -715,7 +1406,7 @@ export default function SchoolManagementTabs({
                   >
                     {roleOptions.map((role) => (
                       <option key={role} value={role}>
-                        {role}
+                        {formatRole(role)}
                       </option>
                     ))}
                   </select>
@@ -736,6 +1427,13 @@ export default function SchoolManagementTabs({
               </div>
               );
             })}
+
+            {filteredMembers.length === 0 && (
+              <EmptyState
+                title="No members found"
+                description="Try a different name, email, or role."
+              />
+            )}
           </div>
         </div>
       )}
@@ -748,16 +1446,47 @@ export default function SchoolManagementTabs({
                 Reservations
               </h2>
               <p className="mt-1 text-sm" style={{ color: "#6B7280" }}>
-                Confirmed student exams for {formatReservationDate(reservationDate)}.
+                {reservationViewMode === "day"
+                  ? `Confirmed student exams for ${formatReservationDate(reservationDate)}.`
+                  : `Confirmed student exams for ${formatReservationDate(
+                      reservationWeekDates[0],
+                    )} through ${formatReservationDate(reservationWeekDates[6])}.`}
               </p>
             </div>
+            <div className="flex flex-col gap-2 sm:items-end">
+              <div
+                className="flex w-fit rounded-xl p-1"
+                style={{ border: "1px solid #E4E8EF", background: "#F8FAFC" }}
+                role="group"
+                aria-label="Reservation view"
+              >
+                {(["day", "week"] as ReservationViewMode[]).map((mode) => (
+                  <button
+                    key={mode}
+                    type="button"
+                    onClick={() => setReservationViewMode(mode)}
+                    className="h-8 rounded-[10px] px-3 text-sm font-semibold capitalize transition-colors duration-150"
+                    style={
+                      reservationViewMode === mode
+                        ? { background: "#FFFFFF", color: "#1D4ED8", border: "1px solid #BFDBFE" }
+                        : { background: "transparent", color: "#6B7280", border: "1px solid transparent" }
+                    }
+                  >
+                    {mode}
+                  </button>
+                ))}
+              </div>
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => setReservationDate((current) => addDays(current, -1))}
+                onClick={() =>
+                  setReservationDate((current) =>
+                    addDays(current, reservationViewMode === "day" ? -1 : -7),
+                  )
+                }
                 className="inline-flex h-9 w-9 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50"
                 style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
-                aria-label="Previous day"
+                aria-label={reservationViewMode === "day" ? "Previous day" : "Previous week"}
               >
                 <ChevronLeft size={16} />
               </button>
@@ -765,21 +1494,40 @@ export default function SchoolManagementTabs({
                 className="min-w-[150px] rounded-xl px-3 py-2 text-center text-sm font-semibold"
                 style={{ border: "1px solid #E4E8EF", color: "#111827" }}
               >
-                {formatReservationDate(reservationDate)}
+                {reservationViewMode === "day"
+                  ? formatReservationDate(reservationDate)
+                  : `${formatReservationDate(reservationWeekDates[0])} - ${formatReservationDate(
+                      reservationWeekDates[6],
+                    )}`}
               </span>
               <button
                 type="button"
-                onClick={() => setReservationDate((current) => addDays(current, 1))}
+                onClick={() =>
+                  setReservationDate((current) =>
+                    addDays(current, reservationViewMode === "day" ? 1 : 7),
+                  )
+                }
                 className="inline-flex h-9 w-9 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50"
                 style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
-                aria-label="Next day"
+                aria-label={reservationViewMode === "day" ? "Next day" : "Next week"}
               >
                 <ChevronRight size={16} />
               </button>
             </div>
+            </div>
           </div>
 
           {reservationError && <ErrorBanner message={reservationError} />}
+
+          {cancelReservationState.error && (
+            <ErrorBanner message={cancelReservationState.error} />
+          )}
+
+          {cancelReservationState.success && (
+            <p className="anim-fade-in mb-4 text-[0.8125rem] font-medium" style={{ color: "#1D4ED8" }}>
+              {cancelReservationState.success}
+            </p>
+          )}
 
           {examSlots.length === 0 ? (
             <EmptyState
@@ -787,6 +1535,111 @@ export default function SchoolManagementTabs({
               description="Reservations will appear here after this school has reusable exam slots."
             />
           ) : (
+            reservationViewMode === "week" ? (
+              <div className="overflow-x-auto">
+                <div
+                  className="grid min-w-[500px] gap-2"
+                  style={{ gridTemplateColumns: "repeat(5, minmax(0, 1fr))" }}
+                >
+                  {reservationWeekDates.filter((dateKey) => {
+                    const dow = new Date(`${dateKey}T00:00:00`).getDay();
+                    return dow !== 0 && dow !== 6;
+                  }).map((dateKey) => {
+                    const dayReservations = reservationsByDate.get(dateKey) ?? [];
+                    const isToday = dateKey === getTodayKey();
+                    const dayDate = new Date(`${dateKey}T00:00:00`);
+                    const dayLabel = dayDate.toLocaleDateString("en-US", { weekday: "short" });
+                    const dayNum = dayDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+
+                    return (
+                      <div
+                        key={dateKey}
+                        className="flex flex-col overflow-hidden rounded-[10px] border"
+                        style={{
+                          background: "#FFFFFF",
+                          borderColor: isToday ? "#93C5FD" : "#E4E8EF",
+                        }}
+                      >
+                        <div
+                          className="flex items-center justify-between px-2.5 py-2"
+                          style={{
+                            background: isToday ? "#EFF6FF" : "#FAFAFA",
+                            borderBottom: `1px solid ${isToday ? "#BFDBFE" : "#F3F4F6"}`,
+                          }}
+                        >
+                          <div>
+                            <p
+                              className="text-[10px] font-bold uppercase tracking-wide"
+                              style={{ color: isToday ? "#2563EB" : "#94A3B8" }}
+                            >
+                              {dayLabel}
+                            </p>
+                            <p
+                              className="text-[13px] font-semibold"
+                              style={{ color: isToday ? "#1D4ED8" : "#111827" }}
+                            >
+                              {dayNum}
+                            </p>
+                          </div>
+                          {dayReservations.length > 0 && (
+                            <span
+                              className="rounded-full px-2 py-0.5 text-[10px] font-semibold"
+                              style={{ background: "#DBEAFE", color: "#1D4ED8" }}
+                            >
+                              {dayReservations.length}
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="flex flex-1 flex-col gap-1 p-1.5">
+                          {dayReservations.length === 0 ? (
+                            <div
+                              className="flex flex-1 items-center justify-center rounded-[8px] border border-dashed py-5"
+                              style={{ borderColor: "#E4E8EF" }}
+                            >
+                              <p className="text-[10px]" style={{ color: "#94A3B8" }}>
+                                No bookings
+                              </p>
+                            </div>
+                          ) : (
+                            dayReservations.map((reservation) => {
+                              const chipSlot = examSlots.find((s) => s.id === reservation.slotId);
+                              return (
+                                <button
+                                  key={reservation.id}
+                                  type="button"
+                                  onClick={() => setSelectedWeekReservationId(reservation.id)}
+                                  className="w-full rounded-[8px] px-2 py-1.5 text-left transition-colors duration-150 hover:bg-[#DBEAFE]"
+                                  style={{
+                                    background: "#EFF6FF",
+                                    border: "1px solid #BFDBFE",
+                                  }}
+                                >
+                                  <p
+                                    className="truncate text-[12px] font-semibold leading-tight"
+                                    style={{ color: "#111827" }}
+                                  >
+                                    {memberNamesByUserId.get(reservation.userId) ?? "Unnamed"}
+                                  </p>
+                                  {chipSlot && (
+                                    <p
+                                      className="mt-0.5 text-[10px] leading-tight"
+                                      style={{ color: "#6B7280" }}
+                                    >
+                                      {formatSlotTime(chipSlot.startsAt)}
+                                    </p>
+                                  )}
+                                </button>
+                              );
+                            })
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
             <div className="overflow-x-auto">
               <div
                 className="grid min-w-[760px] gap-3"
@@ -810,6 +1663,15 @@ export default function SchoolManagementTabs({
                   examSlots.map((slot) => {
                     const reservation = reservationsBySlotId.get(slot.id)?.[seatIndex] ?? null;
                     const isBeyondCapacity = seatIndex >= slot.capacity;
+                    const canCancelReservation =
+                      !!reservation &&
+                      !!currentUserId &&
+                      (reservation.userId === currentUserId ||
+                        currentUserRole === "admin" ||
+                        currentUserRole === "professor");
+                    const cancelPending =
+                      !!reservation &&
+                      cancelReservationState.pendingReservationId === reservation.id;
 
                     return (
                       <div
@@ -821,7 +1683,7 @@ export default function SchoolManagementTabs({
                         }}
                       >
                         {reservation ? (
-                          <div>
+                          <div className="flex h-full min-h-[66px] flex-col">
                             <div className="mb-2 flex items-center justify-between gap-2">
                               <p className="truncate text-sm font-semibold" style={{ color: "#111827" }}>
                                 {memberNamesByUserId.get(reservation.userId) ?? "Unnamed student"}
@@ -839,6 +1701,22 @@ export default function SchoolManagementTabs({
                             <p className="mt-1 text-xs font-medium" style={{ color: "#9CA3AF" }}>
                               {formatExamType(reservation.examType)}
                             </p>
+                            {canCancelReservation && (
+                              <button
+                                type="button"
+                                onClick={() => setCancelDialogReservationId(reservation.id)}
+                                disabled={!!cancelReservationState.pendingReservationId}
+                                className="mt-3 inline-flex h-8 w-fit items-center justify-center gap-1.5 rounded-[10px] px-3 text-xs font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
+                                style={{ border: "1px solid #E4E8EF", color: "#DC2626" }}
+                              >
+                                {cancelPending ? (
+                                  <Loader2 size={13} className="animate-spin" />
+                                ) : (
+                                  <Ban size={13} />
+                                )}
+                                Cancel
+                              </button>
+                            )}
                           </div>
                         ) : (
                           <div className="flex h-full min-h-[66px] items-center justify-center text-xs">
@@ -852,6 +1730,247 @@ export default function SchoolManagementTabs({
                   }),
                 )}
               </div>
+            </div>
+            )
+          )}
+        </div>
+      )}
+
+      {activeTab === "attendance" && (
+        <div className="p-5">
+          {/* Header row: title left, date navigator right */}
+          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <h2 className="text-sm font-semibold" style={{ color: "#111827" }}>
+                Attendance
+              </h2>
+              <p className="mt-1 text-sm" style={{ color: "#6B7280" }}>
+                Track attendance by exam slot. Only the selected slot is shown.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setAttendanceDate((current) => addDays(current, -1))}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50"
+                style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+                aria-label="Previous attendance day"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <span
+                className="min-w-[148px] rounded-xl px-3 py-2 text-center text-sm font-semibold"
+                style={{ border: "1px solid #E4E8EF", color: "#111827" }}
+              >
+                {formatReservationDate(attendanceDate)}
+              </span>
+              <button
+                type="button"
+                onClick={() => setAttendanceDate((current) => addDays(current, 1))}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50"
+                style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+                aria-label="Next attendance day"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+
+          {/* Slot pills */}
+          {examSlots.length > 0 && (
+            <div className="mb-4 flex flex-wrap gap-2">
+              {examSlots.map((slot) => {
+                const isSelected = slot.id === (selectedAttendanceSlot?.id ?? examSlots[0]?.id);
+                return (
+                  <button
+                    key={slot.id}
+                    type="button"
+                    onClick={() => setAttendanceSlotId(slot.id)}
+                    className="inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-sm font-semibold transition-colors duration-150"
+                    style={
+                      isSelected
+                        ? { background: "#EFF6FF", color: "#2563EB", border: "1.5px solid #BFDBFE" }
+                        : { background: "#FFFFFF", color: "#6B7280", border: "1.5px solid #E4E8EF" }
+                    }
+                  >
+                    <span>{slot.name}</span>
+                    <span
+                      className="text-xs font-medium"
+                      style={{ color: isSelected ? "#93C5FD" : "#9CA3AF" }}
+                    >
+                      {formatSlotTime(slot.startsAt)}–{formatSlotTime(slot.endsAt)}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {attendanceState.error && <ErrorBanner message={attendanceState.error} />}
+          {attendanceState.success && (
+            <p className="anim-fade-in mb-4 text-[0.8125rem] font-medium" style={{ color: "#1D4ED8" }}>
+              {attendanceState.success}
+            </p>
+          )}
+
+          {/* Session status bar */}
+          <div
+            className="mb-4 flex items-center justify-between gap-3 rounded-[10px] px-4 py-3"
+            style={{ border: "1px solid #E4E8EF", background: "#FAFAFA" }}
+          >
+            <div className="flex items-center gap-3">
+              <span
+                className="rounded-full px-2.5 py-1 text-xs font-semibold"
+                style={
+                  selectedAttendanceSession
+                    ? { background: "#DBEAFE", color: "#1D4ED8" }
+                    : { background: "#E2E8F0", color: "#64748B" }
+                }
+              >
+                {getAttendanceWindowLabel(attendanceDate, selectedAttendanceSlot, selectedAttendanceSession)}
+              </span>
+              <span className="text-sm" style={{ color: "#6B7280" }}>
+                {selectedAttendanceSlot
+                  ? `${formatSlotTime(selectedAttendanceSlot.startsAt)} – ${formatSlotTime(selectedAttendanceSlot.endsAt)}`
+                  : "No slot selected"}
+              </span>
+            </div>
+            {canMarkAttendance && (
+              <button
+                type="button"
+                onClick={startAttendanceSession}
+                disabled={!selectedAttendanceSlot || attendanceState.starting}
+                className="inline-flex h-9 items-center justify-center gap-1.5 rounded-[10px] px-4 text-sm font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
+                style={{
+                  background: attendanceState.starting ? "#93C5FD" : "#2563EB",
+                  boxShadow: attendanceState.starting
+                    ? "none"
+                    : "0 1px 3px rgba(37,99,235,0.25), 0 4px 12px rgba(37,99,235,0.12)",
+                }}
+              >
+                {attendanceState.starting ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  <Play size={14} />
+                )}
+                Start
+              </button>
+            )}
+          </div>
+
+          {attendanceReservations.length === 0 ? (
+            <EmptyState
+              title="No students in this slot"
+              description="Choose another date or time slot to review attendance."
+            />
+          ) : (
+            <div className="overflow-x-auto rounded-[10px]" style={{ border: "1px solid #E4E8EF" }}>
+              <table className="w-full text-sm" style={{ borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ borderBottom: "1px solid #E4E8EF" }}>
+                    {["Student", "Exam", "Type", "Status"].map((column) => (
+                      <th
+                        key={column}
+                        className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider"
+                        style={{ color: "#9CA3AF", background: "#FAFAFA", whiteSpace: "nowrap" }}
+                      >
+                        {column}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {attendanceReservations.map((reservation, index) => {
+                    const pending = attendanceState.pendingReservationId === reservation.id;
+                    const isLast = index === attendanceReservations.length - 1;
+
+                    return (
+                      <tr
+                        key={reservation.id}
+                        className="anim-slide-up bg-white"
+                        style={isLast ? undefined : { borderBottom: "1px solid #F3F4F6" }}
+                      >
+                        <td className="px-4 py-3">
+                          <p className="font-semibold" style={{ color: "#111827" }}>
+                            {memberNamesByUserId.get(reservation.userId) ?? "Unnamed student"}
+                          </p>
+                        </td>
+                        <td className="px-4 py-3" style={{ color: "#374151" }}>
+                          {reservation.examName}
+                        </td>
+                        <td className="px-4 py-3">
+                          <span
+                            className="rounded-full px-2.5 py-1 text-xs font-semibold"
+                            style={{ background: "#EFF6FF", color: "#2563EB" }}
+                          >
+                            {formatExamType(reservation.examType)}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          {canMarkAttendance ? (
+                            <div
+                              className="inline-flex rounded-xl p-1"
+                              style={{ border: "1px solid #E4E8EF", background: "#F8FAFC" }}
+                              role="group"
+                              aria-label={`Attendance for ${
+                                memberNamesByUserId.get(reservation.userId) ?? "student"
+                              }`}
+                            >
+                              {(["present", "absent"] as AttendanceStatus[]).map((status) => (
+                                <button
+                                  key={status}
+                                  type="button"
+                                  onClick={() => updateAttendance(reservation, status)}
+                                  disabled={pending || !attendanceMarkingOpen}
+                                  title={
+                                    attendanceMarkingOpen
+                                      ? undefined
+                                      : "Attendance marking is closed for this slot."
+                                  }
+                                  className="inline-flex h-8 min-w-[80px] items-center justify-center gap-1.5 rounded-[10px] px-3 text-xs font-semibold capitalize transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-60"
+                                  style={
+                                    reservation.attendanceStatus === status
+                                      ? {
+                                          background: "#FFFFFF",
+                                          color: status === "absent" ? "#DC2626" : "#1D4ED8",
+                                          border: `1px solid ${status === "absent" ? "#FECACA" : "#BFDBFE"}`,
+                                        }
+                                      : {
+                                          background: "transparent",
+                                          color: "#9CA3AF",
+                                          border: "1px solid transparent",
+                                        }
+                                  }
+                                >
+                                  {pending && reservation.attendanceStatus !== status ? (
+                                    <Loader2 size={13} className="animate-spin" />
+                                  ) : status === "present" ? (
+                                    <Check size={13} />
+                                  ) : (
+                                    <X size={13} />
+                                  )}
+                                  {status}
+                                </button>
+                              ))}
+                            </div>
+                          ) : (
+                            <span
+                              className="rounded-full px-3 py-1 text-xs font-semibold capitalize"
+                              style={
+                                reservation.attendanceStatus === "absent"
+                                  ? { background: "#FEF2F2", color: "#DC2626" }
+                                  : { background: "#DBEAFE", color: "#1D4ED8" }
+                              }
+                            >
+                              {reservation.attendanceStatus}
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           )}
         </div>
@@ -1066,8 +2185,107 @@ export default function SchoolManagementTabs({
               School settings
             </h2>
             <p className="mt-1 text-sm" style={{ color: "#6B7280" }}>
-              Delete this school and all related memberships, invites, and join requests.
+              Manage subjects and school configuration.
             </p>
+          </div>
+
+          {/* Manage subjects */}
+          <div
+            className="mb-5 rounded-[10px] border p-4"
+            style={{ background: "#FFFFFF", borderColor: "#E4E8EF" }}
+          >
+            <p className="mb-1 text-sm font-semibold" style={{ color: "#111827" }}>
+              Subjects
+            </p>
+            <p className="mb-4 text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
+              Students select from these subjects when scheduling an exam.
+            </p>
+
+            {/* Subject chips */}
+            {subjects.length > 0 ? (
+              <div className="mb-4 flex flex-wrap gap-2">
+                {subjects.map((subject) => (
+                  <span
+                    key={subject.id}
+                    className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium"
+                    style={{ background: "#F0F5FF", color: "#1D4ED8", border: "1px solid #DBEAFE" }}
+                  >
+                    {subject.name}
+                    <button
+                      type="button"
+                      onClick={() => removeSubject(subject.id)}
+                      disabled={subjectState.pending}
+                      className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full transition-colors duration-150 hover:bg-blue-200 disabled:cursor-not-allowed"
+                      aria-label={`Remove ${subject.name}`}
+                    >
+                      <X size={10} strokeWidth={2.5} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="mb-4 text-sm" style={{ color: "#9CA3AF" }}>
+                No subjects yet. Add one below.
+              </p>
+            )}
+
+            {/* Add subject */}
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newSubjectName}
+                onChange={(e) => setNewSubjectName(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addSubject(); } }}
+                placeholder="Add a subject…"
+                disabled={subjectState.pending}
+                className="h-[2.625rem] flex-1 rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed"
+                style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = "#3B82F6";
+                  e.currentTarget.style.boxShadow = "0 0 0 3px rgba(59,130,246,0.12)";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = "#E4E8EF";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              />
+              <button
+                type="button"
+                onClick={addSubject}
+                disabled={subjectState.pending || !newSubjectName.trim()}
+                className="inline-flex h-[2.625rem] items-center gap-1.5 rounded-[10px] px-4 text-[0.9375rem] font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
+                style={{
+                  background: subjectState.pending || !newSubjectName.trim() ? "#93C5FD" : "#2563EB",
+                  boxShadow: "0 1px 3px rgba(37,99,235,0.25), 0 4px 12px rgba(37,99,235,0.12)",
+                }}
+                onMouseEnter={(e) => {
+                  if (!subjectState.pending && newSubjectName.trim()) {
+                    e.currentTarget.style.background = "#1D4ED8";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!subjectState.pending && newSubjectName.trim()) {
+                    e.currentTarget.style.background = "#2563EB";
+                  }
+                }}
+              >
+                {subjectState.pending ? (
+                  <Loader2 size={15} className="animate-spin" />
+                ) : (
+                  <Plus size={15} strokeWidth={2.2} />
+                )}
+                Add
+              </button>
+            </div>
+
+            {subjectState.error && (
+              <p
+                className="mt-3 rounded-lg px-3 py-2 text-[0.8125rem] anim-fade-in"
+                style={{ background: "#FEF2F2", border: "1px solid #FECACA", color: "#DC2626" }}
+              >
+                {subjectState.error}
+              </p>
+            )}
           </div>
 
           <div
@@ -1142,6 +2360,182 @@ export default function SchoolManagementTabs({
         </div>
       )}
 
+      {selectedWeekReservation && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="week-reservation-detail-title"
+          onClick={() => setSelectedWeekReservationId(null)}
+        >
+          <div
+            className="panel anim-scale-in w-full max-w-[400px] overflow-hidden shadow-[0_18px_60px_rgba(15,23,42,0.18)]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-4 px-5 py-4">
+              <div className="flex min-w-0 items-center gap-3">
+                <div
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+                  style={{ background: "#EFF6FF" }}
+                >
+                  <CalendarDays size={18} color="#2563EB" />
+                </div>
+                <div className="min-w-0">
+                  <h2
+                    id="week-reservation-detail-title"
+                    className="truncate text-[0.9375rem] font-semibold"
+                    style={{ color: "#111827", letterSpacing: "-0.01em" }}
+                  >
+                    {memberNamesByUserId.get(selectedWeekReservation.userId) ?? "Unnamed student"}
+                  </h2>
+                  <p className="mt-0.5 text-sm" style={{ color: "#6B7280" }}>
+                    {formatReservationDate(selectedWeekReservation.reservationDate)}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedWeekReservationId(null)}
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50"
+                style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+                aria-label="Close"
+              >
+                <X size={15} />
+              </button>
+            </div>
+
+            <div style={{ borderTop: "1px solid #E4E8EF" }}>
+              <div className="grid grid-cols-2">
+                <div
+                  className="px-4 py-3"
+                  style={{ borderRight: "1px solid #E4E8EF", borderBottom: "1px solid #E4E8EF" }}
+                >
+                  <p className="text-[11px] font-medium uppercase" style={{ color: "#94A3B8" }}>
+                    Exam
+                  </p>
+                  <p className="mt-0.5 text-sm font-semibold" style={{ color: "#111827" }}>
+                    {selectedWeekReservation.examName}
+                  </p>
+                </div>
+                <div className="px-4 py-3" style={{ borderBottom: "1px solid #E4E8EF" }}>
+                  <p className="text-[11px] font-medium uppercase" style={{ color: "#94A3B8" }}>
+                    Type
+                  </p>
+                  <span
+                    className="mt-1 inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold"
+                    style={{ background: "#DBEAFE", color: "#1D4ED8" }}
+                  >
+                    {formatExamType(selectedWeekReservation.examType)}
+                  </span>
+                </div>
+              </div>
+              {selectedWeekSlot && (
+                <div className="grid grid-cols-2">
+                  <div className="px-4 py-3" style={{ borderRight: "1px solid #E4E8EF" }}>
+                    <p className="text-[11px] font-medium uppercase" style={{ color: "#94A3B8" }}>
+                      Slot
+                    </p>
+                    <p className="mt-0.5 text-sm font-semibold" style={{ color: "#111827" }}>
+                      {selectedWeekSlot.name}
+                    </p>
+                  </div>
+                  <div className="px-4 py-3">
+                    <p className="text-[11px] font-medium uppercase" style={{ color: "#94A3B8" }}>
+                      Time
+                    </p>
+                    <p className="mt-0.5 text-sm font-semibold" style={{ color: "#111827" }}>
+                      {formatSlotTime(selectedWeekSlot.startsAt)} – {formatSlotTime(selectedWeekSlot.endsAt)}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {canCancelWeekReservation && (
+              <div
+                className="flex justify-end px-5 py-4"
+                style={{ borderTop: "1px solid #F3F4F6" }}
+              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCancelDialogReservationId(selectedWeekReservation.id);
+                    setSelectedWeekReservationId(null);
+                  }}
+                  disabled={!!cancelReservationState.pendingReservationId}
+                  className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
+                  style={{ border: "1px solid #E4E8EF", color: "#DC2626" }}
+                >
+                  {cancelWeekReservationPending ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <Ban size={16} />
+                  )}
+                  Cancel reservation
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {cancelDialogReservation && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="cancel-reservation-title"
+        >
+          <div className="panel w-full max-w-[420px] p-5 shadow-[0_18px_60px_rgba(15,23,42,0.18)]">
+            <div className="mb-4 flex items-start gap-3">
+              <div
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+                style={{ background: "#FEF2F2" }}
+              >
+                <Ban size={18} color="#DC2626" strokeWidth={1.9} />
+              </div>
+              <div>
+                <h3 id="cancel-reservation-title" className="text-sm font-semibold" style={{ color: "#111827" }}>
+                  Cancel reservation
+                </h3>
+                <p className="mt-1 text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
+                  This will cancel {cancelDialogReservation.examName} for{" "}
+                  {memberNamesByUserId.get(cancelDialogReservation.userId) ?? "this student"}.
+                </p>
+              </div>
+            </div>
+
+            {cancelReservationState.error && <ErrorBanner message={cancelReservationState.error} />}
+
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setCancelDialogReservationId(null)}
+                disabled={!!cancelReservationState.pendingReservationId}
+                className="inline-flex h-10 items-center justify-center rounded-[10px] px-4 text-sm font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
+                style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+              >
+                Keep
+              </button>
+              <button
+                type="button"
+                onClick={() => cancelReservation(cancelDialogReservation)}
+                disabled={!!cancelReservationState.pendingReservationId}
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-[10px] px-4 text-sm font-semibold transition-colors duration-150 hover:bg-red-50 disabled:cursor-not-allowed"
+                style={{ border: "1px solid #FECACA", color: "#DC2626" }}
+              >
+                {cancelReservationState.pendingReservationId === cancelDialogReservation.id ? (
+                  <Loader2 size={15} className="animate-spin" />
+                ) : (
+                  <Ban size={15} />
+                )}
+                Cancel reservation
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {kickDialogMember && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4"
@@ -1203,6 +2597,288 @@ export default function SchoolManagementTabs({
                 {kickState.pending && <Loader2 size={16} className="animate-spin" />}
                 {kickSecondsRemaining > 0 ? `Confirm in ${kickSecondsRemaining}s` : "Confirm Kick"}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {scheduleDialogMember && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4 py-6"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="schedule-student-title"
+        >
+          <div className="panel w-full max-w-[620px] overflow-hidden shadow-[0_18px_60px_rgba(15,23,42,0.18)]">
+            <div className="flex items-start justify-between gap-4 px-5 py-4 sm:px-6">
+              <div className="flex min-w-0 items-start gap-3">
+                <div
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+                  style={{ background: "#EFF6FF", color: "#2563EB" }}
+                  aria-hidden="true"
+                >
+                  <CalendarPlus size={18} />
+                </div>
+                <div className="min-w-0">
+                  <h2
+                    id="schedule-student-title"
+                    className="text-[0.9375rem] font-semibold"
+                    style={{ color: "#111827", letterSpacing: "-0.01em" }}
+                  >
+                    Schedule exam
+                  </h2>
+                  <p className="mt-1 text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
+                    Create a confirmed booking for this student.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={closeScheduleDialog}
+                disabled={scheduleState.pending}
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
+                style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+                aria-label="Close dialog"
+              >
+                <X size={15} />
+              </button>
+            </div>
+
+            <div className="px-5 pb-5 sm:px-6">
+              {scheduleState.error && <ErrorBanner message={scheduleState.error} />}
+
+              <div
+                className="mb-4 grid gap-0 overflow-hidden rounded-2xl sm:grid-cols-3"
+                style={{ border: "1px solid #E4E8EF", background: "#F8FAFC" }}
+              >
+                <div className="flex items-center gap-3 px-4 py-3 sm:border-r sm:border-[#E4E8EF]">
+                  <div
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+                    style={{ background: "#FFFFFF", color: "#2563EB", border: "1px solid #E4E8EF" }}
+                  >
+                    <UserRound size={15} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-medium uppercase" style={{ color: "#94A3B8" }}>
+                      Student
+                    </p>
+                    <p className="truncate text-sm font-semibold" style={{ color: "#111827" }}>
+                      {scheduleDialogMember.name}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 border-t border-[#E4E8EF] px-4 py-3 sm:border-r sm:border-t-0">
+                  <div
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+                    style={{ background: "#FFFFFF", color: "#2563EB", border: "1px solid #E4E8EF" }}
+                  >
+                    <CalendarDays size={15} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-medium uppercase" style={{ color: "#94A3B8" }}>
+                      Date
+                    </p>
+                    <p className="truncate text-sm font-semibold" style={{ color: "#111827" }}>
+                      {formatReservationDate(scheduleDate)}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 border-t border-[#E4E8EF] px-4 py-3 sm:border-t-0">
+                  <div
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+                    style={{ background: "#FFFFFF", color: "#2563EB", border: "1px solid #E4E8EF" }}
+                  >
+                    <Clock size={15} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-medium uppercase" style={{ color: "#94A3B8" }}>
+                      Slot
+                    </p>
+                    <p className="truncate text-sm font-semibold" style={{ color: "#111827" }}>
+                      {selectedScheduleSlot
+                        ? `${formatSlotTime(selectedScheduleSlot.startsAt)} - ${formatSlotTime(
+                            selectedScheduleSlot.endsAt,
+                          )}`
+                        : "No active slots"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label
+                    htmlFor="schedule-student-date"
+                    className="mb-1.5 block text-[0.8125rem] font-medium"
+                    style={{ color: "#374151" }}
+                  >
+                    Date
+                  </label>
+                  <input
+                    id="schedule-student-date"
+                    type="date"
+                    value={scheduleDate}
+                    min={getTodayKey()}
+                    max={getMaxBookingDate()}
+                    onChange={(event) => setScheduleDate(event.target.value)}
+                    className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
+                    style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+                    onFocus={(event) => {
+                      event.currentTarget.style.borderColor = "#3B82F6";
+                      event.currentTarget.style.boxShadow = "0 0 0 3px rgba(59,130,246,0.12)";
+                    }}
+                    onBlur={(event) => {
+                      event.currentTarget.style.borderColor = "#E4E8EF";
+                      event.currentTarget.style.boxShadow = "none";
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="schedule-student-slot"
+                    className="mb-1.5 block text-[0.8125rem] font-medium"
+                    style={{ color: "#374151" }}
+                  >
+                    Slot
+                  </label>
+                  <select
+                    id="schedule-student-slot"
+                    value={scheduleSlotId}
+                    onChange={(event) => setScheduleSlotId(event.target.value)}
+                    className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
+                    style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+                    onFocus={(event) => {
+                      event.currentTarget.style.borderColor = "#3B82F6";
+                      event.currentTarget.style.boxShadow = "0 0 0 3px rgba(59,130,246,0.12)";
+                    }}
+                    onBlur={(event) => {
+                      event.currentTarget.style.borderColor = "#E4E8EF";
+                      event.currentTarget.style.boxShadow = "none";
+                    }}
+                  >
+                    {examSlots.length === 0 ? (
+                      <option value="">No active slots</option>
+                    ) : (
+                      examSlots.map((slot) => (
+                        <option key={slot.id} value={slot.id}>
+                          {slot.name} - {formatSlotTime(slot.startsAt)}
+                        </option>
+                      ))
+                    )}
+                  </select>
+                  {(() => {
+                    const slot = examSlots.find((s) => s.id === scheduleSlotId);
+                    if (!slot) return null;
+                    const booked = visibleReservations.filter(
+                      (r) => r.slotId === scheduleSlotId && r.reservationDate === scheduleDate,
+                    ).length;
+                    const remaining = slot.capacity - booked;
+                    const bg = remaining <= 0 ? "#FEF2F2" : remaining <= 2 ? "#FEF3C7" : "#DBEAFE";
+                    const color = remaining <= 0 ? "#DC2626" : remaining <= 2 ? "#B45309" : "#1D4ED8";
+                    const label =
+                      remaining <= 0
+                        ? "No spots left"
+                        : `${remaining} of ${slot.capacity} spot${slot.capacity !== 1 ? "s" : ""} left`;
+                    return (
+                      <p
+                        className="mt-1.5 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold anim-fade-in"
+                        style={{ background: bg, color }}
+                      >
+                        {label}
+                      </p>
+                    );
+                  })()}
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="schedule-student-exam-type"
+                    className="mb-1.5 block text-[0.8125rem] font-medium"
+                    style={{ color: "#374151" }}
+                  >
+                    Exam type
+                  </label>
+                  <select
+                    id="schedule-student-exam-type"
+                    value={scheduleExamType}
+                    onChange={(event) => setScheduleExamType(event.target.value as ExamType)}
+                    className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] capitalize outline-none transition-[border-color,box-shadow]"
+                    style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+                    onFocus={(event) => {
+                      event.currentTarget.style.borderColor = "#3B82F6";
+                      event.currentTarget.style.boxShadow = "0 0 0 3px rgba(59,130,246,0.12)";
+                    }}
+                    onBlur={(event) => {
+                      event.currentTarget.style.borderColor = "#E4E8EF";
+                      event.currentTarget.style.boxShadow = "none";
+                    }}
+                  >
+                    <option value="midterm">Midterm</option>
+                    <option value="final">Final</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="schedule-student-exam-name"
+                    className="mb-1.5 flex items-center gap-1.5 text-[0.8125rem] font-medium"
+                    style={{ color: "#374151" }}
+                  >
+                    <FileText size={14} />
+                    Exam name
+                  </label>
+                  <SubjectCommandPalette
+                    subjects={subjects}
+                    value={scheduleExamName}
+                    onChange={setScheduleExamName}
+                    placeholder="Search subject…"
+                    disabled={scheduleState.pending}
+                  />
+                </div>
+              </div>
+
+              <div className="mt-5 flex flex-col-reverse gap-2 border-t border-[#F3F4F6] pt-4 sm:flex-row sm:justify-end">
+                <button
+                  type="button"
+                  onClick={closeScheduleDialog}
+                  disabled={scheduleState.pending}
+                  className="inline-flex h-[2.625rem] items-center justify-center rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
+                  style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={scheduleForStudent}
+                  disabled={
+                    scheduleState.pending ||
+                    !scheduleSlotId ||
+                    !scheduleExamName.trim() ||
+                    examSlots.length === 0
+                  }
+                  className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
+                  style={{
+                    background:
+                      scheduleState.pending ||
+                      !scheduleSlotId ||
+                      !scheduleExamName.trim() ||
+                      examSlots.length === 0
+                        ? "#93C5FD"
+                        : "#2563EB",
+                    boxShadow:
+                      scheduleState.pending ||
+                      !scheduleSlotId ||
+                      !scheduleExamName.trim() ||
+                      examSlots.length === 0
+                        ? "none"
+                        : "0 1px 3px rgba(37,99,235,0.25), 0 4px 12px rgba(37,99,235,0.12)",
+                  }}
+                >
+                  {scheduleState.pending ? <Loader2 size={16} className="animate-spin" /> : <CalendarPlus size={16} />}
+                  Schedule exam
+                </button>
+              </div>
             </div>
           </div>
         </div>

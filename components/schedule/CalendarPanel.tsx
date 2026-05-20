@@ -2,15 +2,22 @@
 
 import { useState } from 'react'
 import type { ExamType } from './types'
+import SubjectCommandPalette from './SubjectCommandPalette'
+
+interface Subject {
+  id: string
+  name: string
+}
+
 interface CalendarPanelProps {
   studentName: string
-  onStudentNameChange: (v: string) => void
   selectedExam: string
   onExamChange: (v: string) => void
   examType: ExamType
   onExamTypeChange: (v: ExamType) => void
   selectedDate: string | null
   onSelectDate: (date: string) => void
+  subjects: Subject[]
 }
 
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -53,13 +60,13 @@ function getDayStatus(y: number, m: number, d: number): DayStatus {
 
 export default function CalendarPanel({
   studentName,
-  onStudentNameChange,
   selectedExam,
   onExamChange,
   examType,
   onExamTypeChange,
   selectedDate,
   onSelectDate,
+  subjects,
 }: CalendarPanelProps) {
   const today = new Date()
   const [viewYear, setViewYear] = useState(today.getFullYear())
@@ -97,27 +104,21 @@ export default function CalendarPanel({
           <label className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: '#9CA3AF' }}>
             Student name
           </label>
-          <div className="relative">
+          <div
+            className="relative w-full rounded-xl py-2.5 pl-8 pr-3 text-sm"
+            style={{
+              border: '1px solid #E4E8EF',
+              color: '#111827',
+              background: '#F8FAFC',
+            }}
+          >
             <span className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                 <circle cx="7" cy="5" r="2.5" stroke="#9CA3AF" strokeWidth="1.3" />
                 <path d="M1.5 12.5c0-2.485 2.462-4.5 5.5-4.5s5.5 2.015 5.5 4.5" stroke="#9CA3AF" strokeWidth="1.3" strokeLinecap="round" />
               </svg>
             </span>
-            <input
-              type="text"
-              value={studentName}
-              onChange={e => onStudentNameChange(e.target.value)}
-              placeholder="Enter your name"
-              className="w-full text-sm pl-8 pr-3 py-2.5 rounded-xl transition-colors duration-150 focus:outline-none"
-              style={{
-                border: '1px solid #E4E8EF',
-                color: '#111827',
-                background: '#FAFAFA',
-              }}
-              onFocus={e => { e.currentTarget.style.borderColor = '#2563EB'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(37,99,235,0.08)' }}
-              onBlur={e => { e.currentTarget.style.borderColor = '#E4E8EF'; e.currentTarget.style.boxShadow = 'none' }}
-            />
+            <span className="block truncate font-medium">{studentName}</span>
           </div>
         </div>
 
@@ -126,28 +127,12 @@ export default function CalendarPanel({
           <label className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: '#9CA3AF' }}>
             Exam
           </label>
-          <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                <rect x="2" y="1.5" width="10" height="11" rx="1.5" stroke="#9CA3AF" strokeWidth="1.3" />
-                <path d="M4.5 5h5M4.5 7.5h5M4.5 10h3" stroke="#9CA3AF" strokeWidth="1.3" strokeLinecap="round" />
-              </svg>
-            </span>
-            <input
-              type="text"
-              value={selectedExam}
-              onChange={e => onExamChange(e.target.value)}
-              placeholder="e.g. Data Structures & Algorithms"
-              className="w-full text-sm pl-8 pr-3 py-2.5 rounded-xl transition-colors duration-150 focus:outline-none"
-              style={{
-                border: '1px solid #E4E8EF',
-                color: '#111827',
-                background: '#FAFAFA',
-              }}
-              onFocus={e => { e.currentTarget.style.borderColor = '#2563EB'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(37,99,235,0.08)' }}
-              onBlur={e => { e.currentTarget.style.borderColor = '#E4E8EF'; e.currentTarget.style.boxShadow = 'none' }}
-            />
-          </div>
+          <SubjectCommandPalette
+            subjects={subjects}
+            value={selectedExam}
+            onChange={onExamChange}
+            placeholder="Search subject…"
+          />
         </div>
 
         {/* Exam type toggle */}

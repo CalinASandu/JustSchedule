@@ -2,10 +2,23 @@ import { createClient } from "@/lib/supabase/server";
 import { sanitizeRelativePath } from "@/lib/urls";
 import { NextResponse, type NextRequest } from "next/server";
 
+function decodeCookieValue(value: string | undefined) {
+  if (!value) {
+    return undefined;
+  }
+
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return undefined;
+  }
+}
+
 export async function GET(request: NextRequest) {
   const requestUrl = request.nextUrl;
   const code = requestUrl.searchParams.get("code");
-  const rawNext = requestUrl.searchParams.get("next") ?? "/dashboard";
+  const cookieNext = decodeCookieValue(request.cookies.get("oauth_next")?.value);
+  const rawNext = requestUrl.searchParams.get("next") ?? cookieNext ?? "/dashboard";
   const next = sanitizeRelativePath(rawNext);
 
   if (code) {
@@ -25,15 +38,21 @@ export async function GET(request: NextRequest) {
           .single();
 
         if (!profile?.name) {
-          return NextResponse.redirect(
+          const response = NextResponse.redirect(
             new URL(`/login?next=${encodeURIComponent(next)}`, requestUrl.origin),
           );
+          response.cookies.delete("oauth_next");
+          return response;
         }
       }
 
-      return NextResponse.redirect(new URL(next, requestUrl.origin));
+      const response = NextResponse.redirect(new URL(next, requestUrl.origin));
+      response.cookies.delete("oauth_next");
+      return response;
     }
   }
 
-  return NextResponse.redirect(new URL("/?auth_error=oauth", requestUrl.origin));
+  const response = NextResponse.redirect(new URL("/?auth_error=oauth", requestUrl.origin));
+  response.cookies.delete("oauth_next");
+  return response;
 }

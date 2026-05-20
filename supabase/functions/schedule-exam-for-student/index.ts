@@ -9,15 +9,16 @@ const corsHeaders = {
 
 type ExamType = "midterm" | "final";
 
-type ReserveRequest = {
+type ScheduleRequest = {
   schoolId?: unknown;
+  studentUserId?: unknown;
   slotId?: unknown;
   reservationDate?: unknown;
   examName?: unknown;
   examType?: unknown;
 };
 
-type ReserveResult = {
+type ScheduleResult = {
   reservation_id: string;
   remaining: number;
 };
@@ -43,7 +44,7 @@ function parseExamType(value: unknown): ExamType | null {
 function statusForDatabaseError(error: { code?: string; message?: string }) {
   const message = (error.message ?? "").toLowerCase();
 
-  if (error.code === "23505" || message.includes("already reserved")) {
+  if (error.code === "23505" || message.includes("already")) {
     return 409;
   }
 
@@ -51,12 +52,9 @@ function statusForDatabaseError(error: { code?: string; message?: string }) {
     return 409;
   }
 
-  if (message.includes("self booking is disabled")) {
-    return 403;
-  }
-
   if (
-    message.includes("student members") ||
+    message.includes("only admins and professors") ||
+    message.includes("target user must be a student") ||
     message.includes("invalid session")
   ) {
     return 403;
@@ -74,13 +72,13 @@ function statusForDatabaseError(error: { code?: string; message?: string }) {
   return 400;
 }
 
-function publicReservationError(error: { code?: string; message?: string }) {
+function publicScheduleError(error: { code?: string; message?: string }) {
   const message = (error.message ?? "").toLowerCase();
 
-  if (error.code === "23505" || message.includes("already reserved")) {
+  if (error.code === "23505" || message.includes("already")) {
     return {
       code: "duplicate_reservation",
-      error: "You already scheduled an exam in this time slot for that date.",
+      error: "This student already has an exam in that time slot for that date.",
     };
   }
 
@@ -91,17 +89,17 @@ function publicReservationError(error: { code?: string; message?: string }) {
     };
   }
 
-  if (message.includes("only student members")) {
+  if (message.includes("only admins and professors")) {
     return {
-      code: "student_membership_required",
-      error: "Only student members can schedule exams.",
+      code: "teacher_permission_required",
+      error: "Only admins and professors can schedule exams for students.",
     };
   }
 
-  if (message.includes("self booking is disabled")) {
+  if (message.includes("target user must be a student")) {
     return {
-      code: "self_booking_disabled",
-      error: "A professor must schedule this exam for you.",
+      code: "student_membership_required",
+      error: "Choose a student member from this school.",
     };
   }
 
@@ -148,7 +146,7 @@ function publicReservationError(error: { code?: string; message?: string }) {
   }
 
   return {
-    code: "reservation_failed",
+    code: "schedule_for_student_failed",
     error: "Could not schedule this exam. Try again in a moment.",
   };
 }
@@ -167,7 +165,7 @@ Deno.serve(async (req) => {
     return jsonResponse({ error: "Missing authorization header." }, 401);
   }
 
-  let body: ReserveRequest;
+  let body: ScheduleRequest;
   try {
     body = await req.json();
   } catch {
@@ -175,6 +173,8 @@ Deno.serve(async (req) => {
   }
 
   const schoolId = typeof body.schoolId === "string" ? body.schoolId.trim() : "";
+  const studentUserId =
+    typeof body.studentUserId === "string" ? body.studentUserId.trim() : "";
   const slotId = typeof body.slotId === "string" ? body.slotId.trim() : "";
   const reservationDate =
     typeof body.reservationDate === "string" ? body.reservationDate.trim() : "";
@@ -183,6 +183,10 @@ Deno.serve(async (req) => {
 
   if (!schoolId) {
     return jsonResponse({ error: "Missing schoolId." }, 400);
+  }
+
+  if (!studentUserId) {
+    return jsonResponse({ error: "Missing studentUserId." }, 400);
   }
 
   if (!slotId) {
@@ -248,8 +252,9 @@ Deno.serve(async (req) => {
     );
   }
 
-  const { data, error } = await supabase.rpc("reserve_exam_slot", {
+  const { data, error } = await supabase.rpc("schedule_exam_for_student", {
     target_school_id: schoolId,
+    target_student_user_id: studentUserId,
     target_slot_id: slotId,
     target_reservation_date: reservationDate,
     target_exam_name: examName,
@@ -257,19 +262,19 @@ Deno.serve(async (req) => {
   });
 
   if (error) {
-    console.error("reserve_exam_slot RPC failed", {
+    console.error("schedule_exam_for_student RPC failed", {
       code: error.code,
       message: error.message,
       details: error.details,
       hint: error.hint,
     });
 
-    return jsonResponse(publicReservationError(error), statusForDatabaseError(error));
+    return jsonResponse(publicScheduleError(error), statusForDatabaseError(error));
   }
 
-  const [reservation] = (data ?? []) as ReserveResult[];
+  const [reservation] = (data ?? []) as ScheduleResult[];
   if (!reservation) {
-    return jsonResponse({ error: "Could not reserve exam slot." }, 400);
+    return jsonResponse({ error: "Could not schedule this exam." }, 400);
   }
 
   return jsonResponse({

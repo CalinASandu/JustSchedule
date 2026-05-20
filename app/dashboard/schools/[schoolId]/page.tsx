@@ -15,6 +15,9 @@ type SchoolMemberRow = {
   joined_at: string;
   profile_name: string | null;
   email: string | null;
+  can_self_book: boolean | null;
+  self_booking_disabled_at: string | null;
+  self_booking_disabled_by: string | null;
 };
 
 type ProfileRow = {
@@ -47,6 +50,11 @@ type ExamSlotRow = {
   capacity: number;
 };
 
+type SchoolSubjectRow = {
+  id: string;
+  name: string;
+};
+
 type ReservationRow = {
   id: string;
   user_id: string;
@@ -56,9 +64,24 @@ type ReservationRow = {
   exam_type: "midterm" | "final";
   status: string;
   created_at: string;
+  created_by: string;
+  created_by_role: SchoolRole;
+  attendance_status: "present" | "absent" | null;
+  attendance_marked_by: string | null;
+  attendance_marked_at: string | null;
 };
 
-type SchoolRole = "admin" | "professor" | "student";
+type AttendanceSessionRow = {
+  id: string;
+  school_id: string;
+  slot_id: string;
+  reservation_date: string;
+  started_by: string;
+  started_at: string;
+  expires_at: string;
+};
+
+type SchoolRole = "admin" | "professor" | "exam_supervisor" | "student";
 
 type SchoolMember = {
   id: string;
@@ -67,6 +90,9 @@ type SchoolMember = {
   email: string | null;
   role: SchoolRole;
   joinedAt: string;
+  canSelfBook: boolean;
+  selfBookingDisabledAt: string | null;
+  selfBookingDisabledBy: string | null;
   isCurrentUser: boolean;
 };
 
@@ -87,6 +113,21 @@ type Reservation = {
   examType: "midterm" | "final";
   status: string;
   createdAt: string;
+  createdBy: string;
+  createdByRole: SchoolRole;
+  attendanceStatus: "present" | "absent";
+  attendanceMarkedBy: string | null;
+  attendanceMarkedAt: string | null;
+};
+
+type AttendanceSession = {
+  id: string;
+  schoolId: string;
+  slotId: string;
+  reservationDate: string;
+  startedBy: string;
+  startedAt: string;
+  expiresAt: string;
 };
 
 function getInitials(name: string) {
@@ -109,7 +150,7 @@ function formatMemberName(member: SchoolMemberRow, currentUserId: string) {
 }
 
 function normalizeRole(role: string | null): SchoolRole {
-  if (role === "admin" || role === "professor") {
+  if (role === "admin" || role === "professor" || role === "exam_supervisor") {
     return role;
   }
 
@@ -131,16 +172,26 @@ export default async function SchoolDashboardPage({
     redirect("/");
   }
 
-  const [{ data: membership }, { data: school }, { data: currentProfile }] = await Promise.all([
-    supabase
-      .from("SchoolMembers")
-      .select("role")
-      .eq("user_id", user.id)
-      .eq("school_id", schoolId)
-      .maybeSingle(),
-    supabase.from("Schools").select("id, name, created_at, created_by").eq("id", schoolId).maybeSingle(),
-    supabase.from("Profiles").select("id, name").eq("id", user.id).maybeSingle(),
-  ]);
+  const [{ data: membership }, { data: school }, { data: currentProfile }] =
+    await Promise.all([
+      supabase
+        .from("SchoolMembers")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("school_id", schoolId)
+        .maybeSingle(),
+      supabase
+        .from("Schools")
+        .select("id, name, created_at, created_by")
+        .eq("id", schoolId)
+        .is("deleted_at", null)
+        .maybeSingle(),
+      supabase
+        .from("Profiles")
+        .select("id, name")
+        .eq("id", user.id)
+        .maybeSingle(),
+    ]);
 
   if (!school) {
     redirect("/dashboard");
@@ -148,8 +199,9 @@ export default async function SchoolDashboardPage({
 
   const isAdmin = membership?.role === "admin" || school.created_by === user.id;
   const isProfessor = membership?.role === "professor";
+  const isExamSupervisor = membership?.role === "exam_supervisor";
 
-  if (!isAdmin && !isProfessor) {
+  if (!isAdmin && !isProfessor && !isExamSupervisor) {
     redirect(`/dashboard/schedule?schoolId=${schoolId}`);
   }
 
@@ -159,30 +211,49 @@ export default async function SchoolDashboardPage({
     { data: joinRequestRows, error: joinRequestsError },
     { data: examSlotRows, error: examSlotsError },
     { data: reservationRows, error: reservationsError },
-  ] =
-    await Promise.all([
-      supabase
-        .rpc("get_school_members_with_profiles", { target_school_id: schoolId }),
-      supabase
-        .from("SchoolInvites")
-        .select("id, token, created_at, expires_at, is_active")
-        .eq("school_id", schoolId)
-        .order("created_at", { ascending: false }),
-      supabase.rpc("get_school_join_requests_with_profiles", { target_school_id: schoolId }),
-      supabase
-        .from("ExamSlots")
-        .select("id, name, starts_at, ends_at, capacity")
-        .eq("school_id", schoolId)
-        .eq("is_active", true)
-        .order("starts_at", { ascending: true }),
-      supabase
-        .from("Reservations")
-        .select("id, user_id, slot_id, reservation_date, exam_name, exam_type, status, created_at")
-        .eq("school_id", schoolId)
-        .eq("status", "confirmed")
-        .order("reservation_date", { ascending: true })
-        .order("created_at", { ascending: true }),
-    ]);
+    { data: attendanceSessionRows },
+    { data: schoolSubjectRows },
+  ] = await Promise.all([
+    supabase.rpc("get_school_members_with_profiles", {
+      target_school_id: schoolId,
+    }),
+    supabase
+      .from("SchoolInvites")
+      .select("id, token, created_at, expires_at, is_active")
+      .eq("school_id", schoolId)
+      .order("created_at", { ascending: false }),
+    supabase.rpc("get_school_join_requests_with_profiles", {
+      target_school_id: schoolId,
+    }),
+    supabase
+      .from("ExamSlots")
+      .select("id, name, starts_at, ends_at, capacity")
+      .eq("school_id", schoolId)
+      .eq("is_active", true)
+      .order("starts_at", { ascending: true }),
+    supabase
+      .from("Reservations")
+      .select(
+        "id, user_id, slot_id, reservation_date, exam_name, exam_type, status, created_at, created_by, created_by_role, attendance_status, attendance_marked_by, attendance_marked_at",
+      )
+      .eq("school_id", schoolId)
+      .eq("status", "confirmed")
+      .order("reservation_date", { ascending: true })
+      .order("created_at", { ascending: true }),
+    supabase
+      .from("AttendanceSessions")
+      .select(
+        "id, school_id, slot_id, reservation_date, started_by, started_at, expires_at",
+      )
+      .eq("school_id", schoolId)
+      .gt("expires_at", new Date().toISOString()),
+    supabase
+      .from("SchoolSubjects")
+      .select("id, name")
+      .eq("school_id", schoolId)
+      .is("deleted_at", null)
+      .order("name", { ascending: true }),
+  ]);
 
   const rows = (memberRows ?? []) as SchoolMemberRow[];
   const currentProfileRow = currentProfile as ProfileRow | null;
@@ -201,6 +272,9 @@ export default async function SchoolDashboardPage({
     email: member.email,
     role: normalizeRole(member.role),
     joinedAt: member.joined_at,
+    canSelfBook: member.can_self_book ?? true,
+    selfBookingDisabledAt: member.self_booking_disabled_at,
+    selfBookingDisabledBy: member.self_booking_disabled_by,
     isCurrentUser: member.user_id === user.id,
   }));
   const members: SchoolMember[] = [
@@ -215,6 +289,9 @@ export default async function SchoolDashboardPage({
             email: user.email ?? null,
             role: "admin" as const,
             joinedAt: school.created_at,
+            canSelfBook: true,
+            selfBookingDisabledAt: null,
+            selfBookingDisabledBy: null,
             isCurrentUser: true,
           },
         ]),
@@ -229,22 +306,28 @@ export default async function SchoolDashboardPage({
     isActive: invite.is_active,
     url: `${origin}/invite/${invite.token}`,
   }));
-  const joinRequests = ((joinRequestRows ?? []) as JoinRequestRow[]).map((request) => ({
-    id: request.id,
-    userId: request.user_id,
-    schoolId: request.school_id,
-    name: request.profile_name || "Unnamed user",
-    email: request.email,
-    requestedAt: request.requested_at,
-  }));
-  const examSlots: ExamSlot[] = ((examSlotRows ?? []) as ExamSlotRow[]).map((slot) => ({
-    id: slot.id,
-    name: slot.name,
-    startsAt: slot.starts_at,
-    endsAt: slot.ends_at,
-    capacity: slot.capacity,
-  }));
-  const reservations: Reservation[] = ((reservationRows ?? []) as ReservationRow[]).map((reservation) => ({
+  const joinRequests = ((joinRequestRows ?? []) as JoinRequestRow[]).map(
+    (request) => ({
+      id: request.id,
+      userId: request.user_id,
+      schoolId: request.school_id,
+      name: request.profile_name || "Unnamed user",
+      email: request.email,
+      requestedAt: request.requested_at,
+    }),
+  );
+  const examSlots: ExamSlot[] = ((examSlotRows ?? []) as ExamSlotRow[]).map(
+    (slot) => ({
+      id: slot.id,
+      name: slot.name,
+      startsAt: slot.starts_at,
+      endsAt: slot.ends_at,
+      capacity: slot.capacity,
+    }),
+  );
+  const reservations: Reservation[] = (
+    (reservationRows ?? []) as ReservationRow[]
+  ).map((reservation) => ({
     id: reservation.id,
     userId: reservation.user_id,
     slotId: reservation.slot_id,
@@ -253,6 +336,22 @@ export default async function SchoolDashboardPage({
     examType: reservation.exam_type,
     status: reservation.status,
     createdAt: reservation.created_at,
+    createdBy: reservation.created_by,
+    createdByRole: reservation.created_by_role,
+    attendanceStatus: reservation.attendance_status ?? "present",
+    attendanceMarkedBy: reservation.attendance_marked_by,
+    attendanceMarkedAt: reservation.attendance_marked_at,
+  }));
+  const attendanceSessions: AttendanceSession[] = (
+    (attendanceSessionRows ?? []) as AttendanceSessionRow[]
+  ).map((session) => ({
+    id: session.id,
+    schoolId: session.school_id,
+    slotId: session.slot_id,
+    reservationDate: session.reservation_date,
+    startedBy: session.started_by,
+    startedAt: session.started_at,
+    expiresAt: session.expires_at,
   }));
 
   return (
@@ -268,7 +367,10 @@ export default async function SchoolDashboardPage({
           >
             <CalendarDays size={17} color="white" strokeWidth={2} />
           </div>
-          <span className="text-[15px] font-semibold" style={{ color: "#111827" }}>
+          <span
+            className="text-[15px] font-semibold"
+            style={{ color: "#111827" }}
+          >
             JustSchedule
           </span>
         </Link>
@@ -301,7 +403,11 @@ export default async function SchoolDashboardPage({
           <div className="anim-slide-up">
             <h1
               className="text-[1.35rem] font-bold"
-              style={{ color: "#111827", letterSpacing: "-0.025em", lineHeight: 1.25 }}
+              style={{
+                color: "#111827",
+                letterSpacing: "-0.025em",
+                lineHeight: 1.25,
+              }}
             >
               {school.name}
             </h1>
@@ -314,8 +420,15 @@ export default async function SchoolDashboardPage({
             <div className="flex items-center gap-3">
               <ShieldCheck size={17} color="#2563EB" strokeWidth={1.9} />
               <div>
-                <p className="text-sm font-semibold" style={{ color: "#111827" }}>
-                  {isAdmin ? "Admin access" : "Professor access"}
+                <p
+                  className="text-sm font-semibold"
+                  style={{ color: "#111827" }}
+                >
+                  {isAdmin
+                    ? "Admin access"
+                    : isProfessor
+                      ? "Professor access"
+                      : "Exam supervisor access"}
                 </p>
                 <p className="text-xs" style={{ color: "#9CA3AF" }}>
                   Signed in as {displayName}
@@ -333,7 +446,17 @@ export default async function SchoolDashboardPage({
           joinRequests={joinRequests}
           examSlots={examSlots}
           reservations={reservations}
+          attendanceSessions={attendanceSessions}
+          schoolSubjects={((schoolSubjectRows ?? []) as SchoolSubjectRow[]).map(
+            (s) => ({ id: s.id, name: s.name }),
+          )}
+          currentUserRole={
+            isAdmin ? "admin" : isProfessor ? "professor" : "exam_supervisor"
+          }
           canManageMembers={isAdmin}
+          canManageSelfBooking={isAdmin || isProfessor}
+          canViewAttendance={isAdmin || isProfessor || isExamSupervisor}
+          canMarkAttendance={isExamSupervisor}
           memberError={
             membersError
               ? getUserFacingErrorMessage("loadMembers", membersError)

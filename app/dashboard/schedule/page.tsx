@@ -8,6 +8,7 @@ type SchoolMemberRow = {
   id: string;
   role: string | null;
   school_id: string;
+  can_self_book: boolean | null;
 };
 
 type SchoolRow = {
@@ -38,6 +39,11 @@ type ReservationRow = {
   exam_type: string;
   status: string;
   created_at: string;
+  created_by: string | null;
+  created_by_role: string | null;
+  attendance_status: "present" | "absent" | null;
+  attendance_marked_by: string | null;
+  attendance_marked_at: string | null;
 };
 
 function getSchoolId(value: string | string[] | undefined) {
@@ -108,11 +114,16 @@ export default async function SchedulePage({
     supabase.from("Profiles").select("name").eq("id", user.id).maybeSingle(),
     supabase
       .from("SchoolMembers")
-      .select("id, role, school_id")
+      .select("id, role, school_id, can_self_book")
       .eq("user_id", user.id)
       .eq("school_id", schoolId)
       .maybeSingle(),
-    supabase.from("Schools").select("id, name, created_by").eq("id", schoolId).maybeSingle(),
+    supabase
+      .from("Schools")
+      .select("id, name, created_by")
+      .eq("id", schoolId)
+      .is("deleted_at", null)
+      .maybeSingle(),
   ]);
 
   const membershipRow = membership as SchoolMemberRow | null;
@@ -144,6 +155,7 @@ export default async function SchedulePage({
   const [
     { data: examSlotRows, error: examSlotsError },
     { data: reservationRows, error: reservationsError },
+    { data: schoolSubjectRows },
   ] = await Promise.all([
     supabase
       .from("ExamSlots")
@@ -156,6 +168,12 @@ export default async function SchedulePage({
       start_date: startDate,
       end_date: endDate,
     }),
+    supabase
+      .from("SchoolSubjects")
+      .select("id, name")
+      .eq("school_id", schoolId)
+      .is("deleted_at", null)
+      .order("name", { ascending: true }),
   ]);
 
   const examSlots: SlotDef[] = ((examSlotRows ?? []) as ExamSlotRow[]).map((slot) => ({
@@ -182,6 +200,14 @@ export default async function SchedulePage({
       examType: normalizeExamType(reservation.exam_type),
       status: reservation.status,
       createdAt: reservation.created_at,
+      createdBy: reservation.created_by ?? reservation.user_id,
+      createdByRole:
+        reservation.created_by_role === "admin" || reservation.created_by_role === "professor"
+          ? reservation.created_by_role
+          : "student",
+      attendanceStatus: reservation.attendance_status ?? "present",
+      attendanceMarkedBy: reservation.attendance_marked_by,
+      attendanceMarkedAt: reservation.attendance_marked_at,
     }),
   );
 
@@ -192,6 +218,10 @@ export default async function SchedulePage({
       : user.email?.split("@")[0]) ||
     "Student";
 
+  const schoolSubjects = ((schoolSubjectRows ?? []) as { id: string; name: string }[]).map(
+    (s) => ({ id: s.id, name: s.name }),
+  );
+
   return (
     <ScheduleClient
       schoolId={schoolRow.id}
@@ -200,8 +230,10 @@ export default async function SchedulePage({
       studentName={displayName}
       userEmail={user.email ?? "Signed in with Google"}
       currentUserId={user.id}
+      canSelfBook={membershipRow.can_self_book ?? true}
       examSlots={examSlots}
       initialReservations={reservations}
+      schoolSubjects={schoolSubjects}
       reservationError={
         examSlotsError || reservationsError
           ? getUserFacingErrorMessage(
