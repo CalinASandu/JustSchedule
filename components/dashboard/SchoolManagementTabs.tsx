@@ -14,7 +14,6 @@ import {
   Link2,
   Loader2,
   Mail,
-  Play,
   Plus,
   Search,
   Trash2,
@@ -370,18 +369,14 @@ export default function SchoolManagementTabs({
   });
   const [cancelDialogReservationId, setCancelDialogReservationId] = useState<string | null>(null);
   const [attendanceOverrides, setAttendanceOverrides] = useState<Record<string, AttendanceStatus>>({});
-  const [startedAttendanceSessions, setStartedAttendanceSessions] =
-    useState<AttendanceSession[]>(attendanceSessions);
   const [attendanceState, setAttendanceState] = useState<{
     error: string | null;
     success: string | null;
     pendingReservationId: string | null;
-    starting: boolean;
   }>({
     error: null,
     success: null,
     pendingReservationId: null,
-    starting: false,
   });
   const [selectedWeekReservationId, setSelectedWeekReservationId] = useState<string | null>(null);
   const [kickState, setKickState] = useState<{ error: string | null; pending: boolean }>({
@@ -541,7 +536,7 @@ export default function SchoolManagementTabs({
     examSlots.find((slot) => slot.id === attendanceSlotId) ?? examSlots[0] ?? null;
   const selectedAttendanceSession =
     selectedAttendanceSlot
-      ? startedAttendanceSessions.find(
+      ? attendanceSessions.find(
           (session) =>
             session.reservationDate === attendanceDate &&
             session.slotId === selectedAttendanceSlot.id,
@@ -1069,60 +1064,6 @@ export default function SchoolManagementTabs({
     router.refresh();
   }
 
-  async function startAttendanceSession() {
-    if (!selectedAttendanceSlot || attendanceState.starting) {
-      return;
-    }
-
-    setAttendanceState({
-      error: null,
-      success: null,
-      pendingReservationId: null,
-      starting: true,
-    });
-
-    const supabase = createClient();
-    const { data, error } = await supabase.rpc("start_attendance_session", {
-      target_school_id: schoolId,
-      target_slot_id: selectedAttendanceSlot.id,
-      target_reservation_date: attendanceDate,
-    });
-
-    if (error) {
-      console.error("Start attendance session failed", error);
-      setAttendanceState({
-        error: getUserFacingErrorMessage("attendanceStart", error),
-        success: null,
-        pendingReservationId: null,
-        starting: false,
-      });
-      return;
-    }
-
-    const [session] = (data ?? []) as { session_id: string; expires_at: string }[];
-    setStartedAttendanceSessions((current) => [
-      ...current.filter(
-        (item) =>
-          item.reservationDate !== attendanceDate || item.slotId !== selectedAttendanceSlot.id,
-      ),
-      {
-        id: session?.session_id ?? `local-${selectedAttendanceSlot.id}-${attendanceDate}`,
-        schoolId,
-        slotId: selectedAttendanceSlot.id,
-        reservationDate: attendanceDate,
-        startedBy: currentUserId ?? "",
-        startedAt: new Date().toISOString(),
-        expiresAt: session?.expires_at ?? new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-      },
-    ]);
-    setAttendanceState({
-      error: null,
-      success: `Attendance started for ${selectedAttendanceSlot.name}.`,
-      pendingReservationId: null,
-      starting: false,
-    });
-  }
-
   async function updateAttendance(reservation: Reservation, status: AttendanceStatus) {
     if (!canMarkAttendance || attendanceState.pendingReservationId) {
       return;
@@ -1132,7 +1073,6 @@ export default function SchoolManagementTabs({
       error: null,
       success: null,
       pendingReservationId: reservation.id,
-      starting: false,
     });
 
     const supabase = createClient();
@@ -1147,7 +1087,6 @@ export default function SchoolManagementTabs({
         error: getUserFacingErrorMessage("attendanceUpdate", error),
         success: null,
         pendingReservationId: null,
-        starting: false,
       });
       return;
     }
@@ -1157,7 +1096,6 @@ export default function SchoolManagementTabs({
       error: null,
       success: `${memberNamesByUserId.get(reservation.userId) ?? "Student"} marked ${status}.`,
       pendingReservationId: null,
-      starting: false,
     });
     router.refresh();
   }
@@ -1835,27 +1773,6 @@ export default function SchoolManagementTabs({
                   : "No slot selected"}
               </span>
             </div>
-            {canMarkAttendance && (
-              <button
-                type="button"
-                onClick={startAttendanceSession}
-                disabled={!selectedAttendanceSlot || attendanceState.starting}
-                className="inline-flex h-9 items-center justify-center gap-1.5 rounded-[10px] px-4 text-sm font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
-                style={{
-                  background: attendanceState.starting ? "#93C5FD" : "#2563EB",
-                  boxShadow: attendanceState.starting
-                    ? "none"
-                    : "0 1px 3px rgba(37,99,235,0.25), 0 4px 12px rgba(37,99,235,0.12)",
-                }}
-              >
-                {attendanceState.starting ? (
-                  <Loader2 size={14} className="animate-spin" />
-                ) : (
-                  <Play size={14} />
-                )}
-                Start
-              </button>
-            )}
           </div>
 
           {attendanceReservations.length === 0 ? (
