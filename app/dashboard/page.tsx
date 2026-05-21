@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { Bell, CalendarDays, ChevronRight, GraduationCap, Plus, ShieldCheck } from "lucide-react";
+import { Bell, CalendarDays, ChevronRight, GraduationCap, ShieldCheck } from "lucide-react";
 import { redirect } from "next/navigation";
 import DashboardSignOutButton from "@/components/dashboard/DashboardSignOutButton";
-import RegisterSchoolForm from "@/components/dashboard/RegisterSchoolForm";
+import DirectJoinCard from "@/components/dashboard/DirectJoinCard";
 import { createClient } from "@/lib/supabase/server";
 
 type SchoolRole = "admin" | "professor" | "exam_supervisor" | "student";
@@ -110,7 +110,7 @@ export default async function DashboardPage() {
     redirect("/");
   }
 
-  const [{ data: profile }, membershipResult, createdSchoolsResult] = await Promise.all([
+  const [{ data: profile }, membershipResult, createdSchoolsResult, allSchoolsResult, pendingRequestsResult] = await Promise.all([
     supabase.from("Profiles").select("name").eq("id", user.id).single(),
     supabase
       .from("SchoolMembers")
@@ -123,6 +123,16 @@ export default async function DashboardPage() {
       .eq("created_by", user.id)
       .is("deleted_at", null)
       .order("created_at", { ascending: true }),
+    supabase
+      .from("Schools")
+      .select("id, name")
+      .is("deleted_at", null)
+      .order("created_at", { ascending: true }),
+    supabase
+      .from("JoinRequests")
+      .select("school_id")
+      .eq("user_id", user.id)
+      .eq("status", "pending"),
   ]);
 
   const membershipRows = (membershipResult.data ?? []) as SchoolMemberRow[];
@@ -148,6 +158,14 @@ export default async function DashboardPage() {
   const memberships = mergeCreatedSchools(
     normalizeMemberships(membershipRows, schools as SchoolRow[] | null),
     createdSchoolsResult.data as SchoolRow[] | null,
+  );
+
+  const memberSchoolIds = new Set(memberships.map((m) => m.school.id));
+  const pendingSchoolIds = new Set(
+    (pendingRequestsResult.data ?? []).map((r) => r.school_id as string),
+  );
+  const nonMemberSchools = (allSchoolsResult.data ?? []).filter(
+    (s) => !memberSchoolIds.has(s.id),
   );
 
   return (
@@ -226,28 +244,7 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {memberships.length === 0 ? (
-          <section className="panel anim-slide-up anim-d2 p-6">
-            <div className="mb-5 flex items-start gap-3">
-              <div
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-                style={{ background: "#EFF6FF" }}
-              >
-                <GraduationCap size={19} color="#2563EB" strokeWidth={1.8} />
-              </div>
-              <div>
-                <h2 className="text-sm font-semibold" style={{ color: "#111827" }}>
-                  No schools yet
-                </h2>
-                <p className="mt-1 max-w-xl text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
-                  Register your first school. You will become its admin automatically.
-                </p>
-              </div>
-            </div>
-            <RegisterSchoolForm />
-          </section>
-        ) : (
-          <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {memberships.map((membership, index) => {
               const isAdmin = membership.role === "admin";
               const opensSchoolDashboard =
@@ -319,27 +316,15 @@ export default async function DashboardPage() {
                 </article>
               );
             })}
-            <div className="anim-slide-up anim-d3 min-h-[178px] rounded-[8px] border border-dashed border-[#C7D2FE] bg-white/60 p-5 transition-colors duration-150 hover:bg-white">
-              <div className="mb-5 flex items-start gap-3">
-                <div
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-                  style={{ background: "#EFF6FF" }}
-                >
-                  <Plus size={19} color="#2563EB" strokeWidth={1.8} />
-                </div>
-                <div className="min-w-0">
-                  <h2 className="text-[0.9375rem] font-semibold" style={{ color: "#111827" }}>
-                    Create another school
-                  </h2>
-                  <p className="mt-1 text-sm" style={{ color: "#6B7280", lineHeight: 1.45 }}>
-                    Register a new school and add it to this dashboard.
-                  </p>
-                </div>
-              </div>
-              <RegisterSchoolForm />
-            </div>
-          </section>
-        )}
+          {nonMemberSchools.map((school) => (
+            <DirectJoinCard
+              key={school.id}
+              schoolId={school.id}
+              schoolName={school.name}
+              isPending={pendingSchoolIds.has(school.id)}
+            />
+          ))}
+        </section>
       </main>
     </div>
   );

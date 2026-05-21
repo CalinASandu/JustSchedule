@@ -70,6 +70,8 @@ Invite links use `/invite/[inviteToken]`; the old `/dashboard/join/[inviteToken]
 
 Admins review pending join requests in the `Join Requests` tab of `components/dashboard/SchoolManagementTabs.tsx`. The list is loaded through `get_school_join_requests_with_profiles`, which returns request id, user id, profile name, email, and request time for school admins. Review submission calls the deployed Supabase Edge Function `review-school-join-requests`, which verifies the caller is an admin, adds approved users to `SchoolMembers` with role `student`, and deletes processed `JoinRequests` rows.
 
+In single-school mode (current default), the dashboard also shows all non-deleted schools to every logged-in user. Non-members see a `DirectJoinCard` (`components/dashboard/DirectJoinCard.tsx`) with a "Request to join" button instead of a link. Clicking it calls `requestDirectJoin` (in `app/dashboard/actions.ts`), which inserts a `JoinRequests` row with `invite_id = null`. A separate RLS policy (`Users can create direct join requests`, migration `20260520000000_direct_join_requests.sql`) permits this path. The school creation UI (`RegisterSchoolForm`, `registerSchool` action) is hidden but NOT deleted. See `docs/revert-to-multi-school-mode.md` to restore it.
+
 ### Schedule Page
 
 `app/dashboard/page.tsx` is the authenticated dashboard overview. It lists the schools the signed-in user belongs to, shows a profile panel, and includes a ghost card with `RegisterSchoolForm` for creating another school. Admin and professor school cards link to `/dashboard/schools/[schoolId]`; student school cards link to `/dashboard/schedule?schoolId=...`.
