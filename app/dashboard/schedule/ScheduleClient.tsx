@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { Ban, CalendarDays, ClipboardList, Loader2, UserRound } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { ExamType, Reservation, SlotDef } from "@/components/schedule/types";
@@ -13,6 +13,7 @@ import BookingSummaryCard from "@/components/schedule/BookingSummaryCard";
 import SeatAvailabilityOverview from "@/components/schedule/SeatAvailabilityOverview";
 import BookingsPanel from "@/components/schedule/BookingsPanel";
 import LeaveSchoolButton from "@/components/dashboard/LeaveSchoolButton";
+import SubjectCommandPalette from "@/components/schedule/SubjectCommandPalette";
 
 interface ScheduleClientProps {
   schoolId: string;
@@ -57,18 +58,21 @@ export default function ScheduleClient({
   const [cancelingReservationId, setCancelingReservationId] = useState<string | null>(null);
   const [cancelReservationError, setCancelReservationError] = useState<string | null>(null);
   const [cancelDialogReservation, setCancelDialogReservation] = useState<Reservation | null>(null);
+  const [bookingStep, setBookingStep] = useState<1 | 2 | 3>(1);
 
   function handleDateSelect(date: string) {
     setSelectedDate(date);
     setSelectedSlotId(null);
     setShowConfirmation(false);
     setReserveError(reservationError);
+    setBookingStep(2);
   }
 
   function handleSlotSelect(slotId: string) {
     setSelectedSlotId(slotId);
     setShowConfirmation(false);
     setReserveError(reservationError);
+    setBookingStep(3);
   }
 
   function handleReserve() {
@@ -151,6 +155,9 @@ export default function ScheduleClient({
     setSelectedSlotId(null);
     setShowConfirmation(false);
     setReserveError(reservationError);
+    setSelectedExam("");
+    setExamType("midterm");
+    setBookingStep(1);
   }
 
   async function handleCancelReservation(reservation: Reservation) {
@@ -295,49 +302,179 @@ export default function ScheduleClient({
 
         {activePanel === "schedule" ? (
           <>
-            <div className="schedule-main-grid">
-              <div className="anim-slide-up anim-d1">
-                <CalendarPanel
-                  studentName={studentName}
-                  selectedExam={selectedExam}
-                  onExamChange={setSelectedExam}
-                  examType={examType}
-                  onExamTypeChange={setExamType}
-                  selectedDate={selectedDate}
-                  onSelectDate={handleDateSelect}
-                  subjects={schoolSubjects}
-                />
-              </div>
+            {/* ── Booking wizard ─────────────────────────── */}
+            <div className="max-w-[640px] mx-auto">
+              <StepBar step={bookingStep} confirmed={showConfirmation} />
 
-              <div className="anim-slide-up anim-d2">
-                <SlotPicker
-                  selectedDate={selectedDate}
-                  selectedSlotId={selectedSlotId}
-                  onSelectSlot={handleSlotSelect}
-                  slots={examSlots}
-                  reservations={reservations}
-                />
-              </div>
+              {/* Step 1 — Pick a date */}
+              {bookingStep === 1 && (
+                <div className="flex flex-col gap-4 anim-slide-up">
+                  <CalendarPanel
+                    calendarOnly
+                    studentName={studentName}
+                    selectedExam={selectedExam}
+                    onExamChange={setSelectedExam}
+                    examType={examType}
+                    onExamTypeChange={setExamType}
+                    selectedDate={selectedDate}
+                    onSelectDate={handleDateSelect}
+                    subjects={schoolSubjects}
+                    slots={examSlots}
+                    reservations={reservations}
+                  />
+                  {selectedDate && (
+                    <button
+                      type="button"
+                      onClick={() => setBookingStep(2)}
+                      className="w-full py-3.5 rounded-2xl text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      style={{ background: "#2563EB", color: "#ffffff", cursor: "pointer" }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = "#1D4ED8"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = "#2563EB"; }}
+                    >
+                      Continue to time
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                        <path d="M3 7h8M8 4l3 3-3 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              )}
 
-              <div className="anim-slide-up anim-d3">
-                <BookingSummaryCard
-                  studentName={studentName}
-                  exam={selectedExam}
-                  examType={examType}
-                  date={formattedDate}
-                  time={selectedSlotDef?.label ?? null}
-                  duration={selectedSlotDef?.duration ?? null}
-                  canReserve={canReserve}
-                  isSubmitting={isReserving}
-                  isConfirmed={showConfirmation}
-                  error={reserveError}
-                  reserveDisabledMessage={reserveDisabledMessage}
-                  onReserve={handleReserve}
-                  onReset={handleReset}
-                />
-              </div>
+              {/* Step 2 — Pick a time slot */}
+              {bookingStep === 2 && (
+                <div className="flex flex-col gap-3 anim-slide-up">
+                  <BackButton label="Back to date" onClick={() => setBookingStep(1)} />
+                  <SlotPicker
+                    selectedDate={selectedDate}
+                    selectedSlotId={selectedSlotId}
+                    onSelectSlot={handleSlotSelect}
+                    slots={examSlots}
+                    reservations={reservations}
+                  />
+                  {selectedSlotId && (
+                    <button
+                      type="button"
+                      onClick={() => setBookingStep(3)}
+                      className="w-full py-3.5 rounded-2xl text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      style={{ background: "#2563EB", color: "#ffffff", cursor: "pointer" }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = "#1D4ED8"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = "#2563EB"; }}
+                    >
+                      Continue to exam details
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                        <path d="M3 7h8M8 4l3 3-3 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Step 3 — Exam details + confirm */}
+              {bookingStep === 3 && (
+                <div className="flex flex-col gap-3 anim-slide-up">
+                  {!showConfirmation && (
+                    <>
+                      <BackButton label="Back to time" onClick={() => setBookingStep(2)} />
+                      <div className="panel p-5 flex flex-col gap-4">
+                        <div className="flex items-center gap-2.5">
+                          <div
+                            className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                            style={{ background: "#EFF6FF" }}
+                          >
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                              <rect x="1.5" y="1.5" width="11" height="11" rx="1.5" stroke="#2563EB" strokeWidth="1.3" />
+                              <path d="M4.5 7h5M4.5 4.5h3M4.5 9.5h4" stroke="#2563EB" strokeWidth="1.3" strokeLinecap="round" />
+                            </svg>
+                          </div>
+                          <div>
+                            <h2 className="text-sm font-semibold" style={{ color: "#111827" }}>
+                              Exam details
+                            </h2>
+                            <p className="text-xs" style={{ color: "#9CA3AF" }}>
+                              Choose your subject and exam type
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label
+                            className="text-[11px] font-semibold uppercase tracking-wider"
+                            style={{ color: "#9CA3AF" }}
+                          >
+                            Subject
+                          </label>
+                          <SubjectCommandPalette
+                            subjects={schoolSubjects}
+                            value={selectedExam}
+                            onChange={setSelectedExam}
+                            placeholder="Search subject…"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label
+                            className="text-[11px] font-semibold uppercase tracking-wider"
+                            style={{ color: "#9CA3AF" }}
+                          >
+                            Exam type
+                          </label>
+                          <div
+                            className="flex rounded-xl p-0.5 gap-0.5 w-fit"
+                            style={{ border: "1px solid #E4E8EF", background: "#F7F8FA" }}
+                            role="group"
+                            aria-label="Exam type"
+                          >
+                            {(["midterm", "final"] as ExamType[]).map((t) => (
+                              <button
+                                key={t}
+                                type="button"
+                                onClick={() => setExamType(t)}
+                                aria-pressed={examType === t}
+                                className="px-4 py-2 text-sm font-medium rounded-[10px] transition-all duration-150 cursor-pointer capitalize focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                                style={
+                                  examType === t
+                                    ? {
+                                        background: "#ffffff",
+                                        color: "#1D4ED8",
+                                        boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
+                                        border: "1px solid #BFDBFE",
+                                      }
+                                    : {
+                                        background: "transparent",
+                                        color: "#6B7280",
+                                        border: "1px solid transparent",
+                                      }
+                                }
+                              >
+                                {t.charAt(0).toUpperCase() + t.slice(1)}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  <BookingSummaryCard
+                    studentName={studentName}
+                    exam={selectedExam}
+                    examType={examType}
+                    date={formattedDate}
+                    time={selectedSlotDef?.label ?? null}
+                    duration={selectedSlotDef?.duration ?? null}
+                    canReserve={canReserve}
+                    isSubmitting={isReserving}
+                    isConfirmed={showConfirmation}
+                    error={reserveError}
+                    reserveDisabledMessage={reserveDisabledMessage}
+                    onReserve={handleReserve}
+                    onReset={handleReset}
+                  />
+                </div>
+              )}
             </div>
 
+            {/* ── Bottom info panels ──────────────────────── */}
             <div className="schedule-bottom-grid mt-6">
               <div className="anim-slide-up anim-d2">
                 <SeatAvailabilityOverview
@@ -456,6 +593,88 @@ export default function ScheduleClient({
         </div>
       )}
     </div>
+  );
+}
+
+function StepBar({ step, confirmed }: { step: 1 | 2 | 3; confirmed: boolean }) {
+  const steps = [
+    { n: 1 as const, label: "Date" },
+    { n: 2 as const, label: "Time" },
+    { n: 3 as const, label: "Exam" },
+  ];
+  return (
+    <div className="flex items-center mb-6">
+      {steps.map((s, i) => {
+        const isCompleted = confirmed || s.n < step;
+        const isCurrent = s.n === step && !confirmed;
+        return (
+          <Fragment key={s.n}>
+            {i > 0 && (
+              <div
+                className="flex-1 h-px mx-3 transition-colors duration-300"
+                style={{ background: s.n <= step || confirmed ? "#2563EB" : "#E4E8EF" }}
+              />
+            )}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <div
+                className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-200"
+                style={
+                  isCompleted
+                    ? { background: "#2563EB", color: "#fff" }
+                    : isCurrent
+                    ? { background: "#EFF6FF", color: "#2563EB", border: "2px solid #2563EB" }
+                    : { background: "#F3F4F6", color: "#9CA3AF", border: "1px solid #E4E8EF" }
+                }
+              >
+                {isCompleted ? (
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                    <path
+                      d="M2.5 6l2.5 2.5L9.5 3.5"
+                      stroke="white"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                ) : (
+                  s.n
+                )}
+              </div>
+              <span
+                className="text-sm font-medium hidden sm:block"
+                style={{
+                  color: isCompleted ? "#2563EB" : isCurrent ? "#111827" : "#9CA3AF",
+                }}
+              >
+                {s.label}
+              </span>
+            </div>
+          </Fragment>
+        );
+      })}
+    </div>
+  );
+}
+
+function BackButton({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="inline-flex items-center gap-1.5 text-sm font-medium transition-opacity duration-150 hover:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+      style={{ color: "#6B7280" }}
+    >
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path
+          d="M10 12L6 8l4-4"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+      {label}
+    </button>
   );
 }
 
