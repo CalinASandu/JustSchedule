@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import type { ExamType } from './types'
+import type { ExamType, Reservation, SlotDef } from './types'
 import SubjectCommandPalette from './SubjectCommandPalette'
 
 interface Subject {
@@ -18,6 +18,9 @@ interface CalendarPanelProps {
   selectedDate: string | null
   onSelectDate: (date: string) => void
   subjects: Subject[]
+  calendarOnly?: boolean
+  slots?: SlotDef[]
+  reservations?: Reservation[]
 }
 
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -51,11 +54,31 @@ function isOutsideBookingWindow(y: number, m: number, d: number) {
 
 type DayStatus = 'unavailable' | 'limited' | 'available'
 
-function getDayStatus(y: number, m: number, d: number): DayStatus {
+function getDayStatus(
+  y: number,
+  m: number,
+  d: number,
+  slots: SlotDef[],
+  reservations: Reservation[],
+): DayStatus {
   if (isWeekend(y, m, d) || isPast(y, m, d) || isOutsideBookingWindow(y, m, d)) return 'unavailable'
-  const hash = (d * 13 + m * 7 + y) % 5
-  if (hash === 0 || hash === 4) return 'limited'
-  return 'available'
+  if (slots.length === 0) return 'unavailable'
+
+  const dateISO = toISO(y, m, d)
+  let totalCapacity = 0
+  let totalFree = 0
+
+  for (const slot of slots) {
+    const booked = reservations.filter(
+      r => r.reservationDate === dateISO && r.slotId === slot.id && r.status === 'confirmed'
+    ).length
+    totalCapacity += slot.capacity
+    totalFree += Math.max(slot.capacity - booked, 0)
+  }
+
+  if (totalFree === 0) return 'unavailable'
+  if (totalFree / totalCapacity > 0.7) return 'available'
+  return 'limited'
 }
 
 export default function CalendarPanel({
@@ -67,6 +90,9 @@ export default function CalendarPanel({
   selectedDate,
   onSelectDate,
   subjects,
+  calendarOnly = false,
+  slots = [],
+  reservations = [],
 }: CalendarPanelProps) {
   const today = new Date()
   const [viewYear, setViewYear] = useState(today.getFullYear())
@@ -98,72 +124,74 @@ export default function CalendarPanel({
   return (
     <div className="panel p-5 flex flex-col gap-5">
       {/* ── Form inputs ────────────────────────────── */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-        {/* Student name */}
-        <div className="flex flex-col gap-1.5 min-w-0 flex-1">
-          <label className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: '#9CA3AF' }}>
-            Student name
-          </label>
-          <div
-            className="relative w-full rounded-xl py-2.5 pl-8 pr-3 text-sm"
-            style={{
-              border: '1px solid #E4E8EF',
-              color: '#111827',
-              background: '#F8FAFC',
-            }}
-          >
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                <circle cx="7" cy="5" r="2.5" stroke="#9CA3AF" strokeWidth="1.3" />
-                <path d="M1.5 12.5c0-2.485 2.462-4.5 5.5-4.5s5.5 2.015 5.5 4.5" stroke="#9CA3AF" strokeWidth="1.3" strokeLinecap="round" />
-              </svg>
-            </span>
-            <span className="block truncate font-medium">{studentName}</span>
+      {!calendarOnly && (
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          {/* Student name */}
+          <div className="flex flex-col gap-1.5 min-w-0 flex-1">
+            <label className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: '#9CA3AF' }}>
+              Student name
+            </label>
+            <div
+              className="relative w-full rounded-xl py-2.5 pl-8 pr-3 text-sm"
+              style={{
+                border: '1px solid #E4E8EF',
+                color: '#111827',
+                background: '#F8FAFC',
+              }}
+            >
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                  <circle cx="7" cy="5" r="2.5" stroke="#9CA3AF" strokeWidth="1.3" />
+                  <path d="M1.5 12.5c0-2.485 2.462-4.5 5.5-4.5s5.5 2.015 5.5 4.5" stroke="#9CA3AF" strokeWidth="1.3" strokeLinecap="round" />
+                </svg>
+              </span>
+              <span className="block truncate font-medium">{studentName}</span>
+            </div>
+          </div>
+
+          {/* Exam name */}
+          <div className="flex flex-col gap-1.5 min-w-0 flex-1">
+            <label className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: '#9CA3AF' }}>
+              Exam
+            </label>
+            <SubjectCommandPalette
+              subjects={subjects}
+              value={selectedExam}
+              onChange={onExamChange}
+              placeholder="Search subject…"
+            />
+          </div>
+
+          {/* Exam type toggle */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: '#9CA3AF' }}>
+              Exam type
+            </label>
+            <div
+              className="flex rounded-xl p-0.5 gap-0.5"
+              style={{ border: '1px solid #E4E8EF', background: '#F7F8FA' }}
+              role="group"
+              aria-label="Exam type"
+            >
+              {(['midterm', 'final'] as ExamType[]).map(t => (
+                <button
+                  key={t}
+                  onClick={() => onExamTypeChange(t)}
+                  aria-pressed={examType === t}
+                  className="px-4 py-2 text-sm font-medium rounded-[10px] transition-all duration-150 cursor-pointer capitalize focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                  style={
+                    examType === t
+                      ? { background: '#ffffff', color: '#1D4ED8', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', border: '1px solid #BFDBFE' }
+                      : { background: 'transparent', color: '#6B7280', border: '1px solid transparent' }
+                  }
+                >
+                  {t.charAt(0).toUpperCase() + t.slice(1)}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
-
-        {/* Exam name */}
-        <div className="flex flex-col gap-1.5 min-w-0 flex-1">
-          <label className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: '#9CA3AF' }}>
-            Exam
-          </label>
-          <SubjectCommandPalette
-            subjects={subjects}
-            value={selectedExam}
-            onChange={onExamChange}
-            placeholder="Search subject…"
-          />
-        </div>
-
-        {/* Exam type toggle */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: '#9CA3AF' }}>
-            Exam type
-          </label>
-          <div
-            className="flex rounded-xl p-0.5 gap-0.5"
-            style={{ border: '1px solid #E4E8EF', background: '#F7F8FA' }}
-            role="group"
-            aria-label="Exam type"
-          >
-            {(['midterm', 'final'] as ExamType[]).map(t => (
-              <button
-                key={t}
-                onClick={() => onExamTypeChange(t)}
-                aria-pressed={examType === t}
-                className="px-4 py-2 text-sm font-medium rounded-[10px] transition-all duration-150 cursor-pointer capitalize focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-                style={
-                  examType === t
-                    ? { background: '#ffffff', color: '#1D4ED8', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', border: '1px solid #BFDBFE' }
-                    : { background: 'transparent', color: '#6B7280', border: '1px solid transparent' }
-                }
-              >
-                {t.charAt(0).toUpperCase() + t.slice(1)}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+      )}
 
       {/* ── Calendar ────────────────────────────────── */}
       <div className="select-none" role="group" aria-label="Date picker">
@@ -228,7 +256,7 @@ export default function CalendarPanel({
 
           {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(day => {
             const iso = toISO(viewYear, viewMonth, day)
-            const status = getDayStatus(viewYear, viewMonth, day)
+            const status = getDayStatus(viewYear, viewMonth, day, slots, reservations)
             const isDisabled = status === 'unavailable'
             const isSelected = selectedDate === iso
             const isToday = iso === todayISO
