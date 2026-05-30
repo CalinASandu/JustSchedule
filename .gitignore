@@ -26,6 +26,7 @@
 .graphify*
 graphify-out/cache/
 supabase/.temp/
+supabase/local
 
 # debug
 npm-debug.log*

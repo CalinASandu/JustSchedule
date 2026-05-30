@@ -44,6 +44,10 @@ function statusForDatabaseError(error: { code?: string; message?: string }) {
     return 409;
   }
 
+  if (error.code === "P0001" || message.includes("within 2 hours")) {
+    return 403;
+  }
+
   return 400;
 }
 
@@ -72,6 +76,13 @@ function publicCancelError(error: { code?: string; message?: string }) {
     return {
       code: "reservation_unavailable",
       error: "This reservation is no longer available to cancel.",
+    };
+  }
+
+  if (error.code === "P0001" || message.includes("within 2 hours")) {
+    return {
+      code: "cancel_too_late",
+      error: "Reservations cannot be cancelled within 2 hours of the exam start time.",
     };
   }
 

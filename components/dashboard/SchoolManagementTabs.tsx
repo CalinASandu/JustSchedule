@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import React, { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   Ban,
   Check,
@@ -14,6 +15,7 @@ import {
   Link2,
   Loader2,
   Mail,
+  MoreHorizontal,
   Plus,
   Search,
   Trash2,
@@ -213,6 +215,15 @@ function formatRole(role: SchoolRole) {
   return role === "exam_supervisor" ? "Exam supervisor" : role;
 }
 
+function getRolePillStyle(role: SchoolRole): React.CSSProperties {
+  switch (role) {
+    case "admin":           return { background: "#D1FAE5", color: "#065F46" };
+    case "professor":       return { background: "#EDE9FE", color: "#5B21B6" };
+    case "exam_supervisor": return { background: "#FEF3C7", color: "#92400E" };
+    case "student":         return { background: "#DBEAFE", color: "#1D4ED8" };
+  }
+}
+
 function getSlotDateTime(dateKey: string, timeValue: string) {
   return new Date(`${dateKey}T${timeValue}`);
 }
@@ -383,6 +394,20 @@ export default function SchoolManagementTabs({
     error: null,
     pending: false,
   });
+  const [openMenuMemberId, setOpenMenuMemberId] = useState<string | null>(null);
+  const [roleSubmenuMemberId, setRoleSubmenuMemberId] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!openMenuMemberId) return;
+    function handlePointerDown(e: PointerEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpenMenuMemberId(null);
+      }
+    }
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [openMenuMemberId]);
   const [inviteState, setInviteState] = useState<{ error: string | null; pending: boolean }>({
     error: null,
     pending: false,
@@ -1254,114 +1279,209 @@ export default function SchoolManagementTabs({
                 !member.id.startsWith("created-");
               const selfBookingPending = selfBookingState.pendingMemberId === member.id;
 
+              const hasAnyAction = canScheduleForStudent || canToggleSelfBooking || canManage || canKick;
+
               return (
               <div
                 key={member.id}
                 className="rounded-[10px] border border-[#E4E8EF] p-4"
                 style={{ background: "#FFFFFF" }}
               >
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex min-w-0 items-center gap-3">
-                  <div
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
-                    style={{ background: "#EFF6FF" }}
-                  >
-                    <UserRound size={16} color="#2563EB" strokeWidth={1.8} />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="truncate text-sm font-semibold" style={{ color: "#111827" }}>
-                        {member.name}
+                {/* Main row */}
+                <div className="flex items-center justify-between gap-3">
+                  {/* Left: avatar + info */}
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+                      style={{ background: "#EFF6FF" }}
+                    >
+                      <UserRound size={16} color="#2563EB" strokeWidth={1.8} />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="truncate text-sm font-semibold" style={{ color: "#111827" }}>
+                          {member.name}
+                        </p>
+                        {member.isCurrentUser && (
+                          <span className="text-xs font-medium" style={{ color: "#9CA3AF" }}>
+                            You
+                          </span>
+                        )}
+                      </div>
+                      <p className="truncate text-xs" style={{ color: "#9CA3AF" }}>
+                        {member.email ?? `Joined ${formatDate(member.joinedAt)}`}
                       </p>
-                      {member.isCurrentUser && (
-                        <span className="text-xs font-medium" style={{ color: "#9CA3AF" }}>
-                          You
-                        </span>
+                      {member.role === "student" && (
+                        <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                          <span
+                            className="rounded-full px-2.5 py-0.5 text-xs font-medium"
+                            style={
+                              member.canSelfBook
+                                ? { background: "#DBEAFE", color: "#1D4ED8" }
+                                : { background: "#E2E8F0", color: "#64748B" }
+                            }
+                          >
+                            {member.canSelfBook ? "Self-booking on" : "Teacher scheduled"}
+                          </span>
+                          {selfBookingPending && (
+                            <Loader2 size={13} className="animate-spin" style={{ color: "#9CA3AF" }} />
+                          )}
+                        </div>
                       )}
                     </div>
-                    <p className="truncate text-xs" style={{ color: "#9CA3AF" }}>
-                      {member.email ?? `Joined ${formatDate(member.joinedAt)}`}
-                    </p>
-                    {member.role === "student" && (
-                      <div className="mt-2 flex flex-wrap items-center gap-2">
-                        <span
-                          className="rounded-full px-3 py-1 text-xs font-semibold"
-                          style={
-                            member.canSelfBook
-                              ? { background: "#DBEAFE", color: "#1D4ED8" }
-                              : { background: "#E2E8F0", color: "#64748B" }
+                  </div>
+
+                  {/* Right: role pill + actions menu */}
+                  <div className="flex shrink-0 items-center gap-2">
+                    <span
+                      className="rounded-full px-2.5 py-1 text-xs font-semibold capitalize"
+                      style={getRolePillStyle(member.role)}
+                    >
+                      {formatRole(member.role)}
+                    </span>
+
+                    {hasAnyAction && (
+                      <div
+                        className="relative"
+                        ref={openMenuMemberId === member.id ? menuRef : undefined}
+                      >
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setOpenMenuMemberId(openMenuMemberId === member.id ? null : member.id)
                           }
+                          className="flex h-8 w-8 items-center justify-center rounded-[8px] transition-colors hover:bg-slate-100"
+                          style={{ color: "#6B7280" }}
+                          aria-label="Member actions"
                         >
-                          {member.canSelfBook ? "Self booking on" : "Teacher scheduled only"}
-                        </span>
-                        {!member.canSelfBook && member.selfBookingDisabledAt && (
-                          <span className="text-xs" style={{ color: "#9CA3AF" }}>
-                            Since {formatDate(member.selfBookingDisabledAt)}
-                          </span>
+                          <MoreHorizontal size={16} />
+                        </button>
+
+                        {openMenuMemberId === member.id && (
+                          <div
+                            className="absolute right-0 top-full z-20 mt-1 w-52 rounded-[10px] bg-white py-1"
+                            style={{
+                              border: "1px solid #E4E8EF",
+                              boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
+                            }}
+                          >
+                            {canScheduleForStudent && (
+                              <button
+                                type="button"
+                                onClick={() => { openScheduleDialog(member); setOpenMenuMemberId(null); }}
+                                disabled={scheduleState.pending}
+                                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                                style={{ color: "#2563EB" }}
+                              >
+                                <CalendarPlus size={15} />
+                                Schedule exam
+                              </button>
+                            )}
+                            {canToggleSelfBooking && (
+                              <button
+                                type="button"
+                                onClick={() => { toggleSelfBooking(member); setOpenMenuMemberId(null); }}
+                                disabled={!!selfBookingState.pendingMemberId}
+                                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                                style={{ color: "#374151" }}
+                              >
+                                <Ban size={15} />
+                                {member.canSelfBook ? "Restrict booking" : "Allow booking"}
+                              </button>
+                            )}
+                            {canManage && (
+                              <>
+                                {(canScheduleForStudent || canToggleSelfBooking) && (
+                                  <div className="my-1 border-t border-[#F3F4F6]" />
+                                )}
+                                <div className="relative">
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setRoleSubmenuMemberId(
+                                        roleSubmenuMemberId === member.id ? null : member.id,
+                                      )
+                                    }
+                                    disabled={roleState.pending}
+                                    className="flex w-full items-center justify-between px-3 py-2 text-sm transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                                    style={{ color: "#374151" }}
+                                  >
+                                    <span className="flex items-center gap-2.5">
+                                      <UserRound size={15} />
+                                      Change role
+                                    </span>
+                                    <ChevronRight size={13} style={{ color: "#9CA3AF" }} />
+                                  </button>
+
+                                  {roleSubmenuMemberId === member.id && (
+                                    <div
+                                      className="absolute right-full top-0 mr-1 w-44 rounded-[10px] bg-white py-1"
+                                      style={{
+                                        border: "1px solid #E4E8EF",
+                                        boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
+                                      }}
+                                    >
+                                      {roleOptions.map((role) => (
+                                        <button
+                                          key={role}
+                                          type="button"
+                                          onClick={() => {
+                                            setSelectedRoles((current) => ({
+                                              ...current,
+                                              [member.id]: role,
+                                            }));
+                                            setRoleState((current) => ({
+                                              ...current,
+                                              error: null,
+                                              success: null,
+                                            }));
+                                            setRoleSubmenuMemberId(null);
+                                            setOpenMenuMemberId(null);
+                                          }}
+                                          className="flex w-full items-center gap-2.5 px-3 py-2 text-sm capitalize transition-colors hover:bg-slate-50"
+                                          style={{
+                                            color:
+                                              role === member.role ? "#2563EB" : "#374151",
+                                            fontWeight: role === member.role ? 600 : 400,
+                                          }}
+                                        >
+                                          <span
+                                            className="flex h-3.5 w-3.5 items-center justify-center"
+                                          >
+                                            {role === selectedRole && (
+                                              <Check size={12} strokeWidth={2.5} />
+                                            )}
+                                          </span>
+                                          {formatRole(role)}
+                                        </button>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
+                              </>
+                            )}
+                            {canKick && (
+                              <>
+                                <div className="my-1 border-t border-[#F3F4F6]" />
+                                <button
+                                  type="button"
+                                  onClick={() => { openKickDialog(member); setOpenMenuMemberId(null); }}
+                                  disabled={kickState.pending}
+                                  className="flex w-full items-center gap-2.5 px-3 py-2 text-sm transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                                  style={{ color: "#DC2626" }}
+                                >
+                                  <UserMinus size={15} />
+                                  Remove from school
+                                </button>
+                              </>
+                            )}
+                          </div>
                         )}
                       </div>
                     )}
                   </div>
                 </div>
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                  {canScheduleForStudent && (
-                    <button
-                      type="button"
-                      onClick={() => openScheduleDialog(member)}
-                      disabled={scheduleState.pending}
-                      className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
-                      style={{ border: "1px solid #E4E8EF", color: "#2563EB" }}
-                    >
-                      <CalendarPlus size={16} />
-                      Schedule
-                    </button>
-                  )}
-                  {canToggleSelfBooking && (
-                    <button
-                      type="button"
-                      onClick={() => toggleSelfBooking(member)}
-                      disabled={!!selfBookingState.pendingMemberId}
-                      className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
-                      style={{ border: "1px solid #E4E8EF", color: "#374151" }}
-                    >
-                      {selfBookingPending && <Loader2 size={16} className="animate-spin" />}
-                      {member.canSelfBook ? "Restrict booking" : "Allow booking"}
-                    </button>
-                  )}
-                  <select
-                    value={selectedRole}
-                    onChange={(event) => {
-                      const value = event.target.value as SchoolRole;
-                      setSelectedRoles((current) => ({
-                        ...current,
-                        [member.id]: value,
-                      }));
-                      setRoleState((current) => ({ ...current, error: null, success: null }));
-                    }}
-                    disabled={!canManage || roleState.pending}
-                    className="h-[2.625rem] rounded-[10px] bg-white px-3 text-[0.9375rem] capitalize outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed disabled:bg-[#F8FAFC] disabled:text-[#94A3B8]"
-                    style={{ border: "1.5px solid #E4E8EF", color: canManage ? "#111827" : "#94A3B8" }}
-                  >
-                    {roleOptions.map((role) => (
-                      <option key={role} value={role}>
-                        {formatRole(role)}
-                      </option>
-                    ))}
-                  </select>
-                  {canKick && (
-                    <button
-                      type="button"
-                      onClick={() => openKickDialog(member)}
-                      disabled={kickState.pending}
-                      className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
-                      style={{ border: "1px solid #E4E8EF", color: "#DC2626" }}
-                    >
-                      <UserMinus size={16} />
-                      Kick
-                    </button>
-                  )}
-                </div>
-                </div>
+
               </div>
               );
             })}
@@ -2453,7 +2573,7 @@ export default function SchoolManagementTabs({
         </div>
       )}
 
-      {kickDialogMember && (
+      {kickDialogMember && createPortal(
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4"
           role="dialog"
@@ -2516,10 +2636,11 @@ export default function SchoolManagementTabs({
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
-      {scheduleDialogMember && (
+      {scheduleDialogMember && createPortal(
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4 py-6"
           role="dialog"
@@ -2798,7 +2919,8 @@ export default function SchoolManagementTabs({
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </section>
   );

@@ -129,7 +129,10 @@ export default function BookingsPanel({
             </thead>
             <tbody>
               {sortedReservations.map((booking, i) => {
-                const canCancel = booking.userId === currentUserId
+                const isOwner = booking.userId === currentUserId
+                const examStart = new Date(`${booking.reservationDate}T${booking.startsAt}`)
+                const withinCutoff = isOwner && (examStart.getTime() - Date.now() < 2 * 60 * 60 * 1000)
+                const canCancel = isOwner && !withinCutoff
                 const isPending = cancelingReservationId === booking.id
                 const delayClass = ['anim-slide-up', 'anim-slide-up anim-d1', 'anim-slide-up anim-d2', 'anim-slide-up anim-d3'][i] ?? 'anim-slide-up'
 
@@ -199,6 +202,14 @@ export default function BookingsPanel({
                           )}
                           Cancel
                         </button>
+                      ) : withinCutoff ? (
+                        <span
+                          className="text-xs whitespace-nowrap"
+                          style={{ color: '#9CA3AF' }}
+                          title="Cancellation is closed within 2 hours of the exam"
+                        >
+                          Cutoff reached
+                        </span>
                       ) : (
                         <span className="text-xs whitespace-nowrap" style={{ color: '#CBD5E1' }}>
                           Not yours
