@@ -1,6 +1,7 @@
 "use client";
 
 import React, { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   Ban,
   Check,
@@ -394,7 +395,7 @@ export default function SchoolManagementTabs({
     pending: false,
   });
   const [openMenuMemberId, setOpenMenuMemberId] = useState<string | null>(null);
-  const [expandedRoleSelectId, setExpandedRoleSelectId] = useState<string | null>(null);
+  const [roleSubmenuMemberId, setRoleSubmenuMemberId] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -794,7 +795,6 @@ export default function SchoolManagementTabs({
       success: `Updated ${pendingRoleChanges.length} role${pendingRoleChanges.length === 1 ? "" : "s"}.`,
       pending: false,
     });
-    setExpandedRoleSelectId(null);
     router.refresh();
   }
 
@@ -1394,21 +1394,70 @@ export default function SchoolManagementTabs({
                                 {(canScheduleForStudent || canToggleSelfBooking) && (
                                   <div className="my-1 border-t border-[#F3F4F6]" />
                                 )}
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setExpandedRoleSelectId(
-                                      expandedRoleSelectId === member.id ? null : member.id,
-                                    );
-                                    setOpenMenuMemberId(null);
-                                  }}
-                                  disabled={roleState.pending}
-                                  className="flex w-full items-center gap-2.5 px-3 py-2 text-sm transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-                                  style={{ color: "#374151" }}
-                                >
-                                  <UserRound size={15} />
-                                  Change role
-                                </button>
+                                <div className="relative">
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setRoleSubmenuMemberId(
+                                        roleSubmenuMemberId === member.id ? null : member.id,
+                                      )
+                                    }
+                                    disabled={roleState.pending}
+                                    className="flex w-full items-center justify-between px-3 py-2 text-sm transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                                    style={{ color: "#374151" }}
+                                  >
+                                    <span className="flex items-center gap-2.5">
+                                      <UserRound size={15} />
+                                      Change role
+                                    </span>
+                                    <ChevronRight size={13} style={{ color: "#9CA3AF" }} />
+                                  </button>
+
+                                  {roleSubmenuMemberId === member.id && (
+                                    <div
+                                      className="absolute right-full top-0 mr-1 w-44 rounded-[10px] bg-white py-1"
+                                      style={{
+                                        border: "1px solid #E4E8EF",
+                                        boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
+                                      }}
+                                    >
+                                      {roleOptions.map((role) => (
+                                        <button
+                                          key={role}
+                                          type="button"
+                                          onClick={() => {
+                                            setSelectedRoles((current) => ({
+                                              ...current,
+                                              [member.id]: role,
+                                            }));
+                                            setRoleState((current) => ({
+                                              ...current,
+                                              error: null,
+                                              success: null,
+                                            }));
+                                            setRoleSubmenuMemberId(null);
+                                            setOpenMenuMemberId(null);
+                                          }}
+                                          className="flex w-full items-center gap-2.5 px-3 py-2 text-sm capitalize transition-colors hover:bg-slate-50"
+                                          style={{
+                                            color:
+                                              role === member.role ? "#2563EB" : "#374151",
+                                            fontWeight: role === member.role ? 600 : 400,
+                                          }}
+                                        >
+                                          <span
+                                            className="flex h-3.5 w-3.5 items-center justify-center"
+                                          >
+                                            {role === selectedRole && (
+                                              <Check size={12} strokeWidth={2.5} />
+                                            )}
+                                          </span>
+                                          {formatRole(role)}
+                                        </button>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
                               </>
                             )}
                             {canKick && (
@@ -1433,49 +1482,6 @@ export default function SchoolManagementTabs({
                   </div>
                 </div>
 
-                {/* Inline role change expansion */}
-                {expandedRoleSelectId === member.id && canManage && (
-                  <div className="mt-3 border-t border-[#F3F4F6] pt-3">
-                    <div className="flex items-center gap-2">
-                      <select
-                        value={selectedRole}
-                        onChange={(event) => {
-                          const value = event.target.value as SchoolRole;
-                          setSelectedRoles((current) => ({ ...current, [member.id]: value }));
-                          setRoleState((current) => ({ ...current, error: null, success: null }));
-                        }}
-                        disabled={roleState.pending}
-                        className="h-9 flex-1 rounded-[8px] bg-white px-3 text-sm capitalize outline-none transition-[border-color]"
-                        style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
-                      >
-                        {roleOptions.map((role) => (
-                          <option key={role} value={role}>
-                            {formatRole(role)}
-                          </option>
-                        ))}
-                      </select>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setExpandedRoleSelectId(null);
-                          setSelectedRoles((current) => {
-                            const next = { ...current };
-                            delete next[member.id];
-                            return next;
-                          });
-                        }}
-                        className="flex h-9 w-9 items-center justify-center rounded-[8px] transition-colors hover:bg-slate-100"
-                        style={{ color: "#6B7280" }}
-                        aria-label="Cancel role change"
-                      >
-                        <X size={15} />
-                      </button>
-                    </div>
-                    <p className="mt-1.5 text-xs" style={{ color: "#9CA3AF" }}>
-                      Staged — confirm all pending changes above.
-                    </p>
-                  </div>
-                )}
               </div>
               );
             })}
@@ -2567,7 +2573,7 @@ export default function SchoolManagementTabs({
         </div>
       )}
 
-      {kickDialogMember && (
+      {kickDialogMember && createPortal(
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4"
           role="dialog"
@@ -2630,10 +2636,11 @@ export default function SchoolManagementTabs({
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
-      {scheduleDialogMember && (
+      {scheduleDialogMember && createPortal(
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4 py-6"
           role="dialog"
@@ -2912,7 +2919,8 @@ export default function SchoolManagementTabs({
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </section>
   );
