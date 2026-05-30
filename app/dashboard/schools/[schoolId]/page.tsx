@@ -298,12 +298,23 @@ export default async function SchoolDashboardPage({
   ];
   const headerStore = await headers();
   const origin = getRequestOrigin(headerStore);
-  const invites = ((inviteRows ?? []) as InviteRow[]).map((invite) => ({
+  const now = new Date();
+  const rows_invites = (inviteRows ?? []) as InviteRow[];
+  const expiredIds = rows_invites
+    .filter((i) => i.is_active && new Date(i.expires_at) < now)
+    .map((i) => i.id);
+  if (expiredIds.length > 0) {
+    await supabase
+      .from("SchoolInvites")
+      .update({ is_active: false })
+      .in("id", expiredIds);
+  }
+  const invites = rows_invites.map((invite) => ({
     id: invite.id,
     token: invite.token,
     createdAt: invite.created_at,
     expiresAt: invite.expires_at,
-    isActive: invite.is_active,
+    isActive: invite.is_active && new Date(invite.expires_at) >= now,
     url: `${origin}/invite/${invite.token}`,
   }));
   const joinRequests = ((joinRequestRows ?? []) as JoinRequestRow[]).map(

@@ -15,6 +15,16 @@ graphify-out/graph.json        # full graph data, queryable
 
 If the graph feels stale after major refactors, run `graphify update .` to rebuild it, but do not do this on every task.
 
+## Production Status
+
+**The app is live with real users.** As of late May 2026, there are ~50 school members and active reservations in the production database.
+
+This means:
+- Schema migrations must be backward-compatible and non-destructive. Never drop columns or tables that may hold live data without a safe migration path.
+- Do not run destructive SQL (truncate, drop, bulk delete) against production without explicit user confirmation.
+- RLS policy changes and RPC modifications affect real users immediately after deployment — review carefully before applying.
+- Treat `Reservations`, `SchoolMembers`, `Schools`, and `Profiles` as live production tables at all times.
+
 ## Commands
 
 ```bash
@@ -112,12 +122,15 @@ Relevant migrations:
 - `supabase/migrations/20260502202326_add_reservations_slot_fk_index.sql` adds the plain `Reservations.slot_id` foreign-key index requested by Supabase advisors.
 - `supabase/migrations/20260505144142_cancel_reservations.sql` replaces all-row reservation uniqueness with a confirmed-only unique index and adds the `cancel_reservation` RPC.
 - `supabase/migrations/20260508114018_attendance_supervisor_soft_delete.sql` adds school soft delete, the `exam_supervisor` role, attendance fields/session override support, broad admin/professor reservation cancellation, and attendance RPCs.
+- `supabase/migrations/20260529000000_default_self_booking_false.sql` changes the default for `SchoolMembers.can_self_book` from `true` to `false`; new members must be explicitly granted self-booking permission by an admin or professor.
 
 ### Reservation Write Flow
 
 Reservation creation is implemented through the deployed Supabase Edge Function `reserve-exam-slot` (`supabase/functions/reserve-exam-slot/index.ts`) with JWT verification enabled in `supabase/config.toml`. The client calls `supabase.functions.invoke("reserve-exam-slot")` with the signed-in user's access token and `{ schoolId, slotId, reservationDate, examName, examType }`.
 
-Server-side checks are authoritative. The RPC verifies the caller is signed in, is a `student` member of the target school, the slot is active and belongs to that school, the date is today through today + 14 calendar days, the date is not a weekend, the exam type is `midterm` or `final`, and the exam name is non-empty. It locks `school_id + reservation_date + slot_id`, counts confirmed reservations after acquiring the lock, compares that count with `ExamSlots.capacity`, and inserts a confirmed reservation only if capacity remains. Do not trust a frontend-only seat availability check for booking enforcement.
+Server-side checks are authoritative. The RPC verifies the caller is signed in, is a `student` member of the target school, has `can_self_book = true` on their `SchoolMembers` row, the slot is active and belongs to that school, the date is today through today + 14 calendar days, the date is not a weekend, the exam type is `midterm` or `final`, and the exam name is non-empty. It locks `school_id + reservation_date + slot_id`, counts confirmed reservations after acquiring the lock, compares that count with `ExamSlots.capacity`, and inserts a confirmed reservation only if capacity remains. Do not trust a frontend-only seat availability check for booking enforcement.
+
+`SchoolMembers.can_self_book` defaults to `false` for all new members (migration `20260529000000_default_self_booking_false.sql`; previously defaulted to `true`). Admins and professors enable or disable self-booking per student via the `set_student_self_booking_permission` RPC from the Members tab. When disabled, the student's booking UI must reflect this state and the RPC will reject any booking attempt with an error.
 
 Duplicate rule: one student cannot hold two confirmed reservations for the same slot on the same date, but can book another slot on the same date. Cancelling a reservation changes `Reservations.status` to `cancelled`, which frees both the seat and that student's ability to book the same date/slot again.
 
@@ -231,8 +244,16 @@ All visual conventions are documented in `docs/design.md`. Read it before buildi
 
 Before UI, React, or Next.js component work, read and follow the relevant installed design and Vercel skills in addition to `docs/design.md`:
 
-- `web-design-guidelines` for UI/accessibility/design review.
-- `vercel-react-best-practices` for React and Next.js performance patterns.
-- `vercel-composition-patterns` for reusable component architecture.
-- `vercel-react-view-transitions` when adding or changing transitions/animations between UI states or routes.
-- `build-web-apps:frontend-app-builder` for new app surfaces, dashboards, major redesigns, or visually driven UI work.
+### Vercel / React skills (always read for any component work)
+- `web-design-guidelines` — UI/accessibility/design review against Vercel's web interface guidelines. Fetch fresh rules from source before each review.
+- `vercel-react-best-practices` — React and Next.js performance patterns (memoization, Suspense, bundle splitting).
+- `vercel-composition-patterns` — reusable component architecture, compound components, composition over inheritance.
+- `vercel-react-view-transitions` — when adding or changing transitions/animations between UI states or routes.
+
+### Design craft skills (read when doing visual or UX work)
+- `impeccable` — end-to-end production design workflow: shape → craft → polish → audit. Use for any new page or significant component. Enforces PRODUCT.md/DESIGN.md context gates, shared design laws (OKLCH color, typography, motion), and an anti-slop checklist. Commands: `shape`, `craft`, `polish`, `bolder`, `quieter`, `distill`, `colorize`, `typeset`, `layout`, `animate`, `critique`, `audit`.
+- `frontend-design:frontend-design` — bold aesthetic direction for one-off components and interfaces. Pick a conceptual direction (brutalist, editorial, luxury, toy-like, etc.) and commit fully. Use when a component needs to be memorable and visually distinctive.
+- `high-end-visual-design` — agency-tier motion choreography and haptic micro-aesthetics. Use for hero sections, landing pages, or any surface where cinematic quality matters. Provides the Double-Bezel nested card architecture, custom cubic-bezier springs, staggered scroll reveals, and Magnetic Button hover physics.
+- `minimalist-ui` — premium utilitarian minimalism. Warm monochrome palette, editorial serif/sans pairing, bento grid layouts, ultra-flat components with 1px `#EAEAEA` borders. Use when the interface should feel like a high-end workspace tool (Notion/Linear tier).
+- `ui-ux-pro-max:ui-ux-pro-max` — comprehensive design reference: 50+ styles, 161 color palettes, 57 font pairings, 99 UX guidelines. Run `python3 skills/ui-ux-pro-max/scripts/search.py "<query>" --design-system` for full design system recommendations. Also contains a priority-ordered accessibility/touch/performance/animation checklist and a pre-delivery verification matrix.
+- `stitch-design-taste` — generates `DESIGN.md` files encoding visual atmosphere, color palette, typography, component behavior, layout principles, and motion philosophy as a semantic design system document. Use when establishing or refreshing the project's design system spec.
