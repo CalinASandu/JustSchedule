@@ -1143,7 +1143,7 @@ export default function SchoolManagementTabs({
   }
 
   return (
-    <section className="panel anim-slide-up anim-d1 overflow-hidden">
+    <section className="panel anim-slide-up anim-d1">
       <div className="flex border-b border-[#E4E8EF] px-2 pt-2">
         {currentUserRole !== "exam_supervisor" && renderTabButton("members", "Members")}
         {renderTabButton("reservations", "Reservations")}
