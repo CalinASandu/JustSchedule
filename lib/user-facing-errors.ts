@@ -23,6 +23,7 @@ export type ErrorContext =
   | "registerSchool"
   | "requestDirectJoin"
   | "reserveExamSlot"
+  | "reservationUpdate"
   | "reviewJoinRequests"
   | "scheduleForStudent"
   | "schoolDelete"
@@ -44,6 +45,7 @@ const fallbackMessages: Record<ErrorContext, string> = {
   registerSchool: "Could not register this school. Try again in a moment.",
   requestDirectJoin: "Could not send your join request. Try again in a moment.",
   reserveExamSlot: "Could not schedule this exam. Try again in a moment.",
+  reservationUpdate: "Could not update this reservation. Try again in a moment.",
   reviewJoinRequests: "Could not review join requests. Try again in a moment.",
   scheduleForStudent: "Could not schedule this exam for the student. Try again in a moment.",
   schoolDelete: "Could not delete this school. Try again in a moment.",
@@ -185,7 +187,7 @@ export function getUserFacingErrorMessage(
     }
   }
 
-  if (context === "scheduleForStudent") {
+  if (context === "scheduleForStudent" || context === "reservationUpdate") {
     if (
       code === "23505" ||
       messageIncludes(message, [
@@ -203,7 +205,9 @@ export function getUserFacingErrorMessage(
     }
 
     if (messageIncludes(message, ["admins and professors"])) {
-      return "Only admins and professors can schedule exams for students.";
+      return context === "reservationUpdate"
+        ? "Only admins and professors can update reservations."
+        : "Only admins and professors can schedule exams for students.";
     }
 
     if (messageIncludes(message, ["target user must be a student", "student member"])) {
@@ -211,7 +215,9 @@ export function getUserFacingErrorMessage(
     }
 
     if (messageIncludes(message, ["invalid session", "jwt", "authorization"])) {
-      return "Your session expired. Sign in again to schedule this exam.";
+      return context === "reservationUpdate"
+        ? "Your session expired. Sign in again to update this reservation."
+        : "Your session expired. Sign in again to schedule this exam.";
     }
 
     if (messageIncludes(message, ["weekend"])) {
