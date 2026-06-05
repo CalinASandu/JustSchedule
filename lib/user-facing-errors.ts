@@ -23,13 +23,15 @@ export type ErrorContext =
   | "registerSchool"
   | "requestDirectJoin"
   | "reserveExamSlot"
+  | "reservationUpdate"
   | "reviewJoinRequests"
   | "scheduleForStudent"
   | "schoolDelete"
   | "schoolLeave"
   | "schoolMemberKick"
   | "schoolRoleUpdate"
-  | "selfBookingUpdate";
+  | "selfBookingUpdate"
+  | "slotManagement";
 
 const fallbackMessages: Record<ErrorContext, string> = {
   attendanceStart: "Could not start attendance for this slot. Try again in a moment.",
@@ -44,6 +46,7 @@ const fallbackMessages: Record<ErrorContext, string> = {
   registerSchool: "Could not register this school. Try again in a moment.",
   requestDirectJoin: "Could not send your join request. Try again in a moment.",
   reserveExamSlot: "Could not schedule this exam. Try again in a moment.",
+  reservationUpdate: "Could not update this reservation. Try again in a moment.",
   reviewJoinRequests: "Could not review join requests. Try again in a moment.",
   scheduleForStudent: "Could not schedule this exam for the student. Try again in a moment.",
   schoolDelete: "Could not delete this school. Try again in a moment.",
@@ -51,6 +54,7 @@ const fallbackMessages: Record<ErrorContext, string> = {
   schoolMemberKick: "Could not remove this member. Try again in a moment.",
   schoolRoleUpdate: "Could not update member roles. Try again in a moment.",
   selfBookingUpdate: "Could not update self-booking permission. Try again in a moment.",
+  slotManagement: "Could not update exam rooms. Try again in a moment.",
 };
 
 function normalizeMessage(value: unknown) {
@@ -133,6 +137,10 @@ export function getUserFacingErrorMessage(
     if (context === "selfBookingUpdate") {
       return "Only admins and professors can update student self-booking permissions.";
     }
+
+    if (context === "slotManagement") {
+      return "Only admins and professors can manage exam rooms.";
+    }
   }
 
   if (context === "reserveExamSlot") {
@@ -185,7 +193,7 @@ export function getUserFacingErrorMessage(
     }
   }
 
-  if (context === "scheduleForStudent") {
+  if (context === "scheduleForStudent" || context === "reservationUpdate") {
     if (
       code === "23505" ||
       messageIncludes(message, [
@@ -203,7 +211,9 @@ export function getUserFacingErrorMessage(
     }
 
     if (messageIncludes(message, ["admins and professors"])) {
-      return "Only admins and professors can schedule exams for students.";
+      return context === "reservationUpdate"
+        ? "Only admins and professors can update reservations."
+        : "Only admins and professors can schedule exams for students.";
     }
 
     if (messageIncludes(message, ["target user must be a student", "student member"])) {
@@ -211,7 +221,9 @@ export function getUserFacingErrorMessage(
     }
 
     if (messageIncludes(message, ["invalid session", "jwt", "authorization"])) {
-      return "Your session expired. Sign in again to schedule this exam.";
+      return context === "reservationUpdate"
+        ? "Your session expired. Sign in again to update this reservation."
+        : "Your session expired. Sign in again to schedule this exam.";
     }
 
     if (messageIncludes(message, ["weekend"])) {
@@ -302,6 +314,31 @@ export function getUserFacingErrorMessage(
 
     if (messageIncludes(message, ["own self-booking"])) {
       return "Students cannot update their own self-booking permission.";
+    }
+  }
+
+  if (context === "slotManagement") {
+    if (
+      code === "23505" ||
+      messageIncludes(message, ["already exists", "duplicate key", "already has an overflow"])
+    ) {
+      return "An exam room with these details already exists.";
+    }
+
+    if (messageIncludes(message, ["capacity"])) {
+      return "Capacity must be at least 1.";
+    }
+
+    if (messageIncludes(message, ["end time", "after the start"])) {
+      return "End time must be after the start time.";
+    }
+
+    if (messageIncludes(message, ["slot name", "name is required"])) {
+      return "Enter an exam room name.";
+    }
+
+    if (messageIncludes(message, ["enable the primary", "primary slot is disabled"])) {
+      return "Enable the main room before enabling its overflow room.";
     }
   }
 

@@ -48,6 +48,9 @@ type ExamSlotRow = {
   starts_at: string;
   ends_at: string;
   capacity: number;
+  is_active: boolean;
+  slot_kind: "primary" | "overflow" | null;
+  primary_slot_id: string | null;
 };
 
 type SchoolSubjectRow = {
@@ -102,6 +105,9 @@ type ExamSlot = {
   startsAt: string;
   endsAt: string;
   capacity: number;
+  isActive: boolean;
+  slotKind: "primary" | "overflow";
+  primarySlotId: string | null;
 };
 
 type Reservation = {
@@ -227,9 +233,8 @@ export default async function SchoolDashboardPage({
     }),
     supabase
       .from("ExamSlots")
-      .select("id, name, starts_at, ends_at, capacity")
+      .select("id, name, starts_at, ends_at, capacity, is_active, slot_kind, primary_slot_id")
       .eq("school_id", schoolId)
-      .eq("is_active", true)
       .order("starts_at", { ascending: true }),
     supabase
       .from("Reservations")
@@ -334,6 +339,9 @@ export default async function SchoolDashboardPage({
       startsAt: slot.starts_at,
       endsAt: slot.ends_at,
       capacity: slot.capacity,
+      isActive: slot.is_active,
+      slotKind: slot.slot_kind ?? "primary",
+      primarySlotId: slot.primary_slot_id,
     }),
   );
   const reservations: Reservation[] = (

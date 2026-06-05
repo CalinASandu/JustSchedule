@@ -21,6 +21,7 @@ If the graph feels stale after major refactors, run `graphify update .` to rebui
 
 This means:
 - Schema migrations must be backward-compatible and non-destructive. Never drop columns or tables that may hold live data without a safe migration path.
+- Before applying any Supabase migration to the remote project, explain the exact migration plan to the user and wait for explicit approval.
 - Do not run destructive SQL (truncate, drop, bulk delete) against production without explicit user confirmation.
 - RLS policy changes and RPC modifications affect real users immediately after deployment — review carefully before applying.
 - Treat `Reservations`, `SchoolMembers`, `Schools`, and `Profiles` as live production tables at all times.
@@ -100,16 +101,16 @@ The schedule UI is split into panels: `CalendarPanel`, `SlotPicker`, `BookingSum
 
 Admin/professor reservation visibility is implemented in the school dashboard, not the student schedule workspace. `app/dashboard/schools/[schoolId]/page.tsx` loads active `ExamSlots` plus confirmed `Reservations` for the selected school and passes them into `components/dashboard/SchoolManagementTabs.tsx`.
 
-`SchoolManagementTabs` has a `Reservations` tab for admins, professors, and exam supervisors. It renders a day/week reservation panel with previous/next arrows. Day view uses `ExamSlots` as columns and seat rows based on slot `capacity` with a minimum visual height of 8 rows. Week view shows Mon–Fri only (weekends are filtered out since no exams can be scheduled then) as a 5-column grid; each day column shows compact clickable chips — student name and slot start time — and clicking a chip opens a detail modal with exam name, type, slot, time, and an optional cancel button. Admins/professors can cancel any confirmed reservation in their school; exam supervisors cannot cancel reservations.
+`SchoolManagementTabs` has a `Reservations` tab for admins, professors, and exam supervisors. `SchoolManagementTabs` is only the shell; reservation UI and mutations live under `components/dashboard/school-management-tabs/`. The tab reuses the page-loaded `ExamSlots`, `Reservations`, and members data rather than refetching the same data in each view. Day view renders responsive slot cards with dynamic occupancy bars, booked reservation rows, open-seat indicators, and an action menu on each manageable reservation. Week view shows Mon-Fri only (weekends are filtered out since no exams can be scheduled then) as weekday agenda columns with clickable reservation chips. Admins/professors can open the action menu to update or cancel any confirmed reservation in their school; exam supervisors can view reservations but cannot update or cancel them.
 
 The current database model is:
 
 | Table | Purpose |
 |---|---|
-| `ExamSlots` | Reusable per-school slot template: `name`, `starts_at`, `ends_at`, `capacity`, `is_active`. Does not store a date. |
+| `ExamSlots` | Reusable per-school slot template: `name`, `starts_at`, `ends_at`, `capacity`, `is_active`, `slot_kind`, `primary_slot_id`. Does not store a date. Primary slots have `slot_kind = 'primary'`; overflow slots have `slot_kind = 'overflow'` and point to their primary slot. |
 | `Reservations` | Actual bookings: `school_id`, `user_id`, `slot_id`, `reservation_date`, `exam_name`, `exam_type`, `status`. |
 
-`Reservations.slot_id` references `ExamSlots.id`. `Reservations.reservation_date` stores the actual calendar day. The uniqueness rule is date-aware and confirmed-only: one user cannot hold two confirmed reservations for the same slot on the same date, but cancelled historical rows do not block rebooking.
+`Reservations.slot_id` references `ExamSlots.id`. `Reservations.reservation_date` stores the actual calendar day. The duplicate rule is primary/overflow-pair aware: one student cannot hold two confirmed reservations for the same primary/overflow pair on the same date, but can book another time slot on the same date. Cancelled historical rows do not block rebooking.
 
 Students can view full confirmed reservations for schools where they are members. The student bookings panel intentionally shows student name, exam name, exam type, reservation date, and slot times for confirmed school reservations, because this read model supports visibility and future swap flows. Students can cancel reservations assigned to them, regardless of whether the booking was created by the student or by an admin/professor.
 
@@ -123,19 +124,24 @@ Relevant migrations:
 - `supabase/migrations/20260505144142_cancel_reservations.sql` replaces all-row reservation uniqueness with a confirmed-only unique index and adds the `cancel_reservation` RPC.
 - `supabase/migrations/20260508114018_attendance_supervisor_soft_delete.sql` adds school soft delete, the `exam_supervisor` role, attendance fields/session override support, broad admin/professor reservation cancellation, and attendance RPCs.
 - `supabase/migrations/20260529000000_default_self_booking_false.sql` changes the default for `SchoolMembers.can_self_book` from `true` to `false`; new members must be explicitly granted self-booking permission by an admin or professor.
+- `supabase/migrations/20260603000000_overflow_exam_rooms.sql` adds primary/overflow slot metadata, overflow-aware reservation routing, and slot management RPCs.
+- `supabase/migrations/20260603170000_slot_management_rooms_fix.sql` adds `create_exam_slot` and fixes overflow-name collisions so same-name primary slots are not mislabeled as existing overflow rooms.
+- `supabase/migrations/20260603195500_allow_overflow_slot_time_overlap.sql` replaces the old all-slot `(school_id, starts_at, ends_at)` uniqueness with a primary-slot-only unique index, allowing overflow rooms to share their primary slot's time window.
+- `supabase/migrations/20260604091603_fix_reserve_exam_slot_created_by.sql` restores `created_by` and `created_by_role` writes in the overflow-aware `reserve_exam_slot` RPC.
 
 ### Reservation Write Flow
 
 Reservation creation is implemented through the deployed Supabase Edge Function `reserve-exam-slot` (`supabase/functions/reserve-exam-slot/index.ts`) with JWT verification enabled in `supabase/config.toml`. The client calls `supabase.functions.invoke("reserve-exam-slot")` with the signed-in user's access token and `{ schoolId, slotId, reservationDate, examName, examType }`.
 
-Server-side checks are authoritative. The RPC verifies the caller is signed in, is a `student` member of the target school, has `can_self_book = true` on their `SchoolMembers` row, the slot is active and belongs to that school, the date is today through today + 14 calendar days, the date is not a weekend, the exam type is `midterm` or `final`, and the exam name is non-empty. It locks `school_id + reservation_date + slot_id`, counts confirmed reservations after acquiring the lock, compares that count with `ExamSlots.capacity`, and inserts a confirmed reservation only if capacity remains. Do not trust a frontend-only seat availability check for booking enforcement.
+Server-side checks are authoritative. The RPC verifies the caller is signed in, is a `student` member of the target school, has `can_self_book = true` on their `SchoolMembers` row, the selected slot is an active primary slot that belongs to the school, the date is today through today + 14 calendar days, the date is not a weekend, the exam type is `midterm` or `final`, and the exam name is non-empty. It locks the primary `school_id + reservation_date + slot_id`, counts confirmed primary reservations, and inserts into the primary slot when capacity remains. If the primary is full and has an active overflow room, it locks the overflow slot and books there only if overflow capacity remains. Do not trust a frontend-only seat availability check for booking enforcement.
 
 `SchoolMembers.can_self_book` defaults to `false` for all new members (migration `20260529000000_default_self_booking_false.sql`; previously defaulted to `true`). Admins and professors enable or disable self-booking per student via the `set_student_self_booking_permission` RPC from the Members tab. When disabled, the student's booking UI must reflect this state and the RPC will reject any booking attempt with an error.
 
-Duplicate rule: one student cannot hold two confirmed reservations for the same slot on the same date, but can book another slot on the same date. Cancelling a reservation changes `Reservations.status` to `cancelled`, which frees both the seat and that student's ability to book the same date/slot again.
+Duplicate rule: one student cannot hold two confirmed reservations for the same primary/overflow pair on the same date, but can book another time slot on the same date. Cancelling a reservation changes `Reservations.status` to `cancelled`, which frees both the seat and that student's ability to book the same date/slot pair again.
 
 Reservation cancellation is implemented through the deployed Supabase Edge Function `cancel-reservation` (`supabase/functions/cancel-reservation/index.ts`) with JWT verification enabled in `supabase/config.toml`. The client calls it with `{ reservationId }`. The RPC allows cancellation when the caller is the reservation's `user_id`, or when the caller is an admin/professor member of the reservation's school. Do not implement cancellation as a direct client-side table update.
 
+Admin/professor reservation updates are implemented in the school dashboard reservations tab through the `update_reservation` RPC, not through direct table updates. Each manageable reservation uses an action menu with `Update` and `Cancel reservation`. The update dialog is prefilled from the existing reservation, so unchanged date, slot, exam name, and exam type are submitted as-is. The client calls `update_reservation` with `target_reservation_id`, `target_slot_id`, `target_reservation_date`, `target_exam_name`, and `target_exam_type`; the RPC performs the same date/weekend/exam validation and primary/overflow capacity routing server-side. Because overflow reservations store the overflow `slot_id`, the dashboard loads `ExamSlots.slot_kind` and `ExamSlots.primary_slot_id` so the update dropdown can default overflow-routed reservations back to their primary slot.
 ### Attendance
 
 Attendance is stored on `Reservations` with `attendance_status`, `attendance_marked_by`, and `attendance_marked_at`. New reservations default to `attendance_status = 'present'`; exam supervisors only change a student to `absent` when the student did not attend.
@@ -232,9 +238,13 @@ Do not restore into an existing live Supabase project without manually clearing 
 
 When making a change, update the relevant section of this file in place — replace outdated information rather than appending. Do not accumulate a changelog. The goal is a compact, always-accurate reference.
 
+## Component Modularity
+
+Do not let dashboard components grow into one large file. Split substantial feature surfaces by tab, panel, dialog, action menu, helper/API module, and repeated row/card component before a file approaches roughly 500 lines. For school management, keep `components/dashboard/SchoolManagementTabs.tsx` as the tab glue shell and put tab-specific UI, local interaction state, and tab-specific mutations under `components/dashboard/school-management-tabs/`. Reuse page-loaded data between tabs instead of refetching the same `ExamSlots`, `Reservations`, members, invites, or join requests in each tab. Reservation-specific UI should stay further split into toolbar, summary strip, day view, week view, action menu, update dialog, and cancel dialog instead of being embedded back into the shell.
+
 ## UI Design System
 
-All visual conventions are documented in `docs/design.md`. Read it before building any UI. Key rules:
+All visual conventions are documented in `docs/ui.md`. Read it before building any UI. Key rules:
 
 - Page background: `#f7f8fa`; card surfaces: `#ffffff` with the `.panel` class. Never recreate this inline.
 - Single accent: `#2563eb` blue. Do not introduce other accent colors.
@@ -242,7 +252,7 @@ All visual conventions are documented in `docs/design.md`. Read it before buildi
 - CSS animation utilities: `anim-fade-in`, `anim-slide-up`, `anim-scale-in`, and stagger delays `anim-d1` through `anim-d4`, all defined in `globals.css`.
 - No dark mode.
 
-Before UI, React, or Next.js component work, read and follow the relevant installed design and Vercel skills in addition to `docs/design.md`:
+Before UI, React, or Next.js component work, read and follow the relevant installed design and Vercel skills in addition to `docs/ui.md`:
 
 ### Vercel / React skills (always read for any component work)
 - `web-design-guidelines` — UI/accessibility/design review against Vercel's web interface guidelines. Fetch fresh rules from source before each review.
