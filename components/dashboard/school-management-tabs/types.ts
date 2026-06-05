@@ -48,6 +48,7 @@ export type ExamSlot = {
   startsAt: string;
   endsAt: string;
   capacity: number;
+  isActive: boolean;
   slotKind: "primary" | "overflow";
   primarySlotId: string | null;
 };

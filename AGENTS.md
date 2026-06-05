@@ -21,6 +21,7 @@ If the graph feels stale after major refactors, run `graphify update .` to rebui
 
 This means:
 - Schema migrations must be backward-compatible and non-destructive. Never drop columns or tables that may hold live data without a safe migration path.
+- Before applying any Supabase migration to the remote project, explain the exact migration plan to the user and wait for explicit approval.
 - Do not run destructive SQL (truncate, drop, bulk delete) against production without explicit user confirmation.
 - RLS policy changes and RPC modifications affect real users immediately after deployment — review carefully before applying.
 - Treat `Reservations`, `SchoolMembers`, `Schools`, and `Profiles` as live production tables at all times.

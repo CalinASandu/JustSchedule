@@ -30,7 +30,8 @@ export type ErrorContext =
   | "schoolLeave"
   | "schoolMemberKick"
   | "schoolRoleUpdate"
-  | "selfBookingUpdate";
+  | "selfBookingUpdate"
+  | "slotManagement";
 
 const fallbackMessages: Record<ErrorContext, string> = {
   attendanceStart: "Could not start attendance for this slot. Try again in a moment.",
@@ -53,6 +54,7 @@ const fallbackMessages: Record<ErrorContext, string> = {
   schoolMemberKick: "Could not remove this member. Try again in a moment.",
   schoolRoleUpdate: "Could not update member roles. Try again in a moment.",
   selfBookingUpdate: "Could not update self-booking permission. Try again in a moment.",
+  slotManagement: "Could not update exam rooms. Try again in a moment.",
 };
 
 function normalizeMessage(value: unknown) {
@@ -134,6 +136,10 @@ export function getUserFacingErrorMessage(
 
     if (context === "selfBookingUpdate") {
       return "Only admins and professors can update student self-booking permissions.";
+    }
+
+    if (context === "slotManagement") {
+      return "Only admins and professors can manage exam rooms.";
     }
   }
 
@@ -308,6 +314,31 @@ export function getUserFacingErrorMessage(
 
     if (messageIncludes(message, ["own self-booking"])) {
       return "Students cannot update their own self-booking permission.";
+    }
+  }
+
+  if (context === "slotManagement") {
+    if (
+      code === "23505" ||
+      messageIncludes(message, ["already exists", "duplicate key", "already has an overflow"])
+    ) {
+      return "An exam room with these details already exists.";
+    }
+
+    if (messageIncludes(message, ["capacity"])) {
+      return "Capacity must be at least 1.";
+    }
+
+    if (messageIncludes(message, ["end time", "after the start"])) {
+      return "End time must be after the start time.";
+    }
+
+    if (messageIncludes(message, ["slot name", "name is required"])) {
+      return "Enter an exam room name.";
+    }
+
+    if (messageIncludes(message, ["enable the primary", "primary slot is disabled"])) {
+      return "Enable the main room before enabling its overflow room.";
     }
   }
 

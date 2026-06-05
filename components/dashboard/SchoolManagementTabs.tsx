@@ -63,6 +63,7 @@ export default function SchoolManagementTabs({
   const [activeTab, setActiveTab] = useState<SchoolDashboardTab>(
     currentUserRole === "exam_supervisor" ? "reservations" : "members",
   );
+  const activeExamSlots = examSlots.filter((slot) => slot.isActive);
 
   function renderTabButton(tab: SchoolDashboardTab, label: string) {
     return (
@@ -98,7 +99,7 @@ export default function SchoolManagementTabs({
           schoolName={schoolName}
           members={members}
           memberError={memberError}
-          examSlots={examSlots}
+          examSlots={activeExamSlots}
           reservations={reservations}
           subjects={schoolSubjects}
           canManageMembers={canManageMembers}
@@ -109,7 +110,7 @@ export default function SchoolManagementTabs({
       {activeTab === "reservations" && (
         <ReservationsTab
           reservationError={reservationError}
-          examSlots={examSlots}
+          examSlots={activeExamSlots}
           reservations={reservations}
           members={members}
           currentUserRole={currentUserRole}
@@ -118,7 +119,7 @@ export default function SchoolManagementTabs({
 
       {activeTab === "attendance" && canViewAttendance && (
         <AttendanceTab
-          examSlots={examSlots}
+          examSlots={activeExamSlots}
           reservations={reservations}
           attendanceSessions={attendanceSessions}
           members={members}
@@ -142,6 +143,7 @@ export default function SchoolManagementTabs({
         <SettingsTab
           schoolId={schoolId}
           schoolName={schoolName}
+          initialExamSlots={examSlots}
           initialSubjects={schoolSubjects}
         />
       )}

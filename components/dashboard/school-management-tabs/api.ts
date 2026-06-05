@@ -6,6 +6,7 @@ import {
 import type {
   AttendanceStatus,
   Decision,
+  ExamSlot,
   ExamType,
   ReservationUpdateResult,
   SchoolRole,
@@ -283,18 +284,150 @@ export async function upsertSchoolSubject(args: {
   return { data: data as SchoolSubject, error: null };
 }
 
+function normalizeExamSlot(row: Record<string, unknown>): ExamSlot {
+  return {
+    id: String(row.slot_id ?? row.id ?? ""),
+    name: String(row.name ?? ""),
+    startsAt: String(row.starts_at ?? ""),
+    endsAt: String(row.ends_at ?? ""),
+    capacity: Number(row.capacity ?? 0),
+    isActive: Boolean(row.is_active ?? false),
+    slotKind: row.slot_kind === "overflow" ? "overflow" : "primary",
+    primarySlotId: row.primary_slot_id ? String(row.primary_slot_id) : null,
+  };
+}
+
+export async function createExamSlot(args: {
+  schoolId: string;
+  name: string;
+  startsAt: string;
+  endsAt: string;
+  capacity: number;
+}): Promise<ApiResult<ExamSlot>> {
+  const supabase = createClient();
+  const { data, error } = await supabase.rpc("create_exam_slot", {
+    target_school_id: args.schoolId,
+    slot_name: args.name,
+    slot_starts_at: args.startsAt,
+    slot_ends_at: args.endsAt,
+    slot_capacity: args.capacity,
+  });
+
+  if (error) {
+    console.error("Create exam slot failed", error);
+    return {
+      data: null,
+      error: getUserFacingErrorMessage("slotManagement", error),
+    };
+  }
+
+  const row = Array.isArray(data) ? data[0] : data;
+
+  if (!row || typeof row !== "object") {
+    return { data: null, error: "The slot function returned an invalid response." };
+  }
+
+  return { data: normalizeExamSlot(row as Record<string, unknown>), error: null };
+}
+
+export async function createOverflowExamSlot(args: {
+  primarySlotId: string;
+  capacity: number;
+}): Promise<ApiResult<ExamSlot>> {
+  const supabase = createClient();
+  const { data, error } = await supabase.rpc("create_overflow_exam_slot", {
+    target_primary_slot_id: args.primarySlotId,
+    slot_capacity: args.capacity,
+  });
+
+  if (error) {
+    console.error("Create overflow exam slot failed", error);
+    return {
+      data: null,
+      error: getUserFacingErrorMessage("slotManagement", error),
+    };
+  }
+
+  const row = Array.isArray(data) ? data[0] : data;
+
+  if (!row || typeof row !== "object") {
+    return { data: null, error: "The overflow slot function returned an invalid response." };
+  }
+
+  return { data: normalizeExamSlot(row as Record<string, unknown>), error: null };
+}
+
+export async function updateExamSlot(args: {
+  slotId: string;
+  name: string;
+  startsAt: string;
+  endsAt: string;
+  capacity: number;
+  isActive?: boolean;
+}): Promise<ApiResult<ExamSlot>> {
+  const supabase = createClient();
+  const { data, error } = await supabase.rpc("update_exam_slot", {
+    target_slot_id: args.slotId,
+    slot_name: args.name,
+    slot_starts_at: args.startsAt,
+    slot_ends_at: args.endsAt,
+    slot_capacity: args.capacity,
+    target_is_active: args.isActive ?? null,
+  });
+
+  if (error) {
+    console.error("Update exam slot failed", error);
+    return {
+      data: null,
+      error: getUserFacingErrorMessage("slotManagement", error),
+    };
+  }
+
+  const row = Array.isArray(data) ? data[0] : data;
+
+  if (!row || typeof row !== "object") {
+    return { data: null, error: "The slot update function returned an invalid response." };
+  }
+
+  return { data: normalizeExamSlot(row as Record<string, unknown>), error: null };
+}
+
+export async function setExamSlotActive(args: {
+  slotId: string;
+  isActive: boolean;
+}): Promise<ApiResult<ExamSlot[]>> {
+  const supabase = createClient();
+  const { data, error } = await supabase.rpc("update_exam_slot", {
+    target_slot_id: args.slotId,
+    target_is_active: args.isActive,
+  });
+
+  if (error) {
+    console.error("Update exam slot active state failed", error);
+    return {
+      data: null,
+      error: getUserFacingErrorMessage("slotManagement", error),
+    };
+  }
+
+  return {
+    data: ((data ?? []) as Record<string, unknown>[]).map(normalizeExamSlot),
+    error: null,
+  };
+}
+
 export async function removeSchoolSubject(args: {
   schoolId: string;
   subjectId: string;
 }): Promise<ApiResult<null>> {
   const supabase = createClient();
-  const { error } = await supabase
-    .from("SchoolSubjects")
-    .update({ deleted_at: new Date().toISOString() })
-    .eq("id", args.subjectId)
-    .eq("school_id", args.schoolId);
+  const { error } = await supabase.rpc("remove_school_subject", {
+    target_school_id: args.schoolId,
+    target_subject_id: args.subjectId,
+  });
 
   if (error) {
+    console.error("Remove school subject failed", error);
     return { data: null, error: "Could not remove subject. Try again." };
   }
 
