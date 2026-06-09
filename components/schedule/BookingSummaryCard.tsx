@@ -15,6 +15,12 @@ interface BookingSummaryCardProps {
   isConfirmed: boolean
   error: string | null
   reserveDisabledMessage?: string | null
+  actionLabel?: string
+  submittingLabel?: string
+  confirmedTitle?: string
+  confirmedDescription?: string
+  resetLabel?: string
+  securityText?: string
   onReserve: () => void
   onReset: () => void
 }
@@ -49,6 +55,12 @@ export default function BookingSummaryCard({
   isConfirmed,
   error,
   reserveDisabledMessage,
+  actionLabel = 'Reserve seat',
+  submittingLabel = 'Reserving...',
+  confirmedTitle = 'Booking confirmed!',
+  confirmedDescription,
+  resetLabel = 'Schedule another exam',
+  securityText = 'Your booking is secure and confidential.',
   onReserve,
   onReset,
 }: BookingSummaryCardProps) {
@@ -94,9 +106,9 @@ export default function BookingSummaryCard({
               </svg>
             </div>
             <div>
-              <p className="text-sm font-semibold" style={{ color: '#15803D' }}>Booking confirmed!</p>
+              <p className="text-sm font-semibold" style={{ color: '#15803D' }}>{confirmedTitle}</p>
               <p className="text-xs mt-0.5" style={{ color: '#4ADE80' }}>
-                {time} · {date}
+                {confirmedDescription ?? `${time} · ${date}`}
               </p>
             </div>
           </div>
@@ -131,7 +143,7 @@ export default function BookingSummaryCard({
             onMouseEnter={e => { e.currentTarget.style.background = '#E9EAEB' }}
             onMouseLeave={e => { e.currentTarget.style.background = '#F3F4F6' }}
           >
-            Schedule another exam
+            {resetLabel}
           </button>
         </div>
       ) : (
@@ -217,7 +229,7 @@ export default function BookingSummaryCard({
               onMouseDown={e => { if (canReserve) e.currentTarget.style.transform = 'scale(0.98)' }}
               onMouseUp={e => { e.currentTarget.style.transform = 'scale(1)' }}
             >
-              {isSubmitting ? 'Reserving...' : 'Reserve seat'}
+              {isSubmitting ? submittingLabel : actionLabel}
               {canReserve && (
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                   <path d="M3 7h8M8 4l3 3-3 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -235,7 +247,7 @@ export default function BookingSummaryCard({
                 />
               </svg>
               <span className="text-[11px]" style={{ color: '#9CA3AF' }}>
-                Your booking is secure and confidential.
+                {securityText}
               </span>
             </div>
           </div>

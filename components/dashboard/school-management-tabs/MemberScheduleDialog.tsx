@@ -47,6 +47,26 @@ export function MemberScheduleDialog({
 }: MemberScheduleDialogProps) {
   const selectedScheduleSlot =
     examSlots.find((slot) => slot.id === scheduleSlotId) ?? examSlots[0] ?? null;
+  const selectedSlotGroupIds = getSlotGroupIds(examSlots, selectedScheduleSlot);
+  const hasSameTimeReservation =
+    selectedSlotGroupIds.size > 0 &&
+    reservations.some(
+      (reservation) =>
+        reservation.userId === member.userId &&
+        reservation.status === "confirmed" &&
+        reservation.reservationDate === scheduleDate &&
+        selectedSlotGroupIds.has(reservation.slotId),
+    );
+  const hasRepeatedExam =
+    !!scheduleExamName.trim() &&
+    reservations.some(
+      (reservation) =>
+        reservation.userId === member.userId &&
+        reservation.status === "confirmed" &&
+        reservation.reservationDate >= getTodayKey() &&
+        reservation.examType === scheduleExamType &&
+        normalizeExamName(reservation.examName) === normalizeExamName(scheduleExamName),
+    );
 
   return createPortal(
     <div
@@ -216,7 +236,9 @@ export function MemberScheduleDialog({
               {selectedScheduleSlot && (
                 <SlotRemainingPill
                   slot={selectedScheduleSlot}
+                  allSlots={examSlots}
                   reservations={reservations}
+                  memberUserId={member.userId}
                   scheduleDate={scheduleDate}
                   scheduleSlotId={scheduleSlotId}
                 />
@@ -270,6 +292,32 @@ export function MemberScheduleDialog({
             </div>
           </div>
 
+          {hasSameTimeReservation ? (
+            <p
+              className="anim-fade-in mt-3 rounded-[8px] px-3 py-2 text-[0.8125rem]"
+              style={{
+                background: "#FEF2F2",
+                border: "1px solid #FECACA",
+                color: "#DC2626",
+              }}
+            >
+              This student already has a reservation in this time slot for this date.
+              Choose another date or slot.
+            </p>
+          ) : hasRepeatedExam ? (
+            <p
+              className="anim-fade-in mt-3 rounded-[8px] px-3 py-2 text-[0.8125rem]"
+              style={{
+                background: "#FEF2F2",
+                border: "1px solid #FECACA",
+                color: "#DC2626",
+              }}
+            >
+              This student already has a future reservation for this exam and type.
+              Choose a different exam or cancel the existing reservation first.
+            </p>
+          ) : null}
+
           <div className="mt-5 flex flex-col-reverse gap-2 border-t border-[#F3F4F6] pt-4 sm:flex-row sm:justify-end">
             <button
               type="button"
@@ -287,16 +335,28 @@ export function MemberScheduleDialog({
                 state.pending ||
                 !scheduleSlotId ||
                 !scheduleExamName.trim() ||
+                hasSameTimeReservation ||
+                hasRepeatedExam ||
                 examSlots.length === 0
               }
               className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
               style={{
                 background:
-                  state.pending || !scheduleSlotId || !scheduleExamName.trim() || examSlots.length === 0
+                  state.pending ||
+                  !scheduleSlotId ||
+                  !scheduleExamName.trim() ||
+                  hasSameTimeReservation ||
+                  hasRepeatedExam ||
+                  examSlots.length === 0
                     ? "#93C5FD"
                     : "#2563EB",
                 boxShadow:
-                  state.pending || !scheduleSlotId || !scheduleExamName.trim() || examSlots.length === 0
+                  state.pending ||
+                  !scheduleSlotId ||
+                  !scheduleExamName.trim() ||
+                  hasSameTimeReservation ||
+                  hasRepeatedExam ||
+                  examSlots.length === 0
                     ? "none"
                     : "0 1px 3px rgba(37,99,235,0.25), 0 4px 12px rgba(37,99,235,0.12)",
               }}
@@ -314,24 +374,40 @@ export function MemberScheduleDialog({
 
 function SlotRemainingPill({
   slot,
+  allSlots,
   reservations,
+  memberUserId,
   scheduleDate,
   scheduleSlotId,
 }: {
   slot: ExamSlot;
+  allSlots: ExamSlot[];
   reservations: Reservation[];
+  memberUserId: string;
   scheduleDate: string;
   scheduleSlotId: string;
 }) {
+  const slotGroupIds = getSlotGroupIds(allSlots, slot);
   const booked = reservations.filter(
     (reservation) =>
-      reservation.slotId === scheduleSlotId && reservation.reservationDate === scheduleDate,
+      reservation.slotId === scheduleSlotId &&
+      reservation.reservationDate === scheduleDate &&
+      reservation.status === "confirmed",
   ).length;
+  const hasStudentConflict = reservations.some(
+    (reservation) =>
+      reservation.userId === memberUserId &&
+      reservation.reservationDate === scheduleDate &&
+      reservation.status === "confirmed" &&
+      slotGroupIds.has(reservation.slotId),
+  );
   const remaining = slot.capacity - booked;
-  const bg = remaining <= 0 ? "#FEF2F2" : remaining <= 2 ? "#FEF3C7" : "#DBEAFE";
-  const color = remaining <= 0 ? "#DC2626" : remaining <= 2 ? "#B45309" : "#1D4ED8";
+  const bg = hasStudentConflict || remaining <= 0 ? "#FEF2F2" : remaining <= 2 ? "#FEF3C7" : "#DBEAFE";
+  const color = hasStudentConflict || remaining <= 0 ? "#DC2626" : remaining <= 2 ? "#B45309" : "#1D4ED8";
   const label =
-    remaining <= 0
+    hasStudentConflict
+      ? "Student already booked at this time"
+      : remaining <= 0
       ? "No spots left"
       : `${remaining} of ${slot.capacity} spot${slot.capacity !== 1 ? "s" : ""} left`;
 
@@ -343,4 +419,27 @@ function SlotRemainingPill({
       {label}
     </p>
   );
+}
+
+function normalizeExamName(value: string) {
+  return value.trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+function getSlotGroupIds(slots: ExamSlot[], slot: ExamSlot | null) {
+  const ids = new Set<string>();
+
+  if (!slot) {
+    return ids;
+  }
+
+  const primaryId = slot.slotKind === "overflow" ? slot.primarySlotId ?? slot.id : slot.id;
+  ids.add(primaryId);
+
+  for (const item of slots) {
+    if (item.id === primaryId || item.primarySlotId === primaryId) {
+      ids.add(item.id);
+    }
+  }
+
+  return ids;
 }

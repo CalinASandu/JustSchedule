@@ -24,7 +24,7 @@ The env helper at `lib/supabase/env.ts` validates `NEXT_PUBLIC_SUPABASE_URL` and
 
 ## Invites and Join Requests
 
-Admins create invite links from the school management page. Invite creation calls the Edge Function `create-school-invite` with `{ schoolId, expiresAt, siteUrl }`, receiving `{ inviteLink }`.
+Admins create invite links from `Settings > Invites` on the school management page. Invite creation calls the Edge Function `create-school-invite` with `{ schoolId, expiresAt, siteUrl }`, receiving `{ inviteLink }`. Invites should stay inside Settings rather than returning as a top-level dashboard tab.
 
 Invite links use `/invite/[inviteToken]`. Unauthenticated visitors redirect to `/?next=/invite/[inviteToken]`. Accepting an invite creates a pending `JoinRequests` row — it does not create direct membership.
 

@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getCompletedProfileName } from "@/lib/profile-name";
 import { createClient } from "@/lib/supabase/server";
 import { getUserFacingErrorMessage } from "@/lib/user-facing-errors";
 
@@ -26,6 +27,16 @@ export async function registerSchool(
 
   if (!user) {
     return { error: "You need to sign in again.", success: false };
+  }
+
+  const { data: profile } = await supabase
+    .from("Profiles")
+    .select("name")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (!getCompletedProfileName(profile)) {
+    return { error: "Add your name before creating a school.", success: false };
   }
 
   const { error: schoolError } = await supabase
@@ -73,6 +84,16 @@ export async function requestDirectJoin(
 
   if (!user) {
     return { error: "You need to sign in again.", success: false };
+  }
+
+  const { data: profile } = await supabase
+    .from("Profiles")
+    .select("name")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (!getCompletedProfileName(profile)) {
+    return { error: "Add your name before requesting to join.", success: false };
   }
 
   const { error } = await supabase.from("JoinRequests").insert({

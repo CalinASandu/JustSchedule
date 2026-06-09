@@ -1,3 +1,4 @@
+import { getCompletedProfileName, getProfileNameSetupPath } from "@/lib/profile-name";
 import { createClient } from "@/lib/supabase/server";
 import { sanitizeRelativePath } from "@/lib/urls";
 import { NextResponse, type NextRequest } from "next/server";
@@ -37,9 +38,9 @@ export async function GET(request: NextRequest) {
           .eq("id", user.id)
           .single();
 
-        if (!profile?.name) {
+        if (!getCompletedProfileName(profile)) {
           const response = NextResponse.redirect(
-            new URL(`/login?next=${encodeURIComponent(next)}`, requestUrl.origin),
+            new URL(getProfileNameSetupPath(next), requestUrl.origin),
           );
           response.cookies.delete("oauth_next");
           return response;

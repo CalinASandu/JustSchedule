@@ -1,5 +1,9 @@
 # JustSchedule — Architecture Decisions
 
+## Supabase Caller Role Assertions
+
+Supabase database functions must use `private.assert_school_role(target_school_id, target_role)` whenever they assert the signed-in caller's school role. Do not duplicate caller authorization with ad hoc `SchoolMembers` role queries inside new RPCs or migrations. Direct `SchoolMembers` queries are still acceptable when reading non-role fields, such as `can_self_book`, or when validating a target user who is not the signed-in caller.
+
 ## Soft Delete for Schools
 
 Schools use soft delete (`soft_delete_school` RPC) rather than hard delete. Dependent rows (SchoolMembers, Reservations, ExamSlots) are preserved for audit and history — hard delete would cascade-destroy student booking records. Active school queries filter `deleted_at is null`.

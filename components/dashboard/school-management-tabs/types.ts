@@ -3,12 +3,20 @@ export type ExamType = "midterm" | "final";
 export type AttendanceStatus = "present" | "absent";
 export type Decision = "approved" | "rejected";
 export type ReservationViewMode = "day" | "week";
+export type ScheduleRequestStatus =
+  | "pending"
+  | "approved"
+  | "declined"
+  | "expired"
+  | "failed_capacity"
+  | "failed_conflict"
+  | "cancelled";
 export type SchoolDashboardTab =
   | "members"
   | "reservations"
   | "attendance"
   | "requests"
-  | "invites"
+  | "examRequests"
   | "settings";
 
 export type SchoolMember = {
@@ -79,6 +87,36 @@ export type ReservationUpdateResult = {
   endsAt: string;
   capacity: number;
   remaining: number;
+};
+
+export type ScheduleRequest = {
+  id: string;
+  schoolId: string;
+  studentUserId: string;
+  studentName: string;
+  studentEmail: string | null;
+  teacherUserId: string;
+  teacherName: string;
+  slotId: string;
+  slotGroupId: string;
+  slotName: string;
+  startsAt: string;
+  endsAt: string;
+  capacity: number;
+  primaryBooked: number;
+  overflowSlotId: string | null;
+  overflowCapacity: number | null;
+  overflowBooked: number;
+  reservationDate: string;
+  examName: string;
+  examType: ExamType;
+  status: ScheduleRequestStatus;
+  reviewerMessage: string | null;
+  reviewedBy: string | null;
+  reviewedAt: string | null;
+  reservationId: string | null;
+  expiresAt: string;
+  createdAt: string;
 };
 
 export type AttendanceSession = {

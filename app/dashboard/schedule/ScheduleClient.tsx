@@ -3,9 +3,19 @@
 import { Fragment, useMemo, useState } from "react";
 import { Ban, CalendarDays, ClipboardList, Loader2, UserRound } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import type { ExamType, Reservation, SlotDef } from "@/components/schedule/types";
+import type {
+  ExamType,
+  Reservation,
+  ScheduleRequest,
+  SlotDef,
+  TeacherOption,
+  UserNotification,
+} from "@/components/schedule/types";
 import { createClient } from "@/lib/supabase/client";
-import { getUserFacingFunctionErrorMessage } from "@/lib/user-facing-errors";
+import {
+  getUserFacingErrorMessage,
+  getUserFacingFunctionErrorMessage,
+} from "@/lib/user-facing-errors";
 import Navbar from "@/components/schedule/Navbar";
 import CalendarPanel from "@/components/schedule/CalendarPanel";
 import SlotPicker from "@/components/schedule/SlotPicker";
@@ -14,6 +24,8 @@ import SeatAvailabilityOverview from "@/components/schedule/SeatAvailabilityOver
 import BookingsPanel from "@/components/schedule/BookingsPanel";
 import LeaveSchoolButton from "@/components/dashboard/LeaveSchoolButton";
 import SubjectCommandPalette from "@/components/schedule/SubjectCommandPalette";
+import ScheduleRequestsPanel from "@/components/schedule/ScheduleRequestsPanel";
+import TeacherRequestSelector from "@/components/schedule/TeacherRequestSelector";
 
 interface ScheduleClientProps {
   schoolId: string;
@@ -25,8 +37,26 @@ interface ScheduleClientProps {
   canSelfBook: boolean;
   examSlots: SlotDef[];
   initialReservations: Reservation[];
+  initialScheduleRequests: ScheduleRequest[];
+  requestTeachers: TeacherOption[];
+  notifications: UserNotification[];
   schoolSubjects: { id: string; name: string }[];
   reservationError: string | null;
+}
+
+function isMissingRefreshTokenError(error: unknown) {
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+
+  const authError = error as { code?: unknown; message?: unknown };
+  const message = typeof authError.message === "string" ? authError.message : "";
+
+  return (
+    authError.code === "refresh_token_not_found" ||
+    message.includes("Invalid Refresh Token") ||
+    message.includes("Refresh Token Not Found")
+  );
 }
 
 export default function ScheduleClient({
@@ -39,6 +69,9 @@ export default function ScheduleClient({
   canSelfBook,
   examSlots,
   initialReservations,
+  initialScheduleRequests,
+  requestTeachers,
+  notifications,
   schoolSubjects,
   reservationError,
 }: ScheduleClientProps) {
@@ -52,13 +85,23 @@ export default function ScheduleClient({
   const [examType, setExamType] = useState<ExamType>("midterm");
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
+  const [selectedTeacherId, setSelectedTeacherId] = useState<string>(
+    requestTeachers[0]?.userId ?? "",
+  );
   const [reservations, setReservations] = useState<Reservation[]>(initialReservations);
+  const [scheduleRequests, setScheduleRequests] =
+    useState<ScheduleRequest[]>(initialScheduleRequests);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [reserveError, setReserveError] = useState<string | null>(reservationError);
   const [cancelingReservationId, setCancelingReservationId] = useState<string | null>(null);
   const [cancelReservationError, setCancelReservationError] = useState<string | null>(null);
   const [cancelDialogReservation, setCancelDialogReservation] = useState<Reservation | null>(null);
+  const [cancelingRequestId, setCancelingRequestId] = useState<string | null>(null);
+  const [cancelRequestError, setCancelRequestError] = useState<string | null>(null);
+  const [markingSeenRequestId, setMarkingSeenRequestId] = useState<string | null>(null);
+  const [markSeenRequestError, setMarkSeenRequestError] = useState<string | null>(null);
   const [bookingStep, setBookingStep] = useState<1 | 2 | 3>(1);
+  const canDirectBook = canSelfBook === true;
 
   function handleDateSelect(date: string) {
     setSelectedDate(date);
@@ -80,13 +123,27 @@ export default function ScheduleClient({
     const slot = examSlots.find((item) => item.id === selectedSlotId);
     if (!slot) return;
 
+    if (!canDirectBook) {
+      void handleCreateRequest(slot);
+      return;
+    }
+
     setReserveError(null);
     setIsReserving(true);
     void (async () => {
       try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+
+        if (sessionError) {
+          if (isMissingRefreshTokenError(sessionError)) {
+            await supabase.auth.signOut({ scope: "local" });
+          }
+
+          setReserveError("Your session expired. Sign in again to reserve a seat.");
+          return;
+        }
+
+        const session = sessionData.session;
 
         if (!session?.access_token) {
           setReserveError("Your session expired. Sign in again to reserve a seat.");
@@ -150,6 +207,74 @@ export default function ScheduleClient({
     })();
   }
 
+  async function handleCreateRequest(slot: SlotDef) {
+    if (!selectedDate || !selectedSlotId) return;
+
+    if (!selectedTeacherId) {
+      setReserveError("Choose a professor for this request.");
+      return;
+    }
+
+    setReserveError(null);
+    setIsReserving(true);
+
+    try {
+      const { data, error } = await supabase.rpc("create_schedule_request", {
+        target_school_id: schoolId,
+        target_teacher_user_id: selectedTeacherId,
+        target_slot_id: selectedSlotId,
+        target_reservation_date: selectedDate,
+        target_exam_name: selectedExam.trim(),
+        target_exam_type: examType,
+      });
+
+      if (error) {
+        console.error("Create schedule request failed", error);
+        setReserveError(getUserFacingErrorMessage("scheduleRequest", error));
+        return;
+      }
+
+      const row = Array.isArray(data) ? data[0] : data;
+      const teacher = requestTeachers.find((item) => item.userId === selectedTeacherId);
+
+      setScheduleRequests((current) => [
+        {
+          id: String(row?.request_id ?? crypto.randomUUID()),
+          schoolId,
+          studentUserId: currentUserId,
+          teacherUserId: selectedTeacherId,
+          teacherName: teacher?.name ?? "Professor",
+          slotId: selectedSlotId,
+          slotGroupId: selectedSlotId,
+          slotName: slot.label,
+          startsAt: slot.startsAt,
+          endsAt: slot.endsAt,
+          capacity: slot.capacity,
+          overflowSlotId: null,
+          overflowCapacity: null,
+          reservationDate: selectedDate,
+          examName: selectedExam.trim(),
+          examType,
+          status: "pending",
+          reviewerMessage: null,
+          reviewedAt: null,
+          reservationId: null,
+          expiresAt: String(row?.expires_at ?? new Date().toISOString()),
+          createdAt: new Date().toISOString(),
+          studentSeenAt: null,
+        },
+        ...current,
+      ]);
+      setShowConfirmation(true);
+      router.refresh();
+    } catch (error) {
+      console.error("Create schedule request failed", error);
+      setReserveError("Could not send this request. Try again in a moment.");
+    } finally {
+      setIsReserving(false);
+    }
+  }
+
   function handleReset() {
     setSelectedDate(null);
     setSelectedSlotId(null);
@@ -157,6 +282,7 @@ export default function ScheduleClient({
     setReserveError(reservationError);
     setSelectedExam("");
     setExamType("midterm");
+    setSelectedTeacherId(requestTeachers[0]?.userId ?? "");
     setBookingStep(1);
   }
 
@@ -169,9 +295,18 @@ export default function ScheduleClient({
     setCancelReservationError(null);
 
     try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+
+      if (sessionError) {
+        if (isMissingRefreshTokenError(sessionError)) {
+          await supabase.auth.signOut({ scope: "local" });
+        }
+
+        setCancelReservationError("Your session expired. Sign in again to cancel this reservation.");
+        return;
+      }
+
+      const session = sessionData.session;
 
       if (!session?.access_token) {
         setCancelReservationError("Your session expired. Sign in again to cancel this reservation.");
@@ -208,6 +343,77 @@ export default function ScheduleClient({
     }
   }
 
+  async function handleCancelRequest(request: ScheduleRequest) {
+    if (cancelingRequestId || request.status !== "pending") {
+      return;
+    }
+
+    setCancelingRequestId(request.id);
+    setCancelRequestError(null);
+
+    try {
+      const { data, error } = await supabase.rpc("cancel_schedule_request", {
+        target_request_id: request.id,
+      });
+
+      if (error) {
+        console.error("Cancel schedule request failed", error);
+        setCancelRequestError(getUserFacingErrorMessage("scheduleRequest", error));
+        return;
+      }
+
+      const row = Array.isArray(data) ? data[0] : data;
+      const nextStatus =
+        row && typeof row === "object" && "status" in row ? String(row.status) : "cancelled";
+
+      setScheduleRequests((current) =>
+        current.map((item) =>
+          item.id === request.id
+            ? { ...item, status: nextStatus as ScheduleRequest["status"] }
+            : item,
+        ),
+      );
+      router.refresh();
+    } catch (error) {
+      console.error("Cancel schedule request failed", error);
+      setCancelRequestError("Could not cancel this request. Try again in a moment.");
+    } finally {
+      setCancelingRequestId(null);
+    }
+  }
+
+  async function handleMarkRequestSeen(request: ScheduleRequest) {
+    if (
+      markingSeenRequestId ||
+      (request.status !== "approved" && request.status !== "declined")
+    ) {
+      return;
+    }
+
+    setMarkingSeenRequestId(request.id);
+    setMarkSeenRequestError(null);
+
+    try {
+      const { error } = await supabase.rpc("mark_schedule_request_seen", {
+        target_request_id: request.id,
+      });
+
+      if (error) {
+        console.error("Mark schedule request seen failed", error);
+        setMarkSeenRequestError(getUserFacingErrorMessage("scheduleRequest", error));
+        return;
+      }
+
+      setScheduleRequests((current) => current.filter((item) => item.id !== request.id));
+      router.refresh();
+    } catch (error) {
+      console.error("Mark schedule request seen failed", error);
+      setMarkSeenRequestError("Could not mark this request as seen. Try again in a moment.");
+    } finally {
+      setMarkingSeenRequestId(null);
+    }
+  }
+
   const selectedSlotDef = selectedSlotId
     ? examSlots.find((slot) => slot.id === selectedSlotId)
     : null;
@@ -226,12 +432,14 @@ export default function ScheduleClient({
     !!selectedExam.trim() &&
     !!selectedDate &&
     !!selectedSlotId &&
-    canSelfBook &&
+    (canDirectBook || !!selectedTeacherId) &&
     !showConfirmation &&
     !isReserving;
-  const reserveDisabledMessage = canSelfBook
+  const reserveDisabledMessage = canDirectBook
     ? null
-    : "A professor must schedule this exam for you.";
+    : !selectedTeacherId
+      ? "Choose a professor from this school to send the request."
+      : "This sends a request only. Seats are not held until a professor approves it.";
   const ownReservations = useMemo(
     () => reservations.filter((reservation) => reservation.userId === currentUserId),
     [currentUserId, reservations],
@@ -255,7 +463,7 @@ export default function ScheduleClient({
 
   return (
     <div className="min-h-dvh" style={{ background: "#F7F8FA" }}>
-      <Navbar userName={studentName} userEmail={userEmail} />
+      <Navbar userName={studentName} userEmail={userEmail} notifications={notifications} />
 
       <main style={{ maxWidth: 1400, margin: "0 auto", padding: "0 24px 64px" }}>
         <div className="flex flex-col gap-4 py-8 lg:flex-row lg:items-end lg:justify-between">
@@ -451,6 +659,14 @@ export default function ScheduleClient({
                             ))}
                           </div>
                         </div>
+
+                        {!canDirectBook && (
+                          <TeacherRequestSelector
+                            teachers={requestTeachers}
+                            selectedTeacherId={selectedTeacherId}
+                            onTeacherChange={setSelectedTeacherId}
+                          />
+                        )}
                       </div>
                     </>
                   )}
@@ -467,6 +683,20 @@ export default function ScheduleClient({
                     isConfirmed={showConfirmation}
                     error={reserveError}
                     reserveDisabledMessage={reserveDisabledMessage}
+                    actionLabel={canDirectBook ? "Reserve seat" : "Send request"}
+                    submittingLabel={canDirectBook ? "Reserving..." : "Sending request..."}
+                    confirmedTitle={canDirectBook ? "Booking confirmed!" : "Request sent"}
+                    confirmedDescription={
+                      canDirectBook
+                        ? undefined
+                        : "A professor must approve before a seat is booked."
+                    }
+                    resetLabel={canDirectBook ? "Schedule another exam" : "Request another exam"}
+                    securityText={
+                      canDirectBook
+                        ? "Your booking is secure and confidential."
+                        : "This request does not reserve a seat until approved."
+                    }
                     onReserve={handleReserve}
                     onReset={handleReset}
                   />
@@ -496,7 +726,18 @@ export default function ScheduleClient({
             </div>
           </>
         ) : activePanel === "reservations" ? (
-          <div className="anim-slide-up anim-d1">
+          <div className="grid gap-4">
+            <div className="anim-slide-up anim-d1">
+              <ScheduleRequestsPanel
+                requests={scheduleRequests}
+                cancelingRequestId={cancelingRequestId}
+                markingSeenRequestId={markingSeenRequestId}
+                cancelError={cancelRequestError}
+                markSeenError={markSeenRequestError}
+                onCancelRequest={handleCancelRequest}
+                onMarkSeen={handleMarkRequestSeen}
+              />
+            </div>
             <BookingsPanel
               reservations={ownReservations}
               currentUserId={currentUserId}

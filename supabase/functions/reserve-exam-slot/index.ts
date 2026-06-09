@@ -77,6 +77,13 @@ function statusForDatabaseError(error: { code?: string; message?: string }) {
 function publicReservationError(error: { code?: string; message?: string }) {
   const message = (error.message ?? "").toLowerCase();
 
+  if (message.includes("future reservation for this exam and type")) {
+    return {
+      code: "duplicate_exam",
+      error: "You already have a future reservation for this exam and type.",
+    };
+  }
+
   if (error.code === "23505" || message.includes("already reserved")) {
     return {
       code: "duplicate_reservation",

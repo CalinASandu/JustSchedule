@@ -1,7 +1,15 @@
 import ScheduleClient from "./ScheduleClient";
+import { getCompletedProfileName, getProfileNameSetupPath } from "@/lib/profile-name";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import type { ExamType, Reservation, SlotDef } from "@/components/schedule/types";
+import type {
+  ExamType,
+  Reservation,
+  ScheduleRequest,
+  SlotDef,
+  TeacherOption,
+  UserNotification,
+} from "@/components/schedule/types";
 import { getUserFacingErrorMessage } from "@/lib/user-facing-errors";
 
 type SchoolMemberRow = {
@@ -23,6 +31,8 @@ type ExamSlotRow = {
   starts_at: string;
   ends_at: string;
   capacity: number;
+  slot_kind: "primary" | "overflow" | null;
+  primary_slot_id: string | null;
 };
 
 type ReservationRow = {
@@ -44,6 +54,50 @@ type ReservationRow = {
   attendance_status: "present" | "absent" | null;
   attendance_marked_by: string | null;
   attendance_marked_at: string | null;
+};
+
+type ScheduleRequestRow = {
+  id: string;
+  school_id: string;
+  student_user_id: string;
+  requested_teacher_user_id: string;
+  teacher_name: string | null;
+  requested_slot_id: string;
+  requested_slot_group_id: string;
+  slot_name: string;
+  starts_at: string;
+  ends_at: string;
+  capacity: number;
+  overflow_slot_id: string | null;
+  overflow_capacity: number | null;
+  reservation_date: string;
+  exam_name: string;
+  exam_type: string;
+  status: ScheduleRequest["status"];
+  reviewer_message: string | null;
+  reviewed_at: string | null;
+  reservation_id: string | null;
+  expires_at: string;
+  created_at: string;
+  student_seen_at: string | null;
+};
+
+type TeacherRow = {
+  user_id: string;
+  name: string;
+};
+
+type NotificationRow = {
+  id: string;
+  school_id: string | null;
+  schedule_request_id: string | null;
+  reservation_id: string | null;
+  type: string;
+  title: string;
+  body: string;
+  href: string | null;
+  read_at: string | null;
+  created_at: string;
 };
 
 function getSchoolId(value: string | string[] | undefined) {
@@ -128,9 +182,14 @@ export default async function SchedulePage({
 
   const membershipRow = membership as SchoolMemberRow | null;
   const schoolRow = school as SchoolRow | null;
+  const displayName = getCompletedProfileName(profile);
 
   if (!schoolRow) {
     redirect("/dashboard");
+  }
+
+  if (!displayName) {
+    redirect(getProfileNameSetupPath(`/dashboard/schedule?schoolId=${schoolId}`));
   }
 
   if (!membershipRow) {
@@ -156,10 +215,13 @@ export default async function SchedulePage({
     { data: examSlotRows, error: examSlotsError },
     { data: reservationRows, error: reservationsError },
     { data: schoolSubjectRows },
+    { data: scheduleRequestRows, error: scheduleRequestsError },
+    { data: teacherRows, error: teachersError },
+    { data: notificationRows },
   ] = await Promise.all([
     supabase
       .from("ExamSlots")
-      .select("id, name, starts_at, ends_at, capacity")
+      .select("id, name, starts_at, ends_at, capacity, slot_kind, primary_slot_id")
       .eq("school_id", schoolId)
       .eq("is_active", true)
       .order("starts_at", { ascending: true }),
@@ -174,16 +236,29 @@ export default async function SchedulePage({
       .eq("school_id", schoolId)
       .is("deleted_at", null)
       .order("name", { ascending: true }),
+    supabase.rpc("get_student_schedule_requests", {
+      target_school_id: schoolId,
+    }),
+    supabase.rpc("get_school_request_teachers", {
+      target_school_id: schoolId,
+    }),
+    supabase.rpc("get_user_notifications", {
+      target_school_id: schoolId,
+    }),
   ]);
 
-  const examSlots: SlotDef[] = ((examSlotRows ?? []) as ExamSlotRow[]).map((slot) => ({
-    id: slot.id,
-    label: `${formatTime(slot.starts_at)} - ${formatTime(slot.ends_at)}`,
-    duration: formatDuration(slot.starts_at, slot.ends_at),
-    startsAt: slot.starts_at,
-    endsAt: slot.ends_at,
-    capacity: slot.capacity,
-  }));
+  const examSlots: SlotDef[] = ((examSlotRows ?? []) as ExamSlotRow[])
+    .filter((slot) => (slot.slot_kind ?? "primary") === "primary")
+    .map((slot) => ({
+      id: slot.id,
+      label: `${formatTime(slot.starts_at)} - ${formatTime(slot.ends_at)}`,
+      duration: formatDuration(slot.starts_at, slot.ends_at),
+      startsAt: slot.starts_at,
+      endsAt: slot.ends_at,
+      capacity: slot.capacity,
+      slotKind: slot.slot_kind ?? "primary",
+      primarySlotId: slot.primary_slot_id,
+    }));
 
   const reservations: Reservation[] = ((reservationRows ?? []) as ReservationRow[]).map(
     (reservation) => ({
@@ -211,16 +286,57 @@ export default async function SchedulePage({
     }),
   );
 
-  const displayName =
-    profile?.name ||
-    (typeof user.user_metadata?.full_name === "string"
-      ? user.user_metadata.full_name
-      : user.email?.split("@")[0]) ||
-    "Student";
-
   const schoolSubjects = ((schoolSubjectRows ?? []) as { id: string; name: string }[]).map(
     (s) => ({ id: s.id, name: s.name }),
   );
+  const scheduleRequests: ScheduleRequest[] = (
+    (scheduleRequestRows ?? []) as ScheduleRequestRow[]
+  ).map((request) => ({
+    id: request.id,
+    schoolId: request.school_id,
+    studentUserId: request.student_user_id,
+    teacherUserId: request.requested_teacher_user_id,
+    teacherName: request.teacher_name || "Professor",
+    slotId: request.requested_slot_id,
+    slotGroupId: request.requested_slot_group_id,
+    slotName: request.slot_name,
+    startsAt: request.starts_at,
+    endsAt: request.ends_at,
+    capacity: request.capacity,
+    overflowSlotId: request.overflow_slot_id,
+    overflowCapacity: request.overflow_capacity,
+    reservationDate: request.reservation_date,
+    examName: request.exam_name,
+    examType: normalizeExamType(request.exam_type),
+    status: request.status,
+    reviewerMessage: request.reviewer_message,
+    reviewedAt: request.reviewed_at,
+    reservationId: request.reservation_id,
+    expiresAt: request.expires_at,
+    createdAt: request.created_at,
+    studentSeenAt: request.student_seen_at,
+  }));
+  const requestTeachers: TeacherOption[] = ((teacherRows ?? []) as TeacherRow[]).map(
+    (teacher) => ({
+      userId: teacher.user_id,
+      name: teacher.name,
+    }),
+  );
+  const notifications: UserNotification[] = ((notificationRows ?? []) as NotificationRow[]).map(
+    (notification) => ({
+      id: notification.id,
+      schoolId: notification.school_id,
+      scheduleRequestId: notification.schedule_request_id,
+      reservationId: notification.reservation_id,
+      type: notification.type,
+      title: notification.title,
+      body: notification.body,
+      href: notification.href,
+      readAt: notification.read_at,
+      createdAt: notification.created_at,
+    }),
+  );
+  const canSelfBook = membershipRow.can_self_book === true;
 
   return (
     <ScheduleClient
@@ -230,15 +346,18 @@ export default async function SchedulePage({
       studentName={displayName}
       userEmail={user.email ?? "Signed in with Google"}
       currentUserId={user.id}
-      canSelfBook={membershipRow.can_self_book ?? true}
+      canSelfBook={canSelfBook}
       examSlots={examSlots}
       initialReservations={reservations}
+      initialScheduleRequests={scheduleRequests}
+      requestTeachers={requestTeachers}
+      notifications={notifications}
       schoolSubjects={schoolSubjects}
       reservationError={
-        examSlotsError || reservationsError
+        examSlotsError || reservationsError || scheduleRequestsError || teachersError
           ? getUserFacingErrorMessage(
               "loadReservations",
-              examSlotsError ?? reservationsError,
+              examSlotsError ?? reservationsError ?? scheduleRequestsError ?? teachersError,
             )
           : null
       }

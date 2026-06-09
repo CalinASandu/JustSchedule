@@ -1,5 +1,5 @@
 import type React from "react";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Ban, CheckCircle2, Loader2, MoreHorizontal, Pencil, Plus, X } from "lucide-react";
 import {
   createExamSlot,
@@ -9,6 +9,7 @@ import {
 } from "./api";
 import { formatSlotTime } from "./formatters";
 import { ErrorBanner } from "./shared";
+import { FloatingActionMenu } from "./FloatingActionMenu";
 import type { ExamSlot } from "./types";
 
 type SettingsExamRoomsPanelProps = {
@@ -342,10 +343,12 @@ function SlotActionMenu({
   onToggle: () => void;
 }) {
   const [open, setOpen] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <div className="relative">
+    <div>
       <button
+        ref={buttonRef}
         type="button"
         onClick={() => setOpen((current) => !current)}
         disabled={disabled}
@@ -357,14 +360,12 @@ function SlotActionMenu({
         {isPending ? <Loader2 size={15} className="animate-spin" /> : <MoreHorizontal size={15} />}
       </button>
 
-      {open && (
-        <div
-          className="absolute right-0 top-full z-30 mt-1 w-48 rounded-[10px] bg-white py-1"
-          style={{
-            border: "1px solid #E4E8EF",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
-          }}
-        >
+      <FloatingActionMenu
+        anchorRef={buttonRef}
+        open={open}
+        width={192}
+        onClose={() => setOpen(false)}
+      >
           <MenuButton
             icon={<Pencil size={14} />}
             label="Edit"
@@ -392,8 +393,7 @@ function SlotActionMenu({
               onToggle();
             }}
           />
-        </div>
-      )}
+      </FloatingActionMenu>
     </div>
   );
 }
