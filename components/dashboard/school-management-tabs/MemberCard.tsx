@@ -1,4 +1,5 @@
 import type React from "react";
+import { useRef } from "react";
 import {
   Ban,
   CalendarPlus,
@@ -10,6 +11,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { formatDate, formatRole } from "./formatters";
+import { FloatingActionMenu } from "./FloatingActionMenu";
 import { getRolePillStyle, roleOptions } from "./role-utils";
 import type { SchoolMember, SchoolRole } from "./types";
 
@@ -31,7 +33,6 @@ type MemberCardProps = {
   kickPending: boolean;
   openMenuMemberId: string | null;
   roleSubmenuMemberId: string | null;
-  menuRef: React.RefObject<HTMLDivElement | null>;
   setOpenMenuMemberId: (id: string | null) => void;
   setRoleSubmenuMemberId: (id: string | null) => void;
   setSelectedRoles: React.Dispatch<React.SetStateAction<Record<string, SchoolRole>>>;
@@ -53,7 +54,6 @@ export function MemberCard({
   kickPending,
   openMenuMemberId,
   roleSubmenuMemberId,
-  menuRef,
   setOpenMenuMemberId,
   setRoleSubmenuMemberId,
   setSelectedRoles,
@@ -73,6 +73,9 @@ export function MemberCard({
   const canScheduleForStudent =
     canManageSelfBooking && member.role === "student" && !member.id.startsWith("created-");
   const hasAnyAction = canScheduleForStudent || canToggleSelfBooking || canManage || canKick;
+  const actionButtonRef = useRef<HTMLButtonElement>(null);
+  const roleButtonRef = useRef<HTMLButtonElement>(null);
+  const roleMenuRef = useRef<HTMLDivElement>(null);
 
   return (
     <div
@@ -130,12 +133,14 @@ export function MemberCard({
           </span>
 
           {hasAnyAction && (
-            <div className="relative" ref={openMenuMemberId === member.id ? menuRef : undefined}>
+            <div>
               <button
+                ref={actionButtonRef}
                 type="button"
-                onClick={() =>
-                  setOpenMenuMemberId(openMenuMemberId === member.id ? null : member.id)
-                }
+                onClick={() => {
+                  setRoleSubmenuMemberId(null);
+                  setOpenMenuMemberId(openMenuMemberId === member.id ? null : member.id);
+                }}
                 className="flex h-8 w-8 items-center justify-center rounded-[8px] transition-colors hover:bg-slate-100"
                 style={{ color: "#6B7280" }}
                 aria-label="Member actions"
@@ -143,14 +148,16 @@ export function MemberCard({
                 <MoreHorizontal size={16} />
               </button>
 
-              {openMenuMemberId === member.id && (
-                <div
-                  className="absolute right-0 top-full z-20 mt-1 w-52 rounded-[10px] bg-white py-1"
-                  style={{
-                    border: "1px solid #E4E8EF",
-                    boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
-                  }}
-                >
+              <FloatingActionMenu
+                anchorRef={actionButtonRef}
+                open={openMenuMemberId === member.id}
+                width={208}
+                ignoreRefs={[roleMenuRef]}
+                onClose={() => {
+                  setOpenMenuMemberId(null);
+                  setRoleSubmenuMemberId(null);
+                }}
+              >
                   {canScheduleForStudent && (
                     <button
                       type="button"
@@ -177,7 +184,7 @@ export function MemberCard({
                       className="flex w-full items-center gap-2.5 px-3 py-2 text-sm transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
                       style={{ color: "#374151" }}
                     >
-                      <Ban size={15} />
+                      {member.canSelfBook ? <Ban size={15} /> : <Check size={15} />}
                       {member.canSelfBook ? "Restrict booking" : "Allow booking"}
                     </button>
                   )}
@@ -186,8 +193,9 @@ export function MemberCard({
                       {(canScheduleForStudent || canToggleSelfBooking) && (
                         <div className="my-1 border-t border-[#F3F4F6]" />
                       )}
-                      <div className="relative">
+                      <div>
                         <button
+                          ref={roleButtonRef}
                           type="button"
                           onClick={() =>
                             setRoleSubmenuMemberId(
@@ -204,46 +212,6 @@ export function MemberCard({
                           </span>
                           <ChevronRight size={13} style={{ color: "#9CA3AF" }} />
                         </button>
-
-                        {roleSubmenuMemberId === member.id && (
-                          <div
-                            className="absolute right-full top-0 mr-1 w-44 rounded-[10px] bg-white py-1"
-                            style={{
-                              border: "1px solid #E4E8EF",
-                              boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
-                            }}
-                          >
-                            {roleOptions.map((role) => (
-                              <button
-                                key={role}
-                                type="button"
-                                onClick={() => {
-                                  setSelectedRoles((current) => ({
-                                    ...current,
-                                    [member.id]: role,
-                                  }));
-                                  setRoleState((current) => ({
-                                    ...current,
-                                    error: null,
-                                    success: null,
-                                  }));
-                                  setRoleSubmenuMemberId(null);
-                                  setOpenMenuMemberId(null);
-                                }}
-                                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm capitalize transition-colors hover:bg-slate-50"
-                                style={{
-                                  color: role === member.role ? "#2563EB" : "#374151",
-                                  fontWeight: role === member.role ? 600 : 400,
-                                }}
-                              >
-                                <span className="flex h-3.5 w-3.5 items-center justify-center">
-                                  {role === selectedRole && <Check size={12} strokeWidth={2.5} />}
-                                </span>
-                                {formatRole(role)}
-                              </button>
-                            ))}
-                          </div>
-                        )}
                       </div>
                     </>
                   )}
@@ -265,8 +233,46 @@ export function MemberCard({
                       </button>
                     </>
                   )}
-                </div>
-              )}
+              </FloatingActionMenu>
+
+              <FloatingActionMenu
+                anchorRef={roleButtonRef}
+                open={openMenuMemberId === member.id && roleSubmenuMemberId === member.id}
+                width={176}
+                placement="right"
+                menuRef={roleMenuRef}
+                onClose={() => setRoleSubmenuMemberId(null)}
+              >
+                {roleOptions.map((role) => (
+                  <button
+                    key={role}
+                    type="button"
+                    onClick={() => {
+                      setSelectedRoles((current) => ({
+                        ...current,
+                        [member.id]: role,
+                      }));
+                      setRoleState((current) => ({
+                        ...current,
+                        error: null,
+                        success: null,
+                      }));
+                      setRoleSubmenuMemberId(null);
+                      setOpenMenuMemberId(null);
+                    }}
+                    className="flex w-full items-center gap-2.5 px-3 py-2 text-sm capitalize transition-colors hover:bg-slate-50"
+                    style={{
+                      color: role === member.role ? "#2563EB" : "#374151",
+                      fontWeight: role === member.role ? 600 : 400,
+                    }}
+                  >
+                    <span className="flex h-3.5 w-3.5 items-center justify-center">
+                      {role === selectedRole && <Check size={12} strokeWidth={2.5} />}
+                    </span>
+                    {formatRole(role)}
+                  </button>
+                ))}
+              </FloatingActionMenu>
             </div>
           )}
         </div>

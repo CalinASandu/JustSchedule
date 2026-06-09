@@ -1,21 +1,26 @@
 import { useState } from "react";
+import { InvitesTab } from "./InvitesTab";
 import { SettingsDangerZonePanel } from "./SettingsDangerZonePanel";
 import { SettingsExamRoomsPanel } from "./SettingsExamRoomsPanel";
 import { SettingsSubjectsPanel } from "./SettingsSubjectsPanel";
-import type { ExamSlot, SchoolSubject } from "./types";
+import type { ExamSlot, SchoolInvite, SchoolSubject } from "./types";
 
-type SettingsSection = "subjects" | "examRooms" | "danger";
+export type SettingsSection = "subjects" | "examRooms" | "invites" | "danger";
 
 type SettingsTabProps = {
   schoolId: string;
   schoolName: string;
   initialExamSlots: ExamSlot[];
   initialSubjects: SchoolSubject[];
+  invites: SchoolInvite[];
+  inviteError: string | null;
+  initialSection?: SettingsSection;
 };
 
 const settingsSections: { id: SettingsSection; label: string }[] = [
   { id: "subjects", label: "Subjects" },
   { id: "examRooms", label: "Exam rooms" },
+  { id: "invites", label: "Invites" },
   { id: "danger", label: "Danger zone" },
 ];
 
@@ -24,8 +29,11 @@ export function SettingsTab({
   schoolName,
   initialExamSlots,
   initialSubjects,
+  invites,
+  inviteError,
+  initialSection = "examRooms",
 }: SettingsTabProps) {
-  const [activeSection, setActiveSection] = useState<SettingsSection>("examRooms");
+  const [activeSection, setActiveSection] = useState<SettingsSection>(initialSection);
 
   return (
     <div className="p-5">
@@ -72,6 +80,15 @@ export function SettingsTab({
 
       {activeSection === "examRooms" && (
         <SettingsExamRoomsPanel schoolId={schoolId} initialExamSlots={initialExamSlots} />
+      )}
+
+      {activeSection === "invites" && (
+        <InvitesTab
+          schoolId={schoolId}
+          invites={invites}
+          inviteError={inviteError}
+          embedded
+        />
       )}
 
       {activeSection === "danger" && (

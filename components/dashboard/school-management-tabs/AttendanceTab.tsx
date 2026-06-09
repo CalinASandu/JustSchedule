@@ -37,10 +37,12 @@ export function AttendanceTab({
     error: string | null;
     success: string | null;
     pendingReservationId: string | null;
+    pendingStatus: AttendanceStatus | null;
   }>({
     error: null,
     success: null,
     pendingReservationId: null,
+    pendingStatus: null,
   });
   const visibleReservations = useMemo(
     () =>
@@ -90,6 +92,7 @@ export function AttendanceTab({
       error: null,
       success: null,
       pendingReservationId: reservation.id,
+      pendingStatus: status,
     });
 
     const result = await setReservationAttendance({
@@ -102,6 +105,7 @@ export function AttendanceTab({
         error: result.error,
         success: null,
         pendingReservationId: null,
+        pendingStatus: null,
       });
       return;
     }
@@ -111,6 +115,7 @@ export function AttendanceTab({
       error: null,
       success: `${memberNamesByUserId.get(reservation.userId) ?? "Student"} marked ${status}.`,
       pendingReservationId: null,
+      pendingStatus: null,
     });
     router.refresh();
   }
@@ -263,7 +268,18 @@ export function AttendanceTab({
               {attendanceReservations.map((reservation, index) => {
                 const pending =
                   attendanceState.pendingReservationId === reservation.id;
+                const hasLocalAttendanceMark = Object.prototype.hasOwnProperty.call(
+                  attendanceOverrides,
+                  reservation.id,
+                );
+                const isAttendanceMarked =
+                  Boolean(reservation.attendanceMarkedAt) || hasLocalAttendanceMark;
                 const isLast = index === attendanceReservations.length - 1;
+                const statusBadgeStyle = !isAttendanceMarked
+                  ? { background: "#E2E8F0", color: "#64748B" }
+                  : reservation.attendanceStatus === "absent"
+                    ? { background: "#FEF2F2", color: "#DC2626" }
+                    : { background: "#DBEAFE", color: "#1D4ED8" };
 
                 return (
                   <tr
@@ -291,7 +307,14 @@ export function AttendanceTab({
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      {canMarkAttendance ? (
+                      <div className="flex flex-col items-start gap-2">
+                        <span
+                          className="rounded-full px-3 py-1 text-xs font-semibold capitalize"
+                          style={statusBadgeStyle}
+                        >
+                          {isAttendanceMarked ? reservation.attendanceStatus : "Not marked"}
+                        </span>
+                        {canMarkAttendance ? (
                         <div
                           className="inline-flex rounded-xl p-1"
                           style={{
@@ -318,6 +341,7 @@ export function AttendanceTab({
                                 }
                                 className="inline-flex h-8 min-w-[80px] items-center justify-center gap-1.5 rounded-[10px] px-3 text-xs font-semibold capitalize transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-60"
                                 style={
+                                  isAttendanceMarked &&
                                   reservation.attendanceStatus === status
                                     ? {
                                         background: "#FFFFFF",
@@ -335,11 +359,11 @@ export function AttendanceTab({
                                         background: "transparent",
                                         color: "#9CA3AF",
                                         border: "1px solid transparent",
-                                      }
+                                  }
                                 }
                               >
                                 {pending &&
-                                reservation.attendanceStatus !== status ? (
+                                attendanceState.pendingStatus === status ? (
                                   <Loader2 size={13} className="animate-spin" />
                                 ) : status === "present" ? (
                                   <Check size={13} />
@@ -351,18 +375,8 @@ export function AttendanceTab({
                             ),
                           )}
                         </div>
-                      ) : (
-                        <span
-                          className="rounded-full px-3 py-1 text-xs font-semibold capitalize"
-                          style={
-                            reservation.attendanceStatus === "absent"
-                              ? { background: "#FEF2F2", color: "#DC2626" }
-                              : { background: "#DBEAFE", color: "#1D4ED8" }
-                          }
-                        >
-                          {reservation.attendanceStatus}
-                        </span>
-                      )}
+                        ) : null}
+                      </div>
                     </td>
                   </tr>
                 );

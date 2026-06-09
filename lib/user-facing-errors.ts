@@ -31,6 +31,7 @@ export type ErrorContext =
   | "schoolMemberKick"
   | "schoolRoleUpdate"
   | "selfBookingUpdate"
+  | "scheduleRequest"
   | "slotManagement";
 
 const fallbackMessages: Record<ErrorContext, string> = {
@@ -54,6 +55,7 @@ const fallbackMessages: Record<ErrorContext, string> = {
   schoolMemberKick: "Could not remove this member. Try again in a moment.",
   schoolRoleUpdate: "Could not update member roles. Try again in a moment.",
   selfBookingUpdate: "Could not update self-booking permission. Try again in a moment.",
+  scheduleRequest: "Could not update this exam request. Try again in a moment.",
   slotManagement: "Could not update exam rooms. Try again in a moment.",
 };
 
@@ -144,6 +146,10 @@ export function getUserFacingErrorMessage(
   }
 
   if (context === "reserveExamSlot") {
+    if (messageIncludes(message, ["future reservation for this exam and type"])) {
+      return "You already have a future reservation for this exam and type.";
+    }
+
     if (
       code === "23505" ||
       messageIncludes(message, [
@@ -194,6 +200,10 @@ export function getUserFacingErrorMessage(
   }
 
   if (context === "scheduleForStudent" || context === "reservationUpdate") {
+    if (messageIncludes(message, ["future reservation for this exam and type"])) {
+      return "This student already has a future reservation for this exam and type.";
+    }
+
     if (
       code === "23505" ||
       messageIncludes(message, [
@@ -339,6 +349,36 @@ export function getUserFacingErrorMessage(
 
     if (messageIncludes(message, ["enable the primary", "primary slot is disabled"])) {
       return "Enable the main room before enabling its overflow room.";
+    }
+  }
+
+  if (context === "scheduleRequest") {
+    if (messageIncludes(message, ["future reservation for this exam and type"])) {
+      return "This student already has a future reservation for this exam and type.";
+    }
+
+    if (code === "23505" || messageIncludes(message, ["already have a pending request"])) {
+      return "You already have a pending request for this slot and date.";
+    }
+
+    if (messageIncludes(message, ["two hours", "cutoff", "close"])) {
+      return "Requests close two hours before the exam starts.";
+    }
+
+    if (messageIncludes(message, ["self-booking enabled", "reserve directly"])) {
+      return "You can reserve this exam directly.";
+    }
+
+    if (messageIncludes(message, ["professor", "teacher"])) {
+      return "Choose a professor from this school.";
+    }
+
+    if (messageIncludes(message, ["slot is full", "slot filled", "no seat", "full"])) {
+      return "This slot filled before approval. Choose another time.";
+    }
+
+    if (messageIncludes(message, ["already has this time", "already reserved"])) {
+      return "This student already has this time reserved.";
     }
   }
 

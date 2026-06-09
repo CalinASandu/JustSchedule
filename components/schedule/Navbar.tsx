@@ -3,13 +3,17 @@
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { CalendarDays } from "lucide-react";
+import NotificationBell, {
+  type NotificationBellItem,
+} from "@/components/dashboard/NotificationBell";
 
 interface NavbarProps {
   userName: string;
   userEmail: string;
+  notifications?: NotificationBellItem[];
 }
 
-export default function Navbar({ userName, userEmail }: NavbarProps) {
+export default function Navbar({ userName, userEmail, notifications = [] }: NavbarProps) {
   const router = useRouter();
   const initials =
     userName
@@ -51,32 +55,7 @@ export default function Navbar({ userName, userEmail }: NavbarProps) {
 
       {/* Right utilities */}
       <div className="flex items-center gap-2">
-        {/* Notifications */}
-        <button
-          className="w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-150 hover:bg-slate-100"
-          aria-label="Notifications"
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            aria-hidden="true"
-          >
-            <path
-              d="M8 1.5A4 4 0 0 0 4 5.5v3L2.5 10H13.5L12 8.5v-3A4 4 0 0 0 8 1.5z"
-              stroke="#6B7280"
-              strokeWidth="1.4"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M6.5 10.5a1.5 1.5 0 0 0 3 0"
-              stroke="#6B7280"
-              strokeWidth="1.4"
-              strokeLinecap="round"
-            />
-          </svg>
-        </button>
+        <NotificationBell notifications={notifications} />
 
         <button
           onClick={handleSignOut}

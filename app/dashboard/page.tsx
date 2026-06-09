@@ -1,8 +1,12 @@
 import Link from "next/link";
-import { Bell, CalendarDays, ChevronRight, GraduationCap, ShieldCheck } from "lucide-react";
+import { CalendarDays, ChevronRight, GraduationCap, ShieldCheck } from "lucide-react";
 import { redirect } from "next/navigation";
 import DashboardSignOutButton from "@/components/dashboard/DashboardSignOutButton";
 import DirectJoinCard from "@/components/dashboard/DirectJoinCard";
+import NotificationBell, {
+  type NotificationBellItem,
+} from "@/components/dashboard/NotificationBell";
+import { getCompletedProfileName, getProfileNameSetupPath } from "@/lib/profile-name";
 import { createClient } from "@/lib/supabase/server";
 
 type SchoolRole = "admin" | "professor" | "exam_supervisor" | "student";
@@ -27,6 +31,15 @@ type SchoolMemberRow = {
 };
 
 type SchoolRow = SchoolMembership["school"];
+
+type NotificationRow = {
+  id: string;
+  title: string;
+  body: string;
+  href: string | null;
+  read_at: string | null;
+  created_at: string;
+};
 
 function getInitials(name: string) {
   return (
@@ -110,7 +123,14 @@ export default async function DashboardPage() {
     redirect("/");
   }
 
-  const [{ data: profile }, membershipResult, createdSchoolsResult, allSchoolsResult, pendingRequestsResult] = await Promise.all([
+  const [
+    { data: profile },
+    membershipResult,
+    createdSchoolsResult,
+    allSchoolsResult,
+    pendingRequestsResult,
+    notificationResult,
+  ] = await Promise.all([
     supabase.from("Profiles").select("name").eq("id", user.id).single(),
     supabase
       .from("SchoolMembers")
@@ -133,7 +153,16 @@ export default async function DashboardPage() {
       .select("school_id")
       .eq("user_id", user.id)
       .eq("status", "pending"),
+    supabase.rpc("get_user_notifications", {
+      target_school_id: null,
+    }),
   ]);
+
+  const displayName = getCompletedProfileName(profile);
+
+  if (!displayName) {
+    redirect(getProfileNameSetupPath("/dashboard"));
+  }
 
   const membershipRows = (membershipResult.data ?? []) as SchoolMemberRow[];
   const schoolIds = Array.from(
@@ -148,12 +177,6 @@ export default async function DashboardPage() {
           .is("deleted_at", null)
       : { data: [] };
 
-  const displayName =
-    profile?.name ||
-    (typeof user.user_metadata?.full_name === "string"
-      ? user.user_metadata.full_name
-      : user.email?.split("@")[0]) ||
-    "Student";
   const initials = getInitials(displayName);
   const memberships = mergeCreatedSchools(
     normalizeMemberships(membershipRows, schools as SchoolRow[] | null),
@@ -167,6 +190,16 @@ export default async function DashboardPage() {
   const nonMemberSchools = (allSchoolsResult.data ?? []).filter(
     (s) => !memberSchoolIds.has(s.id),
   );
+  const notifications: NotificationBellItem[] = (
+    (notificationResult.data ?? []) as NotificationRow[]
+  ).map((notification) => ({
+    id: notification.id,
+    title: notification.title,
+    body: notification.body,
+    href: notification.href,
+    readAt: notification.read_at,
+    createdAt: notification.created_at,
+  }));
 
   return (
     <div className="min-h-dvh" style={{ background: "#F7F8FA" }}>
@@ -189,12 +222,7 @@ export default async function DashboardPage() {
         <div className="flex-1" />
 
         <div className="flex items-center gap-2">
-          <button
-            className="w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-150 hover:bg-slate-100"
-            aria-label="Notifications"
-          >
-            <Bell size={17} color="#6B7280" strokeWidth={1.8} />
-          </button>
+          <NotificationBell notifications={notifications} />
           <DashboardSignOutButton />
           <div
             className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[11px] font-semibold select-none"

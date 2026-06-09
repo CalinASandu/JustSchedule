@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { CalendarDays, Clock, GraduationCap } from "lucide-react";
 import JoinRequestForm from "@/components/dashboard/JoinRequestForm";
+import { getCompletedProfileName, getProfileNameSetupPath } from "@/lib/profile-name";
 import { createClient } from "@/lib/supabase/server";
 
 type InviteRow = {
@@ -37,6 +38,16 @@ export default async function InvitePage({
 
   if (!user) {
     redirect(`/?next=${encodeURIComponent(`/invite/${inviteToken}`)}`);
+  }
+
+  const { data: profile } = await supabase
+    .from("Profiles")
+    .select("name")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (!getCompletedProfileName(profile)) {
+    redirect(getProfileNameSetupPath(`/invite/${inviteToken}`));
   }
 
   const { data: invite } = await supabase

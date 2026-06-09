@@ -9,19 +9,52 @@ import type {
   ExamSlot,
   ExamType,
   ReservationUpdateResult,
+  ScheduleRequest,
   SchoolRole,
   SchoolSubject,
 } from "./types";
 
 type ApiResult<T> = { data: T; error: null } | { data: null; error: string };
 
+function isMissingRefreshTokenError(error: unknown) {
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+
+  const authError = error as { code?: unknown; message?: unknown };
+  const message = typeof authError.message === "string" ? authError.message : "";
+
+  return (
+    authError.code === "refresh_token_not_found" ||
+    message.includes("Invalid Refresh Token") ||
+    message.includes("Refresh Token Not Found")
+  );
+}
+
 async function getAccessToken() {
   const supabase = createClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  try {
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession();
 
-  return session?.access_token ?? null;
+    if (error) {
+      if (isMissingRefreshTokenError(error)) {
+        await supabase.auth.signOut({ scope: "local" });
+      }
+
+      return null;
+    }
+
+    return session?.access_token ?? null;
+  } catch (error) {
+    if (isMissingRefreshTokenError(error)) {
+      await supabase.auth.signOut({ scope: "local" });
+    }
+
+    return null;
+  }
 }
 
 export async function createSchoolInvite(args: {
@@ -265,6 +298,77 @@ export async function updateSchoolReservation(args: {
     },
     error: null,
   };
+}
+
+export async function reviewScheduleRequest(args: {
+  requestId: string;
+  decision: "approved" | "declined";
+  message?: string;
+}): Promise<
+  ApiResult<{
+    requestId: string;
+    status: ScheduleRequest["status"];
+    reservationId: string | null;
+    bookedSlotId: string | null;
+    bookedSlotKind: "primary" | "overflow" | null;
+    remaining: number | null;
+  }>
+> {
+  const supabase = createClient();
+  const { data, error } = await supabase.rpc("review_schedule_request", {
+    target_request_id: args.requestId,
+    target_decision: args.decision,
+    target_reviewer_message: args.message?.trim() || null,
+  });
+
+  if (error) {
+    console.error("Review schedule request failed", error);
+    return {
+      data: null,
+      error: getUserFacingErrorMessage("scheduleRequest", error),
+    };
+  }
+
+  const row = Array.isArray(data) ? data[0] : data;
+
+  if (!row || typeof row !== "object") {
+    return { data: null, error: "The request review returned an invalid response." };
+  }
+
+  const result = row as Record<string, unknown>;
+
+  return {
+    data: {
+      requestId: String(result.request_id ?? args.requestId),
+      status: String(result.status ?? args.decision) as ScheduleRequest["status"],
+      reservationId: result.reservation_id ? String(result.reservation_id) : null,
+      bookedSlotId: result.booked_slot_id ? String(result.booked_slot_id) : null,
+      bookedSlotKind:
+        result.booked_slot_kind === "primary" || result.booked_slot_kind === "overflow"
+          ? result.booked_slot_kind
+          : null,
+      remaining:
+        typeof result.remaining === "number" ? result.remaining : null,
+    },
+    error: null,
+  };
+}
+
+export async function markScheduleRequestTeacherSeen(requestId: string): Promise<ApiResult<null>> {
+  const supabase = createClient();
+  const { error } = await supabase.rpc("mark_schedule_request_teacher_seen", {
+    target_request_id: requestId,
+  });
+
+  if (error) {
+    console.error("Mark schedule request teacher seen failed", error);
+    return {
+      data: null,
+      error: getUserFacingErrorMessage("scheduleRequest", error),
+    };
+  }
+
+  return { data: null, error: null };
 }
 
 export async function upsertSchoolSubject(args: {

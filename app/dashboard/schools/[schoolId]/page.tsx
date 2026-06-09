@@ -3,7 +3,11 @@ import { headers } from "next/headers";
 import { ArrowLeft, CalendarDays, ShieldCheck } from "lucide-react";
 import { redirect } from "next/navigation";
 import DashboardSignOutButton from "@/components/dashboard/DashboardSignOutButton";
+import NotificationBell, {
+  type NotificationBellItem,
+} from "@/components/dashboard/NotificationBell";
 import SchoolManagementTabs from "@/components/dashboard/SchoolManagementTabs";
+import { getCompletedProfileName, getProfileNameSetupPath } from "@/lib/profile-name";
 import { createClient } from "@/lib/supabase/server";
 import { getUserFacingErrorMessage } from "@/lib/user-facing-errors";
 import { getRequestOrigin } from "@/lib/urls";
@@ -108,6 +112,52 @@ type ExamSlot = {
   isActive: boolean;
   slotKind: "primary" | "overflow";
   primarySlotId: string | null;
+};
+
+type ScheduleRequestRow = {
+  id: string;
+  school_id: string;
+  student_user_id: string;
+  student_name: string | null;
+  student_email: string | null;
+  requested_teacher_user_id: string;
+  teacher_name: string | null;
+  requested_slot_id: string;
+  requested_slot_group_id: string;
+  slot_name: string;
+  starts_at: string;
+  ends_at: string;
+  capacity: number;
+  primary_booked: number;
+  overflow_slot_id: string | null;
+  overflow_capacity: number | null;
+  overflow_booked: number | null;
+  reservation_date: string;
+  exam_name: string;
+  exam_type: "midterm" | "final";
+  status:
+    | "pending"
+    | "approved"
+    | "declined"
+    | "expired"
+    | "failed_capacity"
+    | "failed_conflict"
+    | "cancelled";
+  reviewer_message: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  reservation_id: string | null;
+  expires_at: string;
+  created_at: string;
+};
+
+type NotificationRow = {
+  id: string;
+  title: string;
+  body: string;
+  href: string | null;
+  read_at: string | null;
+  created_at: string;
 };
 
 type Reservation = {
@@ -219,6 +269,8 @@ export default async function SchoolDashboardPage({
     { data: reservationRows, error: reservationsError },
     { data: attendanceSessionRows },
     { data: schoolSubjectRows },
+    { data: scheduleRequestRows, error: scheduleRequestsError },
+    { data: notificationRows },
   ] = await Promise.all([
     supabase.rpc("get_school_members_with_profiles", {
       target_school_id: schoolId,
@@ -258,17 +310,27 @@ export default async function SchoolDashboardPage({
       .eq("school_id", schoolId)
       .is("deleted_at", null)
       .order("name", { ascending: true }),
+    isAdmin || isProfessor
+      ? supabase.rpc("get_school_schedule_requests", {
+          target_school_id: schoolId,
+        })
+      : Promise.resolve({ data: [], error: null }),
+    isProfessor
+      ? supabase.rpc("get_user_notifications", {
+          target_school_id: schoolId,
+        })
+      : Promise.resolve({ data: [], error: null }),
   ]);
 
   const rows = (memberRows ?? []) as SchoolMemberRow[];
   const currentProfileRow = currentProfile as ProfileRow | null;
+  const displayName = getCompletedProfileName(currentProfileRow);
+
+  if (!displayName) {
+    redirect(getProfileNameSetupPath(`/dashboard/schools/${schoolId}`));
+  }
+
   const hasCurrentUserRow = rows.some((member) => member.user_id === user.id);
-  const displayName =
-    currentProfileRow?.name ||
-    (typeof user.user_metadata?.full_name === "string"
-      ? user.user_metadata.full_name
-      : user.email?.split("@")[0]) ||
-    "Admin";
   const initials = getInitials(displayName);
   const rowMembers: SchoolMember[] = rows.map((member) => ({
     id: member.id,
@@ -372,6 +434,47 @@ export default async function SchoolDashboardPage({
     startedAt: session.started_at,
     expiresAt: session.expires_at,
   }));
+  const scheduleRequests = ((scheduleRequestRows ?? []) as ScheduleRequestRow[]).map(
+    (request) => ({
+      id: request.id,
+      schoolId: request.school_id,
+      studentUserId: request.student_user_id,
+      studentName: request.student_name || "Unnamed student",
+      studentEmail: request.student_email,
+      teacherUserId: request.requested_teacher_user_id,
+      teacherName: request.teacher_name || "Professor",
+      slotId: request.requested_slot_id,
+      slotGroupId: request.requested_slot_group_id,
+      slotName: request.slot_name,
+      startsAt: request.starts_at,
+      endsAt: request.ends_at,
+      capacity: request.capacity,
+      primaryBooked: request.primary_booked,
+      overflowSlotId: request.overflow_slot_id,
+      overflowCapacity: request.overflow_capacity,
+      overflowBooked: request.overflow_booked ?? 0,
+      reservationDate: request.reservation_date,
+      examName: request.exam_name,
+      examType: request.exam_type,
+      status: request.status,
+      reviewerMessage: request.reviewer_message,
+      reviewedBy: request.reviewed_by,
+      reviewedAt: request.reviewed_at,
+      reservationId: request.reservation_id,
+      expiresAt: request.expires_at,
+      createdAt: request.created_at,
+    }),
+  );
+  const notifications: NotificationBellItem[] = ((notificationRows ?? []) as NotificationRow[]).map(
+    (notification) => ({
+      id: notification.id,
+      title: notification.title,
+      body: notification.body,
+      href: notification.href,
+      readAt: notification.read_at,
+      createdAt: notification.created_at,
+    }),
+  );
 
   return (
     <div className="min-h-dvh" style={{ background: "#F7F8FA" }}>
@@ -397,6 +500,7 @@ export default async function SchoolDashboardPage({
         <div className="flex-1" />
 
         <div className="flex items-center gap-2">
+          {isProfessor && <NotificationBell notifications={notifications} />}
           <DashboardSignOutButton />
           <div
             className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[11px] font-semibold select-none"
@@ -463,6 +567,7 @@ export default async function SchoolDashboardPage({
           members={members}
           invites={invites}
           joinRequests={joinRequests}
+          scheduleRequests={scheduleRequests}
           examSlots={examSlots}
           reservations={reservations}
           attendanceSessions={attendanceSessions}
@@ -489,6 +594,11 @@ export default async function SchoolDashboardPage({
           joinRequestError={
             joinRequestsError
               ? getUserFacingErrorMessage("loadJoinRequests", joinRequestsError)
+              : null
+          }
+          scheduleRequestError={
+            scheduleRequestsError
+              ? getUserFacingErrorMessage("loadReservations", scheduleRequestsError)
               : null
           }
           reservationError={

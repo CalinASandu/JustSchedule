@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Ban, MoreHorizontal, Pencil } from "lucide-react";
+import { FloatingActionMenu } from "./FloatingActionMenu";
 
 type ReservationActionMenuProps = {
   disabled?: boolean;
@@ -13,10 +14,12 @@ export function ReservationActionMenu({
   onUpdate,
 }: ReservationActionMenuProps) {
   const [open, setOpen] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <div className="relative shrink-0">
+    <div className="shrink-0">
       <button
+        ref={buttonRef}
         type="button"
         onClick={() => setOpen((current) => !current)}
         disabled={disabled}
@@ -28,14 +31,12 @@ export function ReservationActionMenu({
         <MoreHorizontal size={15} />
       </button>
 
-      {open && (
-        <div
-          className="absolute right-0 top-full z-30 mt-1 w-44 rounded-[10px] bg-white py-1"
-          style={{
-            border: "1px solid #E4E8EF",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
-          }}
-        >
+      <FloatingActionMenu
+        anchorRef={buttonRef}
+        open={open}
+        width={176}
+        onClose={() => setOpen(false)}
+      >
           <button
             type="button"
             onClick={() => {
@@ -60,8 +61,7 @@ export function ReservationActionMenu({
             <Ban size={14} />
             Cancel reservation
           </button>
-        </div>
-      )}
+      </FloatingActionMenu>
     </div>
   );
 }

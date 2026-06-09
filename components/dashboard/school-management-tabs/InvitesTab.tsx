@@ -11,12 +11,14 @@ type InvitesTabProps = {
   schoolId: string;
   invites: SchoolInvite[];
   inviteError: string | null;
+  embedded?: boolean;
 };
 
 export function InvitesTab({
   schoolId,
   invites,
   inviteError,
+  embedded = false,
 }: InvitesTabProps) {
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
   const [expiresOn, setExpiresOn] = useState(getDefaultExpiryDate);
@@ -84,7 +86,7 @@ export function InvitesTab({
   }
 
   return (
-    <div className="p-5">
+    <div className={embedded ? "" : "p-5"}>
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h2 className="text-sm font-semibold" style={{ color: "#111827" }}>

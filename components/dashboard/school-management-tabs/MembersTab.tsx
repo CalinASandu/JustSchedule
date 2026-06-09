@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
@@ -84,7 +84,6 @@ export function MembersTab({
   });
   const [openMenuMemberId, setOpenMenuMemberId] = useState<string | null>(null);
   const [roleSubmenuMemberId, setRoleSubmenuMemberId] = useState<string | null>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
   const visibleMembers = useMemo(
     () =>
       members
@@ -122,19 +121,6 @@ export function MembersTab({
   const scheduleDialogMember = scheduleDialogMemberId
     ? visibleMembers.find((member) => member.id === scheduleDialogMemberId) ?? null
     : null;
-
-  useEffect(() => {
-    if (!openMenuMemberId) return;
-
-    function handlePointerDown(event: PointerEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setOpenMenuMemberId(null);
-      }
-    }
-
-    document.addEventListener("pointerdown", handlePointerDown);
-    return () => document.removeEventListener("pointerdown", handlePointerDown);
-  }, [openMenuMemberId]);
 
   useEffect(() => {
     if (!kickDialogMemberId || kickSecondsRemaining === 0) {
@@ -430,7 +416,6 @@ export function MembersTab({
             kickPending={kickState.pending}
             openMenuMemberId={openMenuMemberId}
             roleSubmenuMemberId={roleSubmenuMemberId}
-            menuRef={menuRef}
             setOpenMenuMemberId={setOpenMenuMemberId}
             setRoleSubmenuMemberId={setRoleSubmenuMemberId}
             setSelectedRoles={setSelectedRoles}
