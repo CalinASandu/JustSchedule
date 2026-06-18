@@ -85,9 +85,7 @@ export default function ScheduleClient({
   const [examType, setExamType] = useState<ExamType>("midterm");
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
-  const [selectedTeacherId, setSelectedTeacherId] = useState<string>(
-    requestTeachers[0]?.userId ?? "",
-  );
+  const [selectedTeacherId, setSelectedTeacherId] = useState("");
   const [reservations, setReservations] = useState<Reservation[]>(initialReservations);
   const [scheduleRequests, setScheduleRequests] =
     useState<ScheduleRequest[]>(initialScheduleRequests);
@@ -282,7 +280,7 @@ export default function ScheduleClient({
     setReserveError(reservationError);
     setSelectedExam("");
     setExamType("midterm");
-    setSelectedTeacherId(requestTeachers[0]?.userId ?? "");
+    setSelectedTeacherId("");
     setBookingStep(1);
   }
 
