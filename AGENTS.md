@@ -269,6 +269,8 @@ All visual conventions are documented in `docs/ui.md`. Read it before building a
 - CSS animation utilities: `anim-fade-in`, `anim-slide-up`, `anim-scale-in`, and stagger delays `anim-d1` through `anim-d4`, all defined in `globals.css`.
 - No dark mode.
 
+Before editing layout, spacing, responsive behavior, page shells, tabs, tables, cards, dialogs, or navigation, read `docs/responsive-layout.md` and follow its mobile-first layout rules, breakpoint model, table-to-card guidance, touch target requirements, overflow rules, and viewport verification checklist.
+
 Before UI, React, or Next.js component work, read and follow the relevant installed design and Vercel skills in addition to `docs/ui.md`:
 
 ### Vercel / React skills (always read for any component work)

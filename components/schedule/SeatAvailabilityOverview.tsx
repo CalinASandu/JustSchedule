@@ -35,7 +35,7 @@ export default function SeatAvailabilityOverview({
   const occupiedPct  = totalSeats > 0 ? (occupiedSeats  / totalSeats) * 100 : 0
 
   return (
-    <div className="panel p-5 flex flex-col gap-4">
+    <div className="panel flex flex-col gap-4 p-4 sm:p-5">
       {/* Header */}
       <div className="flex items-center gap-2.5">
         <div
@@ -54,9 +54,9 @@ export default function SeatAvailabilityOverview({
             <circle cx="14" cy="9.5" r="1.5" stroke="#16A34A" strokeWidth="1.3" />
           </svg>
         </div>
-        <div>
+        <div className="min-w-0">
           <h2 className="text-sm font-semibold" style={{ color: '#111827' }}>Seat availability</h2>
-          <p className="text-xs" style={{ color: '#9CA3AF' }}>
+          <p className="truncate text-xs" style={{ color: '#9CA3AF' }}>
             {selectedDate ? formatDate(selectedDate) : 'No date selected'}
           </p>
         </div>
@@ -100,10 +100,10 @@ export default function SeatAvailabilityOverview({
         ].map(({ count, label, color, bg }) => (
           <div
             key={label}
-            className="flex flex-col items-center justify-center py-4 rounded-2xl gap-1"
+            className="flex flex-col items-center justify-center gap-1 rounded-2xl px-2 py-3 sm:py-4"
             style={{ background: bg }}
           >
-            <span className="text-2xl font-bold leading-none" style={{ color }}>{count}</span>
+            <span className="text-xl font-bold leading-none sm:text-2xl" style={{ color }}>{count}</span>
             <span className="text-[11px]" style={{ color: '#9CA3AF' }}>{label}</span>
           </div>
         ))}
@@ -125,13 +125,13 @@ export default function SeatAvailabilityOverview({
           return (
             <div
               key={slot.id}
-              className="flex items-center justify-between py-2 px-3 rounded-xl"
+              className="flex items-center justify-between gap-3 rounded-xl px-3 py-2"
               style={{ background: '#F9FAFB' }}
               role="listitem"
             >
-              <span className="text-xs font-medium" style={{ color: '#374151' }}>{slot.label}</span>
+              <span className="min-w-0 truncate text-xs font-medium" style={{ color: '#374151' }}>{slot.label}</span>
               <span
-                className="text-xs font-semibold px-2 py-0.5 rounded-full"
+                className="flex-shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold"
                 style={
                   isFull
                     ? { background: '#F3F4F6', color: '#9CA3AF' }

@@ -34,11 +34,11 @@ interface SummaryRowProps {
 function SummaryRow({ label, value, last = false }: SummaryRowProps) {
   return (
     <div
-      className="flex items-center justify-between gap-4 py-3"
+      className="flex flex-col gap-1 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
       style={{ borderBottom: last ? 'none' : '1px solid #F3F4F6' }}
     >
-      <span className="text-sm flex-shrink-0" style={{ color: '#9CA3AF', minWidth: 80 }}>{label}</span>
-      <span className="text-sm font-medium text-right" style={{ color: '#111827' }}>{value}</span>
+      <span className="text-sm sm:flex-shrink-0" style={{ color: '#9CA3AF', minWidth: 80 }}>{label}</span>
+      <span className="break-words text-sm font-medium sm:text-right" style={{ color: '#111827' }}>{value}</span>
     </div>
   )
 }
@@ -65,9 +65,9 @@ export default function BookingSummaryCard({
   onReset,
 }: BookingSummaryCardProps) {
   return (
-    <div className="panel p-5 flex flex-col">
+    <div className="panel flex flex-col p-4 sm:p-5">
       {/* Header */}
-      <div className="flex items-center gap-2.5 mb-4">
+        <div className="mb-4 flex items-center gap-2.5">
         <div
           className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
           style={{ background: '#EFF6FF' }}
@@ -92,7 +92,7 @@ export default function BookingSummaryCard({
             style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}
           >
             <div
-              className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
+              className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full"
               style={{ background: '#16A34A' }}
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -138,7 +138,7 @@ export default function BookingSummaryCard({
 
           <button
             onClick={onReset}
-            className="mt-5 w-full py-3 rounded-2xl text-sm font-medium transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            className="mt-5 min-h-11 w-full cursor-pointer rounded-2xl py-3 text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             style={{ background: '#F3F4F6', color: '#6B7280', border: '1px solid #E4E8EF' }}
             onMouseEnter={e => { e.currentTarget.style.background = '#E9EAEB' }}
             onMouseLeave={e => { e.currentTarget.style.background = '#F3F4F6' }}
@@ -218,7 +218,7 @@ export default function BookingSummaryCard({
             <button
               onClick={onReserve}
               disabled={!canReserve}
-              className="w-full py-3.5 rounded-2xl text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+              className="flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
               style={
                 canReserve
                   ? { background: '#2563EB', color: '#ffffff', cursor: 'pointer' }

@@ -247,7 +247,7 @@ export function ReservationsTab({
   }
 
   return (
-    <div className="p-5">
+    <div className="p-4 sm:p-5">
       <ReservationToolbar
         reservationDate={reservationDate}
         reservationViewMode={reservationViewMode}
@@ -325,7 +325,7 @@ export function ReservationsTab({
           onClick={() => setSelectedWeekReservationId(null)}
         >
           <div
-            className="panel anim-scale-in w-full max-w-[400px] overflow-hidden shadow-[0_18px_60px_rgba(15,23,42,0.18)]"
+            className="panel anim-scale-in w-full max-w-[400px] shadow-[0_18px_60px_rgba(15,23,42,0.18)]"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-4 px-5 py-4">

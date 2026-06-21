@@ -319,9 +319,9 @@ export function MembersTab({
 
   return (
     <>
-      <div className="p-5">
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <div>
+      <div className="p-4 sm:p-5">
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
           <h2 className="text-sm font-semibold" style={{ color: "#111827" }}>
             School members
           </h2>
@@ -401,7 +401,7 @@ export function MembersTab({
         />
       )}
 
-      <div className="space-y-3">
+      <div className="grid gap-3">
         {filteredMembers.map((member) => (
           <MemberCard
             key={member.id}

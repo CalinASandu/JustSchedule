@@ -477,14 +477,14 @@ export default async function SchoolDashboardPage({
   );
 
   return (
-    <div className="min-h-dvh" style={{ background: "#F7F8FA" }}>
+    <div className="min-h-dvh bg-[#F7F8FA]">
       <header
-        className="h-14 bg-white flex items-center px-6 sticky top-0 z-30"
+        className="sticky top-0 z-30 flex h-14 items-center bg-white px-4 sm:px-6"
         style={{ borderBottom: "1px solid #E4E8EF" }}
       >
-        <Link href="/dashboard" className="flex items-center gap-2.5">
+        <Link href="/dashboard" className="flex min-w-0 items-center gap-2.5">
           <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl"
             style={{ background: "#2563EB" }}
           >
             <CalendarDays size={17} color="white" strokeWidth={2} />
@@ -503,7 +503,7 @@ export default async function SchoolDashboardPage({
           {isProfessor && <NotificationBell notifications={notifications} />}
           <DashboardSignOutButton />
           <div
-            className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[11px] font-semibold select-none"
+            className="hidden h-8 w-8 select-none items-center justify-center rounded-full text-[11px] font-semibold text-white sm:flex"
             style={{ background: "#2563EB" }}
             title={user.email ?? "Signed in with Google"}
           >
@@ -512,7 +512,7 @@ export default async function SchoolDashboardPage({
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-[1120px] px-6 py-8">
+      <main className="mx-auto w-full max-w-[1400px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <Link
           href="/dashboard"
           className="mb-5 inline-flex items-center gap-2 text-sm font-medium"
@@ -522,10 +522,10 @@ export default async function SchoolDashboardPage({
           Schools
         </Link>
 
-        <div className="mb-6 grid gap-4 lg:grid-cols-[minmax(0,1fr)_260px]">
-          <div className="anim-slide-up">
+        <div className="mb-6 grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
+          <div className="anim-slide-up min-w-0">
             <h1
-              className="text-[1.35rem] font-bold"
+              className="break-words text-[1.35rem] font-bold"
               style={{
                 color: "#111827",
                 letterSpacing: "-0.025em",
@@ -542,7 +542,7 @@ export default async function SchoolDashboardPage({
           <div className="panel anim-slide-up anim-d1 p-4">
             <div className="flex items-center gap-3">
               <ShieldCheck size={17} color="#2563EB" strokeWidth={1.9} />
-              <div>
+              <div className="min-w-0">
                 <p
                   className="text-sm font-semibold"
                   style={{ color: "#111827" }}
@@ -553,7 +553,7 @@ export default async function SchoolDashboardPage({
                       ? "Professor access"
                       : "Exam supervisor access"}
                 </p>
-                <p className="text-xs" style={{ color: "#9CA3AF" }}>
+                <p className="truncate text-xs" style={{ color: "#9CA3AF" }}>
                   Signed in as {displayName}
                 </p>
               </div>

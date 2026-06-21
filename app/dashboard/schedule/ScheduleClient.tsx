@@ -85,9 +85,7 @@ export default function ScheduleClient({
   const [examType, setExamType] = useState<ExamType>("midterm");
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
-  const [selectedTeacherId, setSelectedTeacherId] = useState<string>(
-    requestTeachers[0]?.userId ?? "",
-  );
+  const [selectedTeacherId, setSelectedTeacherId] = useState("");
   const [reservations, setReservations] = useState<Reservation[]>(initialReservations);
   const [scheduleRequests, setScheduleRequests] =
     useState<ScheduleRequest[]>(initialScheduleRequests);
@@ -282,7 +280,7 @@ export default function ScheduleClient({
     setReserveError(reservationError);
     setSelectedExam("");
     setExamType("midterm");
-    setSelectedTeacherId(requestTeachers[0]?.userId ?? "");
+    setSelectedTeacherId("");
     setBookingStep(1);
   }
 
@@ -465,25 +463,31 @@ export default function ScheduleClient({
     <div className="min-h-dvh" style={{ background: "#F7F8FA" }}>
       <Navbar userName={studentName} userEmail={userEmail} notifications={notifications} />
 
-      <main style={{ maxWidth: 1400, margin: "0 auto", padding: "0 24px 64px" }}>
-        <div className="flex flex-col gap-4 py-8 lg:flex-row lg:items-end lg:justify-between">
-          <div className="anim-slide-up">
+      <main className="mx-auto w-full max-w-[1400px] px-4 pb-12 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-4 py-5 sm:py-7 lg:flex-row lg:items-end lg:justify-between lg:py-8">
+          <div className="min-w-0 anim-slide-up">
+            <p
+              className="mb-2 text-[11px] font-semibold uppercase tracking-wider"
+              style={{ color: "#94A3B8" }}
+            >
+              Student workspace
+            </p>
             <h1
-              className="text-4xl font-bold"
+              className="text-[1.55rem] font-bold sm:text-[1.85rem] lg:text-[2.15rem]"
               style={{
                 color: "#111827",
-                fontFamily: "var(--font-serif)",
-                lineHeight: 1.15,
+                lineHeight: 1.12,
+                letterSpacing: "-0.025em",
               }}
             >
               Schedule your exam
             </h1>
-            <p className="mt-1.5 text-sm" style={{ color: "#9CA3AF" }}>
+            <p className="mt-1.5 truncate text-sm" style={{ color: "#6B7280" }}>
               {schoolName}
             </p>
           </div>
           <div
-            className="panel anim-slide-up flex w-full p-1 sm:w-auto"
+            className="panel anim-slide-up grid w-full grid-cols-3 p-1 sm:w-auto"
             role="tablist"
             aria-label="School workspace panels"
           >
@@ -497,12 +501,14 @@ export default function ScheduleClient({
               active={activePanel === "reservations"}
               icon={<ClipboardList size={15} aria-hidden="true" />}
               label="My Reservations"
+              mobileLabel="Reservations"
               onClick={() => selectPanel("reservations")}
             />
             <PanelTab
               active={activePanel === "profile"}
               icon={<UserRound size={15} aria-hidden="true" />}
               label="School Profile"
+              mobileLabel="Profile"
               onClick={() => selectPanel("profile")}
             />
           </div>
@@ -510,211 +516,186 @@ export default function ScheduleClient({
 
         {activePanel === "schedule" ? (
           <>
-            {/* ── Booking wizard ─────────────────────────── */}
-            <div className="max-w-[640px] mx-auto">
-              <StepBar step={bookingStep} confirmed={showConfirmation} />
+            <section className="grid gap-4 lg:grid-cols-[minmax(0,640px)_minmax(300px,1fr)] lg:items-start">
+              <div className="min-w-0 anim-slide-up">
+                <StepBar step={bookingStep} confirmed={showConfirmation} />
 
-              {/* Step 1 — Pick a date */}
-              {bookingStep === 1 && (
-                <div className="flex flex-col gap-4 anim-slide-up">
-                  <CalendarPanel
-                    calendarOnly
-                    studentName={studentName}
-                    selectedExam={selectedExam}
-                    onExamChange={setSelectedExam}
-                    examType={examType}
-                    onExamTypeChange={setExamType}
-                    selectedDate={selectedDate}
-                    onSelectDate={handleDateSelect}
-                    subjects={schoolSubjects}
-                    slots={examSlots}
-                    reservations={reservations}
-                  />
-                  {selectedDate && (
-                    <button
-                      type="button"
-                      onClick={() => setBookingStep(2)}
-                      className="w-full py-3.5 rounded-2xl text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      style={{ background: "#2563EB", color: "#ffffff", cursor: "pointer" }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = "#1D4ED8"; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = "#2563EB"; }}
-                    >
-                      Continue to time
-                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                        <path d="M3 7h8M8 4l3 3-3 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </button>
-                  )}
-                </div>
-              )}
+                {/* Step 1 - Pick a date */}
+                {bookingStep === 1 && (
+                  <div className="flex flex-col gap-4">
+                    <CalendarPanel
+                      calendarOnly
+                      studentName={studentName}
+                      selectedExam={selectedExam}
+                      onExamChange={setSelectedExam}
+                      examType={examType}
+                      onExamTypeChange={setExamType}
+                      selectedDate={selectedDate}
+                      onSelectDate={handleDateSelect}
+                      subjects={schoolSubjects}
+                      slots={examSlots}
+                      reservations={reservations}
+                    />
+                    {selectedDate && (
+                      <PrimaryStepButton label="Continue to time" onClick={() => setBookingStep(2)} />
+                    )}
+                  </div>
+                )}
 
-              {/* Step 2 — Pick a time slot */}
-              {bookingStep === 2 && (
-                <div className="flex flex-col gap-3 anim-slide-up">
-                  <BackButton label="Back to date" onClick={() => setBookingStep(1)} />
-                  <SlotPicker
-                    selectedDate={selectedDate}
-                    selectedSlotId={selectedSlotId}
-                    onSelectSlot={handleSlotSelect}
-                    slots={examSlots}
-                    reservations={reservations}
-                  />
-                  {selectedSlotId && (
-                    <button
-                      type="button"
-                      onClick={() => setBookingStep(3)}
-                      className="w-full py-3.5 rounded-2xl text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      style={{ background: "#2563EB", color: "#ffffff", cursor: "pointer" }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = "#1D4ED8"; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = "#2563EB"; }}
-                    >
-                      Continue to exam details
-                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                        <path d="M3 7h8M8 4l3 3-3 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </button>
-                  )}
-                </div>
-              )}
+                {/* Step 2 - Pick a time slot */}
+                {bookingStep === 2 && (
+                  <div className="flex flex-col gap-3">
+                    <BackButton label="Back to date" onClick={() => setBookingStep(1)} />
+                    <SlotPicker
+                      selectedDate={selectedDate}
+                      selectedSlotId={selectedSlotId}
+                      onSelectSlot={handleSlotSelect}
+                      slots={examSlots}
+                      reservations={reservations}
+                    />
+                    {selectedSlotId && (
+                      <PrimaryStepButton label="Continue to exam details" onClick={() => setBookingStep(3)} />
+                    )}
+                  </div>
+                )}
 
-              {/* Step 3 — Exam details + confirm */}
-              {bookingStep === 3 && (
-                <div className="flex flex-col gap-3 anim-slide-up">
-                  {!showConfirmation && (
-                    <>
-                      <BackButton label="Back to time" onClick={() => setBookingStep(2)} />
-                      <div className="panel p-5 flex flex-col gap-4">
-                        <div className="flex items-center gap-2.5">
-                          <div
-                            className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
-                            style={{ background: "#EFF6FF" }}
-                          >
-                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                              <rect x="1.5" y="1.5" width="11" height="11" rx="1.5" stroke="#2563EB" strokeWidth="1.3" />
-                              <path d="M4.5 7h5M4.5 4.5h3M4.5 9.5h4" stroke="#2563EB" strokeWidth="1.3" strokeLinecap="round" />
-                            </svg>
+                {/* Step 3 - Exam details + confirm */}
+                {bookingStep === 3 && (
+                  <div className="flex flex-col gap-3">
+                    {!showConfirmation && (
+                      <>
+                        <BackButton label="Back to time" onClick={() => setBookingStep(2)} />
+                        <div className="panel flex flex-col gap-4 p-4 sm:p-5">
+                          <div className="flex items-center gap-2.5">
+                            <div
+                              className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg"
+                              style={{ background: "#EFF6FF" }}
+                            >
+                              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                                <rect x="1.5" y="1.5" width="11" height="11" rx="1.5" stroke="#2563EB" strokeWidth="1.3" />
+                                <path d="M4.5 7h5M4.5 4.5h3M4.5 9.5h4" stroke="#2563EB" strokeWidth="1.3" strokeLinecap="round" />
+                              </svg>
+                            </div>
+                            <div className="min-w-0">
+                              <h2 className="text-sm font-semibold" style={{ color: "#111827" }}>
+                                Exam details
+                              </h2>
+                              <p className="text-xs" style={{ color: "#9CA3AF" }}>
+                                Choose your subject and exam type
+                              </p>
+                            </div>
                           </div>
-                          <div>
-                            <h2 className="text-sm font-semibold" style={{ color: "#111827" }}>
-                              Exam details
-                            </h2>
-                            <p className="text-xs" style={{ color: "#9CA3AF" }}>
-                              Choose your subject and exam type
-                            </p>
+
+                          <div className="flex flex-col gap-1.5">
+                            <label
+                              className="text-[11px] font-semibold uppercase tracking-wider"
+                              style={{ color: "#9CA3AF" }}
+                            >
+                              Subject
+                            </label>
+                            <SubjectCommandPalette
+                              subjects={schoolSubjects}
+                              value={selectedExam}
+                              onChange={setSelectedExam}
+                              placeholder="Search subject..."
+                            />
                           </div>
-                        </div>
 
-                        <div className="flex flex-col gap-1.5">
-                          <label
-                            className="text-[11px] font-semibold uppercase tracking-wider"
-                            style={{ color: "#9CA3AF" }}
-                          >
-                            Subject
-                          </label>
-                          <SubjectCommandPalette
-                            subjects={schoolSubjects}
-                            value={selectedExam}
-                            onChange={setSelectedExam}
-                            placeholder="Search subject…"
-                          />
-                        </div>
-
-                        <div className="flex flex-col gap-1.5">
-                          <label
-                            className="text-[11px] font-semibold uppercase tracking-wider"
-                            style={{ color: "#9CA3AF" }}
-                          >
-                            Exam type
-                          </label>
-                          <div
-                            className="flex rounded-xl p-0.5 gap-0.5 w-fit"
-                            style={{ border: "1px solid #E4E8EF", background: "#F7F8FA" }}
-                            role="group"
-                            aria-label="Exam type"
-                          >
-                            {(["midterm", "final"] as ExamType[]).map((t) => (
-                              <button
-                                key={t}
-                                type="button"
-                                onClick={() => setExamType(t)}
-                                aria-pressed={examType === t}
-                                className="px-4 py-2 text-sm font-medium rounded-[10px] transition-all duration-150 cursor-pointer capitalize focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-                                style={
-                                  examType === t
-                                    ? {
-                                        background: "#ffffff",
-                                        color: "#1D4ED8",
-                                        boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
-                                        border: "1px solid #BFDBFE",
-                                      }
-                                    : {
-                                        background: "transparent",
-                                        color: "#6B7280",
-                                        border: "1px solid transparent",
-                                      }
-                                }
-                              >
-                                {t.charAt(0).toUpperCase() + t.slice(1)}
-                              </button>
-                            ))}
+                          <div className="flex flex-col gap-1.5">
+                            <label
+                              className="text-[11px] font-semibold uppercase tracking-wider"
+                              style={{ color: "#9CA3AF" }}
+                            >
+                              Exam type
+                            </label>
+                            <div
+                              className="grid grid-cols-2 rounded-xl p-0.5"
+                              style={{ border: "1px solid #E4E8EF", background: "#F7F8FA" }}
+                              role="group"
+                              aria-label="Exam type"
+                            >
+                              {(["midterm", "final"] as ExamType[]).map((t) => (
+                                <button
+                                  key={t}
+                                  type="button"
+                                  onClick={() => setExamType(t)}
+                                  aria-pressed={examType === t}
+                                  className="min-h-10 rounded-[10px] px-4 py-2 text-sm font-medium capitalize transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                                  style={
+                                    examType === t
+                                      ? {
+                                          background: "#ffffff",
+                                          color: "#1D4ED8",
+                                          boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
+                                          border: "1px solid #BFDBFE",
+                                        }
+                                      : {
+                                          background: "transparent",
+                                          color: "#6B7280",
+                                          border: "1px solid transparent",
+                                        }
+                                  }
+                                >
+                                  {t.charAt(0).toUpperCase() + t.slice(1)}
+                                </button>
+                              ))}
+                            </div>
                           </div>
+
+                          {!canDirectBook && (
+                            <TeacherRequestSelector
+                              teachers={requestTeachers}
+                              selectedTeacherId={selectedTeacherId}
+                              onTeacherChange={setSelectedTeacherId}
+                            />
+                          )}
                         </div>
+                      </>
+                    )}
 
-                        {!canDirectBook && (
-                          <TeacherRequestSelector
-                            teachers={requestTeachers}
-                            selectedTeacherId={selectedTeacherId}
-                            onTeacherChange={setSelectedTeacherId}
-                          />
-                        )}
-                      </div>
-                    </>
-                  )}
+                    <BookingSummaryCard
+                      studentName={studentName}
+                      exam={selectedExam}
+                      examType={examType}
+                      date={formattedDate}
+                      time={selectedSlotDef?.label ?? null}
+                      duration={selectedSlotDef?.duration ?? null}
+                      canReserve={canReserve}
+                      isSubmitting={isReserving}
+                      isConfirmed={showConfirmation}
+                      error={reserveError}
+                      reserveDisabledMessage={reserveDisabledMessage}
+                      actionLabel={canDirectBook ? "Reserve seat" : "Send request"}
+                      submittingLabel={canDirectBook ? "Reserving..." : "Sending request..."}
+                      confirmedTitle={canDirectBook ? "Booking confirmed!" : "Request sent"}
+                      confirmedDescription={
+                        canDirectBook
+                          ? undefined
+                          : "A professor must approve before a seat is booked."
+                      }
+                      resetLabel={canDirectBook ? "Schedule another exam" : "Request another exam"}
+                      securityText={
+                        canDirectBook
+                          ? "Your booking is secure and confidential."
+                          : "This request does not reserve a seat until approved."
+                      }
+                      onReserve={handleReserve}
+                      onReset={handleReset}
+                    />
+                  </div>
+                )}
+              </div>
 
-                  <BookingSummaryCard
-                    studentName={studentName}
-                    exam={selectedExam}
-                    examType={examType}
-                    date={formattedDate}
-                    time={selectedSlotDef?.label ?? null}
-                    duration={selectedSlotDef?.duration ?? null}
-                    canReserve={canReserve}
-                    isSubmitting={isReserving}
-                    isConfirmed={showConfirmation}
-                    error={reserveError}
-                    reserveDisabledMessage={reserveDisabledMessage}
-                    actionLabel={canDirectBook ? "Reserve seat" : "Send request"}
-                    submittingLabel={canDirectBook ? "Reserving..." : "Sending request..."}
-                    confirmedTitle={canDirectBook ? "Booking confirmed!" : "Request sent"}
-                    confirmedDescription={
-                      canDirectBook
-                        ? undefined
-                        : "A professor must approve before a seat is booked."
-                    }
-                    resetLabel={canDirectBook ? "Schedule another exam" : "Request another exam"}
-                    securityText={
-                      canDirectBook
-                        ? "Your booking is secure and confidential."
-                        : "This request does not reserve a seat until approved."
-                    }
-                    onReserve={handleReserve}
-                    onReset={handleReset}
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* ── Bottom info panels ──────────────────────── */}
-            <div className="schedule-bottom-grid mt-6">
-              <div className="anim-slide-up anim-d2">
+              <div className="min-w-0 anim-slide-up anim-d2 lg:sticky lg:top-20">
                 <SeatAvailabilityOverview
                   selectedDate={selectedDate}
                   slots={examSlots}
                   reservations={reservations}
                 />
               </div>
+            </section>
 
-              <div className="anim-slide-up anim-d3">
+            <section className="mt-4 anim-slide-up anim-d3">
                 <BookingsPanel
                   reservations={reservations}
                   currentUserId={currentUserId}
@@ -722,8 +703,7 @@ export default function ScheduleClient({
                   cancelError={cancelReservationError}
                   onCancelReservation={setCancelDialogReservation}
                 />
-              </div>
-            </div>
+            </section>
           </>
         ) : activePanel === "reservations" ? (
           <div className="grid gap-4">
@@ -767,7 +747,7 @@ export default function ScheduleClient({
           aria-modal="true"
           aria-labelledby="cancel-reservation-title"
         >
-          <div className="panel w-full max-w-[420px] p-5 shadow-[0_18px_60px_rgba(15,23,42,0.18)]">
+          <div className="panel max-h-[calc(100dvh-2rem)] w-full max-w-[420px] overflow-y-auto p-5 shadow-[0_18px_60px_rgba(15,23,42,0.18)]">
             <div className="mb-4 flex items-start gap-3">
               <div
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
@@ -805,12 +785,12 @@ export default function ScheduleClient({
               </p>
             )}
 
-            <div className="mt-5 flex justify-end gap-2">
+            <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <button
                 type="button"
                 onClick={() => setCancelDialogReservation(null)}
                 disabled={!!cancelingReservationId}
-                className="inline-flex h-10 items-center justify-center rounded-[10px] px-4 text-sm font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
+                className="inline-flex h-10 items-center justify-center rounded-[10px] px-4 text-sm font-semibold transition-colors duration-150 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed"
                 style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
               >
                 Keep
@@ -819,7 +799,7 @@ export default function ScheduleClient({
                 type="button"
                 onClick={() => handleCancelReservation(cancelDialogReservation)}
                 disabled={!!cancelingReservationId}
-                className="inline-flex h-10 items-center justify-center gap-2 rounded-[10px] px-4 text-sm font-semibold transition-colors duration-150 hover:bg-red-50 disabled:cursor-not-allowed"
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-[10px] px-4 text-sm font-semibold transition-colors duration-150 hover:bg-red-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed"
                 style={{ border: "1px solid #FECACA", color: "#DC2626" }}
               >
                 {cancelingReservationId === cancelDialogReservation.id ? (
@@ -844,7 +824,7 @@ function StepBar({ step, confirmed }: { step: 1 | 2 | 3; confirmed: boolean }) {
     { n: 3 as const, label: "Exam" },
   ];
   return (
-    <div className="flex items-center mb-6">
+    <div className="mb-4 flex items-center rounded-[18px] border border-[#E4E8EF] bg-white p-3 sm:mb-5 sm:p-4">
       {steps.map((s, i) => {
         const isCompleted = confirmed || s.n < step;
         const isCurrent = s.n === step && !confirmed;
@@ -852,13 +832,13 @@ function StepBar({ step, confirmed }: { step: 1 | 2 | 3; confirmed: boolean }) {
           <Fragment key={s.n}>
             {i > 0 && (
               <div
-                className="flex-1 h-px mx-3 transition-colors duration-300"
+                className="mx-2 h-px flex-1 transition-colors duration-300 sm:mx-3"
                 style={{ background: s.n <= step || confirmed ? "#2563EB" : "#E4E8EF" }}
               />
             )}
-            <div className="flex items-center gap-2 flex-shrink-0">
+            <div className="flex flex-shrink-0 items-center gap-2">
               <div
-                className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-200"
+                className="flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold transition-all duration-200"
                 style={
                   isCompleted
                     ? { background: "#2563EB", color: "#fff" }
@@ -882,7 +862,7 @@ function StepBar({ step, confirmed }: { step: 1 | 2 | 3; confirmed: boolean }) {
                 )}
               </div>
               <span
-                className="text-sm font-medium hidden sm:block"
+                className="hidden text-sm font-medium sm:block"
                 style={{
                   color: isCompleted ? "#2563EB" : isCurrent ? "#111827" : "#9CA3AF",
                 }}
@@ -897,12 +877,40 @@ function StepBar({ step, confirmed }: { step: 1 | 2 | 3; confirmed: boolean }) {
   );
 }
 
+function PrimaryStepButton({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl py-3 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+      style={{ background: "#2563EB", color: "#ffffff" }}
+      onMouseEnter={(event) => {
+        event.currentTarget.style.background = "#1D4ED8";
+      }}
+      onMouseLeave={(event) => {
+        event.currentTarget.style.background = "#2563EB";
+      }}
+    >
+      {label}
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <path
+          d="M3 7h8M8 4l3 3-3 3"
+          stroke="white"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </button>
+  );
+}
+
 function BackButton({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex items-center gap-1.5 text-sm font-medium transition-opacity duration-150 hover:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+      className="inline-flex min-h-10 w-fit items-center gap-1.5 rounded-[10px] text-sm font-medium transition-opacity duration-150 hover:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
       style={{ color: "#6B7280" }}
     >
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -923,11 +931,13 @@ function PanelTab({
   active,
   icon,
   label,
+  mobileLabel,
   onClick,
 }: {
   active: boolean;
   icon: React.ReactNode;
   label: string;
+  mobileLabel?: string;
   onClick: () => void;
 }) {
   return (
@@ -936,7 +946,7 @@ function PanelTab({
       role="tab"
       aria-selected={active}
       onClick={onClick}
-      className="inline-flex h-9 min-w-0 flex-1 items-center justify-center gap-2 rounded-[10px] px-3 text-sm font-semibold transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 sm:flex-none"
+      className="inline-flex h-10 min-w-0 items-center justify-center gap-1.5 rounded-[10px] px-2 text-xs font-semibold transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 sm:h-9 sm:gap-2 sm:px-3 sm:text-sm"
       style={
         active
           ? { background: "#EFF6FF", color: "#1D4ED8" }
@@ -944,7 +954,8 @@ function PanelTab({
       }
     >
       {icon}
-      <span className="truncate">{label}</span>
+      <span className="truncate sm:hidden">{mobileLabel ?? label}</span>
+      <span className="hidden truncate sm:inline">{label}</span>
     </button>
   );
 }
@@ -961,13 +972,13 @@ function SchoolProfilePanel({
   membershipId: string;
 }) {
   return (
-    <section className="panel anim-slide-up anim-d1 p-6">
+    <section className="panel anim-slide-up anim-d1 p-4 sm:p-6">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
+        <div className="min-w-0">
           <h2 className="text-[0.9375rem] font-semibold" style={{ color: "#111827" }}>
             School Profile
           </h2>
-          <p className="mt-1 text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
+          <p className="mt-1 break-words text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
             Your membership details for {schoolName}.
           </p>
         </div>
@@ -984,7 +995,7 @@ function SchoolProfilePanel({
           <p className="text-xs font-medium uppercase" style={{ color: "#94A3B8" }}>
             School
           </p>
-          <p className="mt-1 truncate text-sm font-semibold" style={{ color: "#111827" }}>
+          <p className="mt-1 break-words text-sm font-semibold" style={{ color: "#111827" }}>
             {schoolName}
           </p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -992,7 +1003,7 @@ function SchoolProfilePanel({
               <p className="text-xs font-medium uppercase" style={{ color: "#94A3B8" }}>
                 Name
               </p>
-              <p className="mt-1 truncate text-sm" style={{ color: "#374151" }}>
+              <p className="mt-1 break-words text-sm" style={{ color: "#374151" }}>
                 {studentName}
               </p>
             </div>
@@ -1000,7 +1011,7 @@ function SchoolProfilePanel({
               <p className="text-xs font-medium uppercase" style={{ color: "#94A3B8" }}>
                 Email
               </p>
-              <p className="mt-1 truncate text-sm" style={{ color: "#374151" }}>
+              <p className="mt-1 break-words text-sm" style={{ color: "#374151" }}>
                 {userEmail}
               </p>
             </div>

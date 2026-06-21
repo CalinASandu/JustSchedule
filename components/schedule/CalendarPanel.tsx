@@ -122,7 +122,7 @@ export default function CalendarPanel({
   }
 
   return (
-    <div className="panel p-5 flex flex-col gap-5">
+    <div className="panel flex flex-col gap-5 p-4 sm:p-5">
       {/* ── Form inputs ────────────────────────────── */}
       {!calendarOnly && (
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -249,7 +249,7 @@ export default function CalendarPanel({
         </div>
 
         {/* Date grid */}
-        <div className="grid grid-cols-7 gap-y-0.5">
+        <div className="grid grid-cols-7 gap-y-1">
           {Array.from({ length: firstDayOfWeek }).map((_, i) => (
             <div key={`e-${i}`} />
           ))}
@@ -268,11 +268,11 @@ export default function CalendarPanel({
                 disabled={isDisabled}
                 aria-label={`${MONTH_NAMES[viewMonth]} ${day}, ${viewYear}${isDisabled ? ', unavailable' : ''}`}
                 aria-pressed={isSelected}
-                className="flex flex-col items-center gap-0.5 py-0.5 transition-all duration-150 rounded-xl group focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                className="group flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-xl transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                 style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
               >
                 <span
-                  className="w-8 h-8 flex items-center justify-center rounded-full text-sm transition-all duration-150"
+                  className="flex h-9 w-9 items-center justify-center rounded-full text-sm transition-colors duration-150"
                   style={
                     isSelected
                       ? { background: '#2563EB', color: '#ffffff', fontWeight: 600 }
@@ -308,7 +308,7 @@ export default function CalendarPanel({
       </div>
 
       {/* ── Legend ──────────────────────────────────── */}
-      <div className="flex items-center justify-center gap-5 pt-1">
+      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 pt-1">
         {[
           { label: 'Available', color: '#16A34A', filled: true },
           { label: 'Limited', color: '#D97706', filled: true },

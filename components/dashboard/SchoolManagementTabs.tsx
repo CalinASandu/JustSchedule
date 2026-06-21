@@ -85,13 +85,17 @@ export default function SchoolManagementTabs({
   const canViewExamRequests = currentUserRole === "admin" || currentUserRole === "professor";
 
   function renderTabButton(tab: SchoolDashboardTab, label: string) {
+    const selected = activeTab === tab;
+
     return (
       <button
         type="button"
         onClick={() => setActiveTab(tab)}
-        className="h-10 rounded-t-[10px] px-4 text-sm font-semibold transition-colors duration-150"
+        role="tab"
+        aria-selected={selected}
+        className="h-11 shrink-0 whitespace-nowrap rounded-[12px] px-4 text-sm font-semibold transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
         style={
-          activeTab === tab
+          selected
             ? { background: "#EFF6FF", color: "#1D4ED8" }
             : { color: "#6B7280" }
         }
@@ -102,14 +106,20 @@ export default function SchoolManagementTabs({
   }
 
   return (
-    <section className="panel anim-slide-up anim-d1">
-      <div className="flex border-b border-[#E4E8EF] px-2 pt-2">
-        {currentUserRole !== "exam_supervisor" && renderTabButton("members", "Members")}
-        {renderTabButton("reservations", "Reservations")}
-        {canViewExamRequests && renderTabButton("examRequests", "Exam Requests")}
-        {canViewAttendance && renderTabButton("attendance", "Attendance")}
-        {canManageMembers && renderTabButton("requests", "Join Requests")}
-        {canManageMembers && renderTabButton("settings", "Settings")}
+    <section className="panel anim-slide-up anim-d1 min-w-0 overflow-hidden">
+      <div className="border-b border-[#E4E8EF]">
+        <div
+          className="flex gap-1 overflow-x-auto px-2 py-2"
+          role="tablist"
+          aria-label="School dashboard sections"
+        >
+          {currentUserRole !== "exam_supervisor" && renderTabButton("members", "Members")}
+          {renderTabButton("reservations", "Reservations")}
+          {canViewExamRequests && renderTabButton("examRequests", "Exam Requests")}
+          {canViewAttendance && renderTabButton("attendance", "Attendance")}
+          {canManageMembers && renderTabButton("requests", "Join Requests")}
+          {canManageMembers && renderTabButton("settings", "Settings")}
+        </div>
       </div>
 
       {activeTab === "members" && currentUserRole !== "exam_supervisor" && (
