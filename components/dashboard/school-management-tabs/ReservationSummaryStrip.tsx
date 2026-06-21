@@ -23,7 +23,7 @@ export function ReservationSummaryStrip({
   const utilization = shownCapacity > 0 ? Math.round((activeReservations.length / shownCapacity) * 100) : 0;
 
   return (
-    <div className="mb-4 grid gap-3 md:grid-cols-3">
+    <div className="mb-4 grid gap-3 lg:grid-cols-3">
       <SummaryCell
         icon={<CalendarDays size={16} />}
         label={viewMode === "day" ? "This day" : "This week"}

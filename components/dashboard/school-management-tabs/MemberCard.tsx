@@ -82,8 +82,8 @@ export function MemberCard({
       className="rounded-[10px] border border-[#E4E8EF] p-4"
       style={{ background: "#FFFFFF" }}
     >
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-start gap-3 sm:items-center">
           <div
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
             style={{ background: "#EFF6FF" }}
@@ -91,8 +91,8 @@ export function MemberCard({
             <UserRound size={16} color="#2563EB" strokeWidth={1.8} />
           </div>
           <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <p className="truncate text-sm font-semibold" style={{ color: "#111827" }}>
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
+              <p className="min-w-0 break-words text-sm font-semibold" style={{ color: "#111827" }}>
                 {member.name}
               </p>
               {member.isCurrentUser && (
@@ -101,7 +101,7 @@ export function MemberCard({
                 </span>
               )}
             </div>
-            <p className="truncate text-xs" style={{ color: "#9CA3AF" }}>
+            <p className="break-words text-xs" style={{ color: "#9CA3AF" }}>
               {member.email ?? `Joined ${formatDate(member.joinedAt)}`}
             </p>
             {member.role === "student" && (
@@ -124,7 +124,7 @@ export function MemberCard({
           </div>
         </div>
 
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex shrink-0 items-center justify-between gap-2 sm:justify-end">
           <span
             className="rounded-full px-2.5 py-1 text-xs font-semibold capitalize"
             style={getRolePillStyle(member.role)}
@@ -141,9 +141,10 @@ export function MemberCard({
                   setRoleSubmenuMemberId(null);
                   setOpenMenuMemberId(openMenuMemberId === member.id ? null : member.id);
                 }}
-                className="flex h-8 w-8 items-center justify-center rounded-[8px] transition-colors hover:bg-slate-100"
+                className="flex h-10 w-10 items-center justify-center rounded-[10px] transition-colors hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                 style={{ color: "#6B7280" }}
                 aria-label="Member actions"
+                aria-expanded={openMenuMemberId === member.id}
               >
                 <MoreHorizontal size={16} />
               </button>

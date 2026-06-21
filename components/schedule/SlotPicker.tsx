@@ -24,7 +24,7 @@ export default function SlotPicker({
   reservations,
 }: SlotPickerProps) {
   return (
-    <div className="panel p-5 flex flex-col">
+    <div className="panel flex flex-col p-4 sm:p-5">
       {/* Panel header */}
       <div className="flex items-center gap-2.5 mb-1">
         <div
@@ -68,7 +68,7 @@ export default function SlotPicker({
                 disabled={isFull}
                 aria-label={`${slot.label} — ${isFull ? 'fully booked' : `${remaining} seats available`}`}
                 aria-pressed={isSelected}
-                className={`w-full text-left rounded-2xl px-4 py-3.5 transition-all duration-200 anim-slide-up ${delayClass} focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500`}
+                className={`w-full min-h-[4.5rem] rounded-2xl px-4 py-3.5 text-left transition-[border-color,background,box-shadow,transform] duration-200 anim-slide-up ${delayClass} focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500`}
                 style={{
                   border: isSelected
                     ? '1.5px solid #2563EB'
@@ -95,13 +95,13 @@ export default function SlotPicker({
                 }}
               >
                 <div className="flex items-center justify-between gap-3">
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-[15px] font-semibold" style={{ color: isSelected ? '#1D4ED8' : '#111827' }}>
                       {slot.label}
                     </p>
                     <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>{slot.duration}</p>
                   </div>
-                  <div className="flex items-center gap-2 flex-shrink-0">
+                  <div className="flex flex-shrink-0 items-center gap-2">
                     <span
                       className="text-xs font-semibold px-2.5 py-1 rounded-full"
                       style={
@@ -145,8 +145,8 @@ export default function SlotPicker({
           <div className="mt-2 pt-2" style={{ borderTop: '1px solid #F3F4F6' }}>
             <p className="text-xs" style={{ color: '#9CA3AF' }}>
               Can&apos;t find a suitable time?{' '}
-              <button className="font-medium transition-colors duration-150 hover:underline" style={{ color: '#2563EB' }}>
-                View other dates →
+              <button className="font-medium transition-colors duration-150 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500" style={{ color: '#2563EB' }}>
+                View other dates
               </button>
             </p>
           </div>

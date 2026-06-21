@@ -34,7 +34,7 @@ export function ReservationDayView({
   formatExamType,
 }: ReservationDayViewProps) {
   return (
-    <div className="grid gap-3 xl:grid-cols-2 2xl:grid-cols-3">
+    <div className="grid gap-3 lg:grid-cols-3">
       {examSlots.map((slot) => {
         const slotReservations = reservationsBySlotId.get(slot.id) ?? [];
         const remaining = Math.max(0, slot.capacity - slotReservations.length);

@@ -48,6 +48,83 @@ function formatExamType(value: Reservation['examType']) {
   return value.charAt(0).toUpperCase() + value.slice(1)
 }
 
+function getReservationActionState(booking: Reservation, currentUserId: string) {
+  const isOwner = booking.userId === currentUserId
+  const examStart = new Date(`${booking.reservationDate}T${booking.startsAt}`)
+  const withinCutoff = isOwner && (examStart.getTime() - Date.now() < 2 * 60 * 60 * 1000)
+
+  return {
+    isOwner,
+    withinCutoff,
+    canCancel: isOwner && !withinCutoff,
+  }
+}
+
+function ReservationAction({
+  booking,
+  currentUserId,
+  cancelingReservationId,
+  onCancelReservation,
+  fullWidth = false,
+}: {
+  booking: Reservation
+  currentUserId: string
+  cancelingReservationId: string | null
+  onCancelReservation: (reservation: Reservation) => void
+  fullWidth?: boolean
+}) {
+  const { withinCutoff, canCancel } = getReservationActionState(booking, currentUserId)
+  const isPending = cancelingReservationId === booking.id
+
+  if (canCancel) {
+    return (
+      <button
+        type="button"
+        onClick={() => onCancelReservation(booking)}
+        disabled={!!cancelingReservationId}
+        className={`${fullWidth ? 'w-full justify-center' : ''} inline-flex min-h-10 items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed`}
+        style={{ background: 'transparent', color: '#DC2626', border: '1px solid #FECACA' }}
+        onMouseEnter={e => {
+          if (!cancelingReservationId) {
+            e.currentTarget.style.background = '#FEF2F2'
+          }
+        }}
+        onMouseLeave={e => {
+          if (!cancelingReservationId) {
+            e.currentTarget.style.background = 'transparent'
+          }
+        }}
+        aria-label={`Cancel ${booking.examName} for ${booking.studentName}`}
+      >
+        {isPending ? (
+          <Loader2 size={13} className="animate-spin" />
+        ) : (
+          <Ban size={13} />
+        )}
+        Cancel
+      </button>
+    )
+  }
+
+  if (withinCutoff) {
+    return (
+      <span
+        className="text-xs"
+        style={{ color: '#9CA3AF' }}
+        title="Cancellation is closed within 2 hours of the exam"
+      >
+        Cutoff reached
+      </span>
+    )
+  }
+
+  return (
+    <span className="text-xs" style={{ color: '#CBD5E1' }}>
+      Not yours
+    </span>
+  )
+}
+
 export default function BookingsPanel({
   reservations,
   currentUserId,
@@ -112,7 +189,59 @@ export default function BookingsPanel({
       )}
 
       {sortedReservations.length > 0 ? (
-        <div className="overflow-x-auto -mx-1 px-1">
+        <>
+        <div className="grid gap-3 md:hidden">
+          {sortedReservations.map((booking, i) => {
+            const delayClass = ['anim-slide-up', 'anim-slide-up anim-d1', 'anim-slide-up anim-d2', 'anim-slide-up anim-d3'][i] ?? 'anim-slide-up'
+
+            return (
+              <article
+                key={booking.id}
+                className={`rounded-xl border border-[#E4E8EF] bg-[#F9FAFB] p-4 ${delayClass}`}
+              >
+                <div className="flex items-start gap-3">
+                  <div
+                    className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-semibold"
+                    style={{ background: '#EFF6FF', color: '#2563EB' }}
+                    aria-hidden="true"
+                  >
+                    {getInitials(booking.studentName)}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="break-words text-sm font-semibold" style={{ color: '#111827' }}>
+                        {booking.examName}
+                      </h3>
+                      <span
+                        className="rounded-full px-2.5 py-1 text-xs font-semibold"
+                        style={{ background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE' }}
+                      >
+                        {formatExamType(booking.examType)}
+                      </span>
+                    </div>
+                    <p className="mt-1 break-words text-sm" style={{ color: '#374151' }}>
+                      {booking.studentName}
+                    </p>
+                    <p className="mt-1 text-xs" style={{ color: '#6B7280' }}>
+                      {formatDate(booking.reservationDate)} at {formatTime(booking.startsAt)} - {formatTime(booking.endsAt)}
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <ReservationAction
+                    booking={booking}
+                    currentUserId={currentUserId}
+                    cancelingReservationId={cancelingReservationId}
+                    onCancelReservation={onCancelReservation}
+                    fullWidth
+                  />
+                </div>
+              </article>
+            )
+          })}
+        </div>
+
+        <div className="hidden overflow-x-auto px-1 md:block">
           <table className="w-full text-sm" style={{ borderCollapse: 'separate', borderSpacing: 0 }}>
             <thead>
               <tr>
@@ -129,11 +258,6 @@ export default function BookingsPanel({
             </thead>
             <tbody>
               {sortedReservations.map((booking, i) => {
-                const isOwner = booking.userId === currentUserId
-                const examStart = new Date(`${booking.reservationDate}T${booking.startsAt}`)
-                const withinCutoff = isOwner && (examStart.getTime() - Date.now() < 2 * 60 * 60 * 1000)
-                const canCancel = isOwner && !withinCutoff
-                const isPending = cancelingReservationId === booking.id
                 const delayClass = ['anim-slide-up', 'anim-slide-up anim-d1', 'anim-slide-up anim-d2', 'anim-slide-up anim-d3'][i] ?? 'anim-slide-up'
 
                 return (
@@ -176,45 +300,12 @@ export default function BookingsPanel({
                     </td>
 
                     <td className="py-3">
-                      {canCancel ? (
-                        <button
-                          type="button"
-                          onClick={() => onCancelReservation(booking)}
-                          disabled={!!cancelingReservationId}
-                          className="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition-all duration-200 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed"
-                          style={{ background: 'transparent', color: '#DC2626', border: '1px solid #FECACA' }}
-                          onMouseEnter={e => {
-                            if (!cancelingReservationId) {
-                              e.currentTarget.style.background = '#FEF2F2'
-                            }
-                          }}
-                          onMouseLeave={e => {
-                            if (!cancelingReservationId) {
-                              e.currentTarget.style.background = 'transparent'
-                            }
-                          }}
-                          aria-label={`Cancel ${booking.examName} for ${booking.studentName}`}
-                        >
-                          {isPending ? (
-                            <Loader2 size={13} className="animate-spin" />
-                          ) : (
-                            <Ban size={13} />
-                          )}
-                          Cancel
-                        </button>
-                      ) : withinCutoff ? (
-                        <span
-                          className="text-xs whitespace-nowrap"
-                          style={{ color: '#9CA3AF' }}
-                          title="Cancellation is closed within 2 hours of the exam"
-                        >
-                          Cutoff reached
-                        </span>
-                      ) : (
-                        <span className="text-xs whitespace-nowrap" style={{ color: '#CBD5E1' }}>
-                          Not yours
-                        </span>
-                      )}
+                      <ReservationAction
+                        booking={booking}
+                        currentUserId={currentUserId}
+                        cancelingReservationId={cancelingReservationId}
+                        onCancelReservation={onCancelReservation}
+                      />
                     </td>
                   </tr>
                 )
@@ -222,6 +313,7 @@ export default function BookingsPanel({
             </tbody>
           </table>
         </div>
+        </>
       ) : (
         <div className="rounded-xl border border-[#E4E8EF] bg-[#F9FAFB] px-4 py-8 text-center">
           <p className="text-sm font-medium" style={{ color: '#6B7280' }}>{emptyTitle}</p>

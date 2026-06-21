@@ -183,7 +183,7 @@ export function ExamRequestsTab({
   }
 
   return (
-    <div className="p-5">
+    <div className="p-4 sm:p-5">
       <div className="mb-4 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
@@ -206,13 +206,13 @@ export function ExamRequestsTab({
 
         <div className="flex flex-col gap-2 lg:flex-row lg:items-center">
           {currentUserRole === "admin" && (
-            <label className="flex items-center gap-2 rounded-[12px] border bg-white px-3 py-2" style={{ borderColor: "#E4E8EF" }}>
+            <label className="flex min-h-10 w-full items-center gap-2 rounded-[12px] border bg-white px-3 py-2 lg:w-auto" style={{ borderColor: "#E4E8EF" }}>
               <Filter size={14} aria-hidden="true" style={{ color: "#6B7280" }} />
               <span className="sr-only">Assigned teacher filter</span>
               <select
                 value={teacherFilter}
                 onChange={(event) => setTeacherFilter(event.target.value)}
-                className="min-h-5 bg-transparent text-sm font-semibold outline-none"
+                className="min-h-5 min-w-0 flex-1 bg-transparent text-sm font-semibold outline-none focus-visible:ring-2 focus-visible:ring-blue-500 lg:min-w-[150px]"
                 style={{ color: "#111827" }}
               >
                 <option value="all">All requests</option>
@@ -225,18 +225,18 @@ export function ExamRequestsTab({
             </label>
           )}
 
-          <div className="flex items-center gap-2 rounded-[12px] bg-white">
+          <div className="flex w-full min-w-0 items-center gap-2 rounded-[12px] bg-white lg:w-auto">
             <button
               type="button"
               onClick={() => moveWeek(-7)}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50"
+              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
               aria-label="Previous week"
             >
               <ChevronLeft size={16} aria-hidden="true" />
             </button>
             <span
-              className="min-w-[210px] rounded-xl px-3 py-2 text-center text-sm font-semibold"
+              className="min-w-0 flex-1 rounded-xl px-3 py-2 text-center text-sm font-semibold lg:min-w-[210px]"
               style={{ border: "1px solid #E4E8EF", color: "#111827" }}
             >
               {rangeLabel}
@@ -244,7 +244,7 @@ export function ExamRequestsTab({
             <button
               type="button"
               onClick={() => moveWeek(7)}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50"
+              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
               aria-label="Next week"
             >

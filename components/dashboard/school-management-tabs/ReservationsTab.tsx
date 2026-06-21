@@ -247,7 +247,7 @@ export function ReservationsTab({
   }
 
   return (
-    <div className="p-5">
+    <div className="p-4 sm:p-5">
       <ReservationToolbar
         reservationDate={reservationDate}
         reservationViewMode={reservationViewMode}

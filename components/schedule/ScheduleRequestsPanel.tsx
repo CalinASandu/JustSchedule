@@ -58,7 +58,7 @@ export default function ScheduleRequestsPanel({
   onMarkSeen,
 }: ScheduleRequestsPanelProps) {
   return (
-    <div className="panel p-5">
+    <div className="panel p-4 sm:p-5">
       <div className="mb-4 flex items-center gap-2.5">
         <div
           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl"
@@ -66,7 +66,7 @@ export default function ScheduleRequestsPanel({
         >
           <Clock3 size={16} color="#2563EB" strokeWidth={1.8} />
         </div>
-        <div>
+        <div className="min-w-0">
           <h2 className="text-sm font-semibold" style={{ color: "#111827" }}>
             Exam requests
           </h2>
@@ -115,9 +115,9 @@ export default function ScheduleRequestsPanel({
                 style={{ background: "#FFFFFF" }}
               >
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="truncate text-sm font-semibold" style={{ color: "#111827" }}>
+                      <p className="break-words text-sm font-semibold" style={{ color: "#111827" }}>
                         {request.examName}
                       </p>
                       <span
@@ -150,7 +150,7 @@ export default function ScheduleRequestsPanel({
                       type="button"
                       onClick={() => onCancelRequest(request)}
                       disabled={cancelingRequestId === request.id || !!markingSeenRequestId}
-                      className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-[10px] px-3 text-sm font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
+                      className="inline-flex h-10 w-full shrink-0 items-center justify-center gap-2 rounded-[10px] px-3 text-sm font-semibold transition-colors duration-150 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed sm:h-9 sm:w-auto"
                       style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
                     >
                       {cancelingRequestId === request.id ? (
@@ -165,7 +165,7 @@ export default function ScheduleRequestsPanel({
                       type="button"
                       onClick={() => onMarkSeen(request)}
                       disabled={markingSeen || !!cancelingRequestId}
-                      className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-[10px] px-3 text-sm font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
+                      className="inline-flex h-10 w-full shrink-0 items-center justify-center gap-2 rounded-[10px] px-3 text-sm font-semibold transition-colors duration-150 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed sm:h-9 sm:w-auto"
                       style={{ border: "1px solid #E4E8EF", color: "#2563EB" }}
                     >
                       {markingSeen ? (

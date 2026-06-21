@@ -81,7 +81,7 @@ export function ExamRequestsReviewRail({
 
   return (
     <aside
-      className="rounded-[12px] border bg-white p-4 lg:sticky lg:top-20"
+      className="rounded-[12px] border bg-white p-4 xl:sticky xl:top-20"
       style={{ borderColor: "#E4E8EF" }}
       aria-label="Review selected exam request"
     >
@@ -90,7 +90,7 @@ export function ExamRequestsReviewRail({
           <p className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: "#94A3B8" }}>
             Review request
           </p>
-          <h3 className="mt-1 truncate text-base font-semibold" style={{ color: "#111827" }}>
+          <h3 className="mt-1 break-words text-base font-semibold" style={{ color: "#111827" }}>
             {request.studentName}
           </h3>
           {request.studentEmail && (
@@ -185,7 +185,7 @@ export function ExamRequestsReviewRail({
         />
       </label>
 
-      <div className="mt-4 grid grid-cols-2 gap-2">
+      <div className="mt-4 grid gap-2 sm:grid-cols-2">
         <button
           type="button"
           onClick={() => onReview(request, "declined")}
@@ -218,11 +218,11 @@ export function ExamRequestsReviewRail({
 
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-start justify-between gap-4 border-b border-[#F3F4F6] py-2 last:border-b-0">
+    <div className="flex flex-col gap-1 border-b border-[#F3F4F6] py-2 last:border-b-0 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
       <dt className="shrink-0 text-xs font-medium" style={{ color: "#94A3B8" }}>
         {label}
       </dt>
-      <dd className="min-w-0 text-right font-medium" style={{ color: "#111827" }}>
+      <dd className="min-w-0 break-words font-medium sm:text-right" style={{ color: "#111827" }}>
         {value}
       </dd>
     </div>
