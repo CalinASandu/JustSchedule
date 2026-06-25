@@ -75,7 +75,7 @@ export function MemberScheduleDialog({
       aria-modal="true"
       aria-labelledby="schedule-student-title"
     >
-      <div className="panel w-full max-w-[620px] overflow-hidden shadow-[0_18px_60px_rgba(15,23,42,0.18)]">
+      <div className="panel w-full max-w-[620px] shadow-[0_18px_60px_rgba(15,23,42,0.18)]">
         <div className="flex items-start justify-between gap-4 px-5 py-4 sm:px-6">
           <div className="flex min-w-0 items-start gap-3">
             <div

@@ -1,10 +1,11 @@
 import type React from "react";
 import { useState } from "react";
 import { CalendarDays, Clock, FileText, Loader2, Pencil, X } from "lucide-react";
+import SubjectCommandPalette from "@/components/schedule/SubjectCommandPalette";
 import { getMaxBookingDate, getTodayKey } from "./date-utils";
 import { formatReservationDate, formatSlotTime } from "./formatters";
 import { ErrorBanner } from "./shared";
-import type { ExamSlot, ExamType, Reservation } from "./types";
+import type { ExamSlot, ExamType, Reservation, SchoolSubject } from "./types";
 
 type ReservationUpdateValues = {
   slotId: string;
@@ -17,6 +18,7 @@ type ReservationUpdateDialogProps = {
   reservation: Reservation;
   studentName: string;
   examSlots: ExamSlot[];
+  subjects: SchoolSubject[];
   pending: boolean;
   error: string | null;
   onClose: () => void;
@@ -27,6 +29,7 @@ export function ReservationUpdateDialog({
   reservation,
   studentName,
   examSlots,
+  subjects,
   pending,
   error,
   onClose,
@@ -47,6 +50,15 @@ export function ReservationUpdateDialog({
   const [examName, setExamName] = useState(reservation.examName);
   const [examType, setExamType] = useState<ExamType>(reservation.examType);
   const selectedSlot = selectableSlots.find((slot) => slot.id === slotId) ?? selectableSlots[0] ?? null;
+  const hasValidExamName =
+    subjects.length === 0 ||
+    subjects.some((subject) => subject.name.trim().toLowerCase() === examName.trim().toLowerCase());
+  const canSubmit = !!slotId && !!examName.trim() && hasValidExamName;
+
+  function openDatePicker(event: React.MouseEvent<HTMLInputElement>) {
+    const input = event.currentTarget as HTMLInputElement & { showPicker?: () => void };
+    input.showPicker?.();
+  }
 
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -67,7 +79,7 @@ export function ReservationUpdateDialog({
     >
       <form
         onSubmit={submit}
-        className="panel anim-scale-in w-full max-w-[620px] overflow-hidden shadow-[0_18px_60px_rgba(15,23,42,0.18)]"
+        className="panel anim-scale-in w-full max-w-[620px] shadow-[0_18px_60px_rgba(15,23,42,0.18)]"
       >
         <div className="flex items-start justify-between gap-4 px-5 py-4 sm:px-6">
           <div className="flex min-w-0 items-start gap-3">
@@ -131,8 +143,9 @@ export function ReservationUpdateDialog({
                 min={getTodayKey()}
                 max={getMaxBookingDate()}
                 onChange={(event) => setReservationDate(event.target.value)}
+                onClick={openDatePicker}
                 disabled={pending}
-                className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed"
+                className="h-[2.625rem] w-full cursor-pointer rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed"
                 style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
               />
             </Field>
@@ -173,15 +186,19 @@ export function ReservationUpdateDialog({
             </Field>
 
             <Field label="Exam name" htmlFor="reservation-update-exam-name">
-              <input
+              <SubjectCommandPalette
                 id="reservation-update-exam-name"
-                type="text"
+                subjects={subjects}
                 value={examName}
-                onChange={(event) => setExamName(event.target.value)}
+                onChange={setExamName}
+                placeholder="Search subject..."
                 disabled={pending}
-                className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed"
-                style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
               />
+              {!hasValidExamName && examName.trim() && (
+                <p className="mt-1.5 text-xs font-medium" style={{ color: "#DC2626" }}>
+                  Choose an exam from the school subject list.
+                </p>
+              )}
             </Field>
           </div>
 
@@ -197,12 +214,12 @@ export function ReservationUpdateDialog({
             </button>
             <button
               type="submit"
-              disabled={pending || !slotId || !examName.trim()}
+              disabled={pending || !canSubmit}
               className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
               style={{
-                background: pending || !slotId || !examName.trim() ? "#93C5FD" : "#2563EB",
+                background: pending || !canSubmit ? "#93C5FD" : "#2563EB",
                 boxShadow:
-                  pending || !slotId || !examName.trim()
+                  pending || !canSubmit
                     ? "none"
                     : "0 1px 3px rgba(37,99,235,0.25), 0 4px 12px rgba(37,99,235,0.12)",
               }}

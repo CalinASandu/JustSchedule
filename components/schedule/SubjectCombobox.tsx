@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 interface Subject {
   id: string;
@@ -23,11 +23,13 @@ export default function SubjectCombobox({
   disabled = false,
 }: SubjectComboboxProps) {
   const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState(value);
   const [activeIndex, setActiveIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
+  const generatedListboxId = useId();
+  const listboxId = `${generatedListboxId}-subjects`;
+  const query = value;
 
   const filtered =
     query.trim() === ""
@@ -35,11 +37,6 @@ export default function SubjectCombobox({
       : subjects.filter((s) =>
           s.name.toLowerCase().includes(query.trim().toLowerCase()),
         );
-
-  // Keep query in sync when value changes externally (e.g. reset)
-  useEffect(() => {
-    setQuery(value);
-  }, [value]);
 
   // Scroll active item into view
   useEffect(() => {
@@ -63,14 +60,12 @@ export default function SubjectCombobox({
 
   function selectSubject(name: string) {
     onChange(name);
-    setQuery(name);
     setOpen(false);
     setActiveIndex(-1);
   }
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const v = e.target.value;
-    setQuery(v);
     onChange(v);
     setOpen(true);
     setActiveIndex(-1);
@@ -142,7 +137,9 @@ export default function SubjectCombobox({
         placeholder={placeholder}
         disabled={disabled}
         autoComplete="off"
+        role="combobox"
         aria-autocomplete="list"
+        aria-controls={listboxId}
         aria-expanded={open}
         aria-haspopup="listbox"
         className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
@@ -155,6 +152,7 @@ export default function SubjectCombobox({
 
       {open && filtered.length > 0 && (
         <ul
+          id={listboxId}
           ref={listRef}
           role="listbox"
           className="anim-scale-in"

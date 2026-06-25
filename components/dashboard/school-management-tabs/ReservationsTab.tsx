@@ -19,6 +19,7 @@ import type {
   ReservationViewMode,
   SchoolMember,
   SchoolRole,
+  SchoolSubject,
 } from "./types";
 
 type ReservationsTabProps = {
@@ -26,6 +27,7 @@ type ReservationsTabProps = {
   examSlots: ExamSlot[];
   reservations: Reservation[];
   members: SchoolMember[];
+  subjects: SchoolSubject[];
   currentUserRole: Exclude<SchoolRole, "student">;
 };
 
@@ -34,6 +36,7 @@ export function ReservationsTab({
   examSlots,
   reservations,
   members,
+  subjects,
   currentUserRole,
 }: ReservationsTabProps) {
   const router = useRouter();
@@ -439,6 +442,7 @@ export function ReservationsTab({
           reservation={updateDialogReservation}
           studentName={memberNamesByUserId.get(updateDialogReservation.userId) ?? "Unnamed student"}
           examSlots={examSlots}
+          subjects={subjects}
           pending={updateReservationState.pendingReservationId === updateDialogReservation.id}
           error={updateReservationState.error}
           onClose={() => {

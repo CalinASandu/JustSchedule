@@ -142,6 +142,7 @@ export default function SchoolManagementTabs({
           examSlots={activeExamSlots}
           reservations={reservations}
           members={members}
+          subjects={schoolSubjects}
           currentUserRole={currentUserRole}
         />
       )}
