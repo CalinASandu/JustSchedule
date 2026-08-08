@@ -36,15 +36,15 @@ export default function DirectJoinCard({ schoolId, schoolName, isPending }: Prop
       <div className="flex items-start gap-3">
         <div
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-[11px] font-semibold"
-          style={{ background: "#EFF6FF", color: "#2563EB" }}
+          style={{ background: "var(--accent-subtle)", color: "var(--accent-color)" }}
         >
           {getInitials(schoolName)}
         </div>
         <div>
-          <h2 className="text-[0.9375rem] font-semibold" style={{ color: "#111827" }}>
+          <h2 className="text-[0.9375rem] font-semibold" style={{ color: "var(--text-primary)" }}>
             {schoolName}
           </h2>
-          <p className="mt-1 text-xs" style={{ color: "#9CA3AF" }}>
+          <p className="mt-1 text-xs" style={{ color: "var(--text-muted)" }}>
             {hasPending ? "Request pending admin approval" : "You are not a member yet"}
           </p>
         </div>
@@ -54,7 +54,7 @@ export default function DirectJoinCard({ schoolId, schoolName, isPending }: Prop
         {hasPending ? (
           <div
             className="inline-flex h-[2.375rem] items-center gap-2 rounded-[10px] px-3 text-[0.8125rem] font-medium"
-            style={{ background: "#EFF6FF", color: "#2563EB" }}
+            style={{ background: "var(--accent-subtle)", color: "var(--accent-color)" }}
           >
             <Check size={14} />
             Request sent
@@ -65,9 +65,10 @@ export default function DirectJoinCard({ schoolId, schoolName, isPending }: Prop
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex h-[2.375rem] items-center gap-2 rounded-[10px] px-4 text-[0.8125rem] font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
+              className="inline-flex h-[2.375rem] items-center gap-2 rounded-[10px] px-4 text-[0.8125rem] font-semibold transition-colors duration-150 disabled:cursor-not-allowed"
               style={{
-                background: submitting ? "#93C5FD" : "#2563EB",
+                color: "var(--text-on-accent)",
+                background: submitting ? "var(--accent-disabled)" : "var(--accent-color)",
                 boxShadow: submitting
                   ? "none"
                   : "0 1px 3px rgba(37,99,235,0.25), 0 4px 12px rgba(37,99,235,0.12)",
@@ -87,9 +88,9 @@ export default function DirectJoinCard({ schoolId, schoolName, isPending }: Prop
           <p
             className="anim-fade-in mt-2 text-[0.8125rem]"
             style={{
-              color: "#DC2626",
-              background: "#FEF2F2",
-              border: "1px solid #FECACA",
+              color: "var(--danger)",
+              background: "var(--danger-subtle)",
+              border: "1px solid var(--danger-border)",
               borderRadius: 8,
               padding: "0.5rem 0.75rem",
             }}

@@ -18,9 +18,10 @@ export default function JoinRequestForm({ inviteToken }: { inviteToken: string }
       <button
         type="submit"
         disabled={pending || state.success}
-        className="inline-flex h-[2.625rem] w-full items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
+        className="inline-flex h-[2.625rem] w-full items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 disabled:cursor-not-allowed"
         style={{
-          background: pending || state.success ? "#93C5FD" : "#2563EB",
+          color: "var(--text-on-accent)",
+          background: pending || state.success ? "var(--accent-disabled)" : "var(--accent-color)",
           boxShadow:
             pending || state.success
               ? "none"
@@ -41,9 +42,9 @@ export default function JoinRequestForm({ inviteToken }: { inviteToken: string }
         <p
           className="anim-fade-in text-[0.8125rem]"
           style={{
-            color: "#DC2626",
-            background: "#FEF2F2",
-            border: "1px solid #FECACA",
+            color: "var(--danger)",
+            background: "var(--danger-subtle)",
+            border: "1px solid var(--danger-border)",
             borderRadius: 8,
             padding: "0.5rem 0.75rem",
           }}
@@ -53,7 +54,7 @@ export default function JoinRequestForm({ inviteToken }: { inviteToken: string }
       )}
 
       {state.success && (
-        <p className="anim-fade-in text-[0.8125rem] font-medium" style={{ color: "#1D4ED8" }}>
+        <p className="anim-fade-in text-[0.8125rem] font-medium" style={{ color: "var(--accent-strong)" }}>
           Your request is waiting for admin approval.
         </p>
       )}

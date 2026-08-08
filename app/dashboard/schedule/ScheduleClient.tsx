@@ -460,7 +460,7 @@ export default function ScheduleClient({
   }
 
   return (
-    <div className="min-h-dvh" style={{ background: "#F7F8FA" }}>
+    <div className="min-h-dvh" style={{ background: "var(--surface-page)" }}>
       <Navbar userName={studentName} userEmail={userEmail} notifications={notifications} />
 
       <main className="mx-auto w-full max-w-[1400px] px-4 pb-12 sm:px-6 lg:px-8">
@@ -468,21 +468,21 @@ export default function ScheduleClient({
           <div className="min-w-0 anim-slide-up">
             <p
               className="mb-2 text-[11px] font-semibold uppercase tracking-wider"
-              style={{ color: "#94A3B8" }}
+              style={{ color: "var(--text-faint)" }}
             >
               Student workspace
             </p>
             <h1
               className="text-[1.55rem] font-bold sm:text-[1.85rem] lg:text-[2.15rem]"
               style={{
-                color: "#111827",
+                color: "var(--text-primary)",
                 lineHeight: 1.12,
                 letterSpacing: "-0.025em",
               }}
             >
               Schedule your exam
             </h1>
-            <p className="mt-1.5 truncate text-sm" style={{ color: "#6B7280" }}>
+            <p className="mt-1.5 truncate text-sm" style={{ color: "var(--text-secondary)" }}>
               {schoolName}
             </p>
           </div>
@@ -569,18 +569,18 @@ export default function ScheduleClient({
                           <div className="flex items-center gap-2.5">
                             <div
                               className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg"
-                              style={{ background: "#EFF6FF" }}
+                              style={{ background: "var(--accent-subtle)" }}
                             >
                               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                                <rect x="1.5" y="1.5" width="11" height="11" rx="1.5" stroke="#2563EB" strokeWidth="1.3" />
-                                <path d="M4.5 7h5M4.5 4.5h3M4.5 9.5h4" stroke="#2563EB" strokeWidth="1.3" strokeLinecap="round" />
+                                <rect x="1.5" y="1.5" width="11" height="11" rx="1.5" stroke="var(--accent-color)" strokeWidth="1.3" />
+                                <path d="M4.5 7h5M4.5 4.5h3M4.5 9.5h4" stroke="var(--accent-color)" strokeWidth="1.3" strokeLinecap="round" />
                               </svg>
                             </div>
                             <div className="min-w-0">
-                              <h2 className="text-sm font-semibold" style={{ color: "#111827" }}>
+                              <h2 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                                 Exam details
                               </h2>
-                              <p className="text-xs" style={{ color: "#9CA3AF" }}>
+                              <p className="text-xs" style={{ color: "var(--text-muted)" }}>
                                 Choose your subject and exam type
                               </p>
                             </div>
@@ -589,7 +589,7 @@ export default function ScheduleClient({
                           <div className="flex flex-col gap-1.5">
                             <label
                               className="text-[11px] font-semibold uppercase tracking-wider"
-                              style={{ color: "#9CA3AF" }}
+                              style={{ color: "var(--text-muted)" }}
                             >
                               Subject
                             </label>
@@ -604,13 +604,13 @@ export default function ScheduleClient({
                           <div className="flex flex-col gap-1.5">
                             <label
                               className="text-[11px] font-semibold uppercase tracking-wider"
-                              style={{ color: "#9CA3AF" }}
+                              style={{ color: "var(--text-muted)" }}
                             >
                               Exam type
                             </label>
                             <div
                               className="grid grid-cols-2 rounded-xl p-0.5"
-                              style={{ border: "1px solid #E4E8EF", background: "#F7F8FA" }}
+                              style={{ border: "1px solid var(--border-default)", background: "var(--surface-page)" }}
                               role="group"
                               aria-label="Exam type"
                             >
@@ -620,18 +620,18 @@ export default function ScheduleClient({
                                   type="button"
                                   onClick={() => setExamType(t)}
                                   aria-pressed={examType === t}
-                                  className="min-h-10 rounded-[10px] px-4 py-2 text-sm font-medium capitalize transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                                  className="min-h-10 rounded-[10px] px-4 py-2 text-sm font-medium capitalize transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)]"
                                   style={
                                     examType === t
                                       ? {
-                                          background: "#ffffff",
-                                          color: "#1D4ED8",
+                                          background: "var(--surface-panel)",
+                                          color: "var(--accent-strong)",
                                           boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
-                                          border: "1px solid #BFDBFE",
+                                          border: "1px solid var(--accent-border)",
                                         }
                                       : {
                                           background: "transparent",
-                                          color: "#6B7280",
+                                          color: "var(--text-secondary)",
                                           border: "1px solid transparent",
                                         }
                                   }
@@ -742,7 +742,8 @@ export default function ScheduleClient({
 
       {cancelDialogReservation && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4"
+          className="fixed inset-0 z-50 flex items-center justify-center px-4"
+          style={{ background: "var(--overlay-scrim)" }}
           role="dialog"
           aria-modal="true"
           aria-labelledby="cancel-reservation-title"
@@ -751,15 +752,15 @@ export default function ScheduleClient({
             <div className="mb-4 flex items-start gap-3">
               <div
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-                style={{ background: "#FEF2F2" }}
+                style={{ background: "var(--danger-subtle)" }}
               >
-                <Ban size={18} color="#DC2626" strokeWidth={1.9} />
+                <Ban size={18} color="var(--danger)" strokeWidth={1.9} />
               </div>
               <div>
-                <h3 id="cancel-reservation-title" className="text-sm font-semibold" style={{ color: "#111827" }}>
+                <h3 id="cancel-reservation-title" className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                   Cancel reservation
                 </h3>
-                <p className="mt-1 text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
+                <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}>
                   This will cancel {cancelDialogReservation.examName} on{" "}
                   {new Date(`${cancelDialogReservation.reservationDate}T00:00:00`).toLocaleDateString(
                     "en-US",
@@ -774,9 +775,9 @@ export default function ScheduleClient({
               <p
                 className="anim-fade-in mb-4 text-[0.8125rem]"
                 style={{
-                  color: "#DC2626",
-                  background: "#FEF2F2",
-                  border: "1px solid #FECACA",
+                  color: "var(--danger)",
+                  background: "var(--danger-subtle)",
+                  border: "1px solid var(--danger-border)",
                   borderRadius: 8,
                   padding: "0.5rem 0.75rem",
                 }}
@@ -790,8 +791,8 @@ export default function ScheduleClient({
                 type="button"
                 onClick={() => setCancelDialogReservation(null)}
                 disabled={!!cancelingReservationId}
-                className="inline-flex h-10 items-center justify-center rounded-[10px] px-4 text-sm font-semibold transition-colors duration-150 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed"
-                style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+                className="inline-flex h-10 items-center justify-center rounded-[10px] px-4 text-sm font-semibold transition-colors duration-150 hover:bg-[var(--surface-subtle)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)] disabled:cursor-not-allowed"
+                style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
               >
                 Keep
               </button>
@@ -799,8 +800,8 @@ export default function ScheduleClient({
                 type="button"
                 onClick={() => handleCancelReservation(cancelDialogReservation)}
                 disabled={!!cancelingReservationId}
-                className="inline-flex h-10 items-center justify-center gap-2 rounded-[10px] px-4 text-sm font-semibold transition-colors duration-150 hover:bg-red-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed"
-                style={{ border: "1px solid #FECACA", color: "#DC2626" }}
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-[10px] px-4 text-sm font-semibold transition-colors duration-150 hover:bg-[var(--danger-subtle)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)] disabled:cursor-not-allowed"
+                style={{ border: "1px solid var(--danger-border)", color: "var(--danger)" }}
               >
                 {cancelingReservationId === cancelDialogReservation.id ? (
                   <Loader2 size={15} className="animate-spin" />
@@ -824,7 +825,10 @@ function StepBar({ step, confirmed }: { step: 1 | 2 | 3; confirmed: boolean }) {
     { n: 3 as const, label: "Exam" },
   ];
   return (
-    <div className="mb-4 flex items-center rounded-[18px] border border-[#E4E8EF] bg-white p-3 sm:mb-5 sm:p-4">
+    <div
+      className="mb-4 flex items-center rounded-[18px] border border-[var(--border-default)] p-3 sm:mb-5 sm:p-4"
+      style={{ background: "var(--surface-panel)" }}
+    >
       {steps.map((s, i) => {
         const isCompleted = confirmed || s.n < step;
         const isCurrent = s.n === step && !confirmed;
@@ -833,7 +837,7 @@ function StepBar({ step, confirmed }: { step: 1 | 2 | 3; confirmed: boolean }) {
             {i > 0 && (
               <div
                 className="mx-2 h-px flex-1 transition-colors duration-300 sm:mx-3"
-                style={{ background: s.n <= step || confirmed ? "#2563EB" : "#E4E8EF" }}
+                style={{ background: s.n <= step || confirmed ? "var(--accent-color)" : "var(--border-default)" }}
               />
             )}
             <div className="flex flex-shrink-0 items-center gap-2">
@@ -841,10 +845,10 @@ function StepBar({ step, confirmed }: { step: 1 | 2 | 3; confirmed: boolean }) {
                 className="flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold transition-all duration-200"
                 style={
                   isCompleted
-                    ? { background: "#2563EB", color: "#fff" }
+                    ? { background: "var(--accent-color)", color: "var(--text-on-accent)" }
                     : isCurrent
-                    ? { background: "#EFF6FF", color: "#2563EB", border: "2px solid #2563EB" }
-                    : { background: "#F3F4F6", color: "#9CA3AF", border: "1px solid #E4E8EF" }
+                    ? { background: "var(--accent-subtle)", color: "var(--accent-color)", border: "2px solid var(--accent-color)" }
+                    : { background: "var(--border-subtle)", color: "var(--text-muted)", border: "1px solid var(--border-default)" }
                 }
               >
                 {isCompleted ? (
@@ -864,7 +868,7 @@ function StepBar({ step, confirmed }: { step: 1 | 2 | 3; confirmed: boolean }) {
               <span
                 className="hidden text-sm font-medium sm:block"
                 style={{
-                  color: isCompleted ? "#2563EB" : isCurrent ? "#111827" : "#9CA3AF",
+                  color: isCompleted ? "var(--accent-color)" : isCurrent ? "var(--text-primary)" : "var(--text-muted)",
                 }}
               >
                 {s.label}
@@ -882,13 +886,13 @@ function PrimaryStepButton({ label, onClick }: { label: string; onClick: () => v
     <button
       type="button"
       onClick={onClick}
-      className="flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl py-3 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-      style={{ background: "#2563EB", color: "#ffffff" }}
+      className="flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl py-3 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)] focus-visible:ring-offset-2"
+      style={{ background: "var(--accent-color)", color: "var(--text-on-accent)" }}
       onMouseEnter={(event) => {
-        event.currentTarget.style.background = "#1D4ED8";
+        event.currentTarget.style.background = "var(--accent-strong)";
       }}
       onMouseLeave={(event) => {
-        event.currentTarget.style.background = "#2563EB";
+        event.currentTarget.style.background = "var(--accent-color)";
       }}
     >
       {label}
@@ -910,8 +914,8 @@ function BackButton({ label, onClick }: { label: string; onClick: () => void }) 
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex min-h-10 w-fit items-center gap-1.5 rounded-[10px] text-sm font-medium transition-opacity duration-150 hover:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-      style={{ color: "#6B7280" }}
+      className="inline-flex min-h-10 w-fit items-center gap-1.5 rounded-[10px] text-sm font-medium transition-opacity duration-150 hover:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)]"
+      style={{ color: "var(--text-secondary)" }}
     >
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
         <path
@@ -946,11 +950,11 @@ function PanelTab({
       role="tab"
       aria-selected={active}
       onClick={onClick}
-      className="inline-flex h-10 min-w-0 items-center justify-center gap-1.5 rounded-[10px] px-2 text-xs font-semibold transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 sm:h-9 sm:gap-2 sm:px-3 sm:text-sm"
+      className="inline-flex h-10 min-w-0 items-center justify-center gap-1.5 rounded-[10px] px-2 text-xs font-semibold transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)] sm:h-9 sm:gap-2 sm:px-3 sm:text-sm"
       style={
         active
-          ? { background: "#EFF6FF", color: "#1D4ED8" }
-          : { background: "#FFFFFF", color: "#6B7280" }
+          ? { background: "var(--accent-subtle)", color: "var(--accent-strong)" }
+          : { background: "var(--surface-panel)", color: "var(--text-secondary)" }
       }
     >
       {icon}
@@ -975,54 +979,54 @@ function SchoolProfilePanel({
     <section className="panel anim-slide-up anim-d1 p-4 sm:p-6">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h2 className="text-[0.9375rem] font-semibold" style={{ color: "#111827" }}>
+          <h2 className="text-[0.9375rem] font-semibold" style={{ color: "var(--text-primary)" }}>
             School Profile
           </h2>
-          <p className="mt-1 break-words text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
+          <p className="mt-1 break-words text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}>
             Your membership details for {schoolName}.
           </p>
         </div>
         <span
           className="inline-flex w-fit rounded-full px-3 py-1 text-xs font-semibold"
-          style={{ background: "#E2E8F0", color: "#64748B" }}
+          style={{ background: "var(--surface-subtle)", color: "var(--text-slate)" }}
         >
           Student
         </span>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
-        <div className="rounded-[10px] border border-[#E4E8EF] p-4">
-          <p className="text-xs font-medium uppercase" style={{ color: "#94A3B8" }}>
+        <div className="rounded-[10px] border border-[var(--border-default)] p-4">
+          <p className="text-xs font-medium uppercase" style={{ color: "var(--text-faint)" }}>
             School
           </p>
-          <p className="mt-1 break-words text-sm font-semibold" style={{ color: "#111827" }}>
+          <p className="mt-1 break-words text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
             {schoolName}
           </p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <div>
-              <p className="text-xs font-medium uppercase" style={{ color: "#94A3B8" }}>
+              <p className="text-xs font-medium uppercase" style={{ color: "var(--text-faint)" }}>
                 Name
               </p>
-              <p className="mt-1 break-words text-sm" style={{ color: "#374151" }}>
+              <p className="mt-1 break-words text-sm" style={{ color: "var(--text-body)" }}>
                 {studentName}
               </p>
             </div>
             <div>
-              <p className="text-xs font-medium uppercase" style={{ color: "#94A3B8" }}>
+              <p className="text-xs font-medium uppercase" style={{ color: "var(--text-faint)" }}>
                 Email
               </p>
-              <p className="mt-1 break-words text-sm" style={{ color: "#374151" }}>
+              <p className="mt-1 break-words text-sm" style={{ color: "var(--text-body)" }}>
                 {userEmail}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="rounded-[10px] border border-[#E4E8EF] p-4">
-          <h3 className="text-sm font-semibold" style={{ color: "#111827" }}>
+        <div className="rounded-[10px] border border-[var(--border-default)] p-4">
+          <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
             Membership
           </h3>
-          <p className="mb-4 mt-1 text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
+          <p className="mb-4 mt-1 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}>
             Leave this school if you no longer need access.
           </p>
           <LeaveSchoolButton membershipId={membershipId} schoolName={schoolName} />

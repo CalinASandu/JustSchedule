@@ -151,10 +151,10 @@ export function SettingsExamRoomsPanel({
     <div>
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-sm font-semibold" style={{ color: "#111827" }}>
+          <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
             Exam rooms
           </p>
-          <p className="mt-1 max-w-[620px] text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
+          <p className="mt-1 max-w-[620px] text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}>
             Primary rooms define selectable exam times. Overflow rooms stay attached to a
             primary room and only receive students after the primary room is full.
           </p>
@@ -163,9 +163,10 @@ export function SettingsExamRoomsPanel({
         <button
           type="button"
           onClick={() => setDialogState({ mode: "create-primary" })}
-          className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold text-white transition-colors duration-150"
+          className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150"
           style={{
-            background: "#2563EB",
+            color: "var(--text-on-accent)",
+            background: "var(--accent-color)",
             boxShadow: "0 1px 3px rgba(37,99,235,0.25), 0 4px 12px rgba(37,99,235,0.12)",
           }}
         >
@@ -174,8 +175,8 @@ export function SettingsExamRoomsPanel({
         </button>
       </div>
 
-      <p className="mb-4 text-sm" style={{ color: "#6B7280" }}>
-        <span className="font-semibold" style={{ color: "#111827" }}>
+      <p className="mb-4 text-sm" style={{ color: "var(--text-secondary)" }}>
+        <span className="font-semibold" style={{ color: "var(--text-primary)" }}>
           {primarySlots.length} slots
         </span>
         {" · "}
@@ -188,13 +189,13 @@ export function SettingsExamRoomsPanel({
 
       <div
         className="overflow-hidden rounded-[12px] border"
-        style={{ background: "#FFFFFF", borderColor: "#E4E8EF" }}
+        style={{ background: "var(--surface-panel)", borderColor: "var(--border-default)" }}
       >
         {primarySlots.length > 0 ? (
           primarySlots.map((slot, index) => {
             const overflowSlot = overflowByPrimaryId.get(slot.id) ?? null;
             return (
-              <div key={slot.id} className={index > 0 ? "border-t border-[#E4E8EF]" : ""}>
+              <div key={slot.id} className={index > 0 ? "border-t border-[var(--border-default)]" : ""}>
                 <SlotRow
                   slot={slot}
                   pendingKey={slotState.pendingKey}
@@ -206,7 +207,7 @@ export function SettingsExamRoomsPanel({
                 />
 
                 {overflowSlot && (
-                  <div className="border-t border-[#F3F4F6]">
+                  <div className="border-t border-[var(--border-subtle)]">
                     <SlotRow
                       slot={overflowSlot}
                       nested
@@ -221,10 +222,10 @@ export function SettingsExamRoomsPanel({
           })
         ) : (
           <div className="p-5">
-            <p className="text-sm font-semibold" style={{ color: "#111827" }}>
+            <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
               No exam rooms
             </p>
-            <p className="mt-1 text-sm" style={{ color: "#6B7280" }}>
+            <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)" }}>
               Add a primary slot to make exam scheduling available.
             </p>
           </div>
@@ -274,20 +275,20 @@ function SlotRow({
       <div className="min-w-0">
         <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
           {nested && (
-            <span className="text-sm" style={{ color: "#94A3B8" }} aria-hidden="true">
+            <span className="text-sm" style={{ color: "var(--text-faint)" }} aria-hidden="true">
               ↳
             </span>
           )}
-          <p className="truncate text-sm font-semibold" style={{ color: "#111827" }}>
+          <p className="truncate text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
             {nested ? "Overflow room" : slot.name}
           </p>
           {!nested && (
-            <span className="text-sm" style={{ color: "#6B7280" }}>
+            <span className="text-sm" style={{ color: "var(--text-secondary)" }}>
               {formatSlotTime(slot.startsAt)}-{formatSlotTime(slot.endsAt)}
             </span>
           )}
         </div>
-        <p className="mt-1 text-sm" style={{ color: "#6B7280" }}>
+        <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)" }}>
           {nested
             ? `${slot.capacity} seats, opens when the main room is full`
             : `${slot.capacity} seats${slot.isActive ? "" : ", disabled"}`}
@@ -314,11 +315,11 @@ function StatusBadge({ isActive }: { isActive: boolean }) {
   return (
     <span
       className="inline-flex items-center gap-1.5 text-[0.8125rem] font-semibold"
-      style={{ color: isActive ? "#1D4ED8" : "#6B7280" }}
+      style={{ color: isActive ? "var(--accent-strong)" : "var(--text-secondary)" }}
     >
       <span
         className="h-1.5 w-1.5 rounded-full"
-        style={{ background: isActive ? "#2563EB" : "#94A3B8" }}
+        style={{ background: isActive ? "var(--accent-color)" : "var(--text-faint)" }}
       />
       {isActive ? "Open" : "Closed"}
     </span>
@@ -352,8 +353,8 @@ function SlotActionMenu({
         type="button"
         onClick={() => setOpen((current) => !current)}
         disabled={disabled}
-        className="inline-flex h-8 w-8 items-center justify-center rounded-[10px] transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
-        style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+        className="inline-flex h-8 w-8 items-center justify-center rounded-[10px] transition-colors duration-150 hover:bg-[var(--surface-subtle)] disabled:cursor-not-allowed disabled:opacity-60"
+        style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
         aria-label="Exam room actions"
         aria-expanded={open}
       >
@@ -413,8 +414,8 @@ function MenuButton({
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full items-center gap-2.5 px-3 py-2 text-sm transition-colors hover:bg-slate-50"
-      style={{ color: tone === "danger" ? "#DC2626" : "#374151" }}
+      className="flex w-full items-center gap-2.5 px-3 py-2 text-sm transition-colors hover:bg-[var(--surface-subtle)]"
+      style={{ color: tone === "danger" ? "var(--danger)" : "var(--text-body)" }}
     >
       {icon}
       {label}
@@ -476,25 +477,27 @@ function SlotDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4 py-6"
+      className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6"
+      style={{ background: "var(--overlay-scrim)" }}
       role="dialog"
       aria-modal="true"
       aria-labelledby="slot-dialog-title"
     >
       <form
         onSubmit={submit}
-        className="panel anim-scale-in w-full max-w-[520px] overflow-hidden shadow-[0_18px_60px_rgba(15,23,42,0.18)]"
+        className="panel anim-scale-in w-full max-w-[520px] overflow-hidden"
+        style={{ boxShadow: "var(--shadow-dialog)" }}
       >
         <div className="flex items-start justify-between gap-4 px-5 py-4 sm:px-6">
           <div>
             <h2
               id="slot-dialog-title"
               className="text-[0.9375rem] font-semibold"
-              style={{ color: "#111827", letterSpacing: "-0.01em" }}
+              style={{ color: "var(--text-primary)", letterSpacing: "-0.01em" }}
             >
               {title}
             </h2>
-            <p className="mt-1 text-sm" style={{ color: "#6B7280" }}>
+            <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)" }}>
               {isOverflowCreate || isOverflowEdit
                 ? "Overflow rooms inherit their main room time."
                 : "Set the selectable exam time and room capacity."}
@@ -504,8 +507,8 @@ function SlotDialog({
             type="button"
             onClick={onClose}
             disabled={pending}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
-            style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-[var(--surface-subtle)] disabled:cursor-not-allowed"
+            style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
             aria-label="Close"
           >
             <X size={15} />
@@ -524,8 +527,12 @@ function SlotDialog({
                   value={name}
                   onChange={(event) => setName(event.target.value)}
                   disabled={pending}
-                  className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed"
-                  style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+                  className="h-[2.625rem] w-full rounded-[10px] px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed"
+                  style={{
+                    background: "var(--surface-panel)",
+                    border: "1.5px solid var(--border-default)",
+                    color: "var(--text-primary)",
+                  }}
                 />
               </Field>
             )}
@@ -533,12 +540,12 @@ function SlotDialog({
             {isOverflowCreate && primarySlot && (
               <div
                 className="rounded-[10px] border px-3 py-2.5"
-                style={{ borderColor: "#E4E8EF", background: "#F8FAFC" }}
+                style={{ borderColor: "var(--border-default)", background: "var(--surface-alt)" }}
               >
-                <p className="text-[0.8125rem] font-medium" style={{ color: "#374151" }}>
+                <p className="text-[0.8125rem] font-medium" style={{ color: "var(--text-body)" }}>
                   Main room
                 </p>
-                <p className="mt-1 text-sm font-semibold" style={{ color: "#111827" }}>
+                <p className="mt-1 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                   {primarySlot.name} · {formatSlotTime(primarySlot.startsAt)}-{formatSlotTime(primarySlot.endsAt)}
                 </p>
               </div>
@@ -552,8 +559,12 @@ function SlotDialog({
                   value={startsAt}
                   onChange={(event) => setStartsAt(event.target.value)}
                   disabled={timeFieldsDisabled}
-                  className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed disabled:bg-slate-50"
-                  style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+                  className="h-[2.625rem] w-full rounded-[10px] px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed disabled:bg-[var(--surface-subtle)]"
+                  style={{
+                    background: "var(--surface-panel)",
+                    border: "1.5px solid var(--border-default)",
+                    color: "var(--text-primary)",
+                  }}
                 />
               </Field>
               <Field label="Ends" htmlFor="slot-ends">
@@ -563,8 +574,12 @@ function SlotDialog({
                   value={endsAt}
                   onChange={(event) => setEndsAt(event.target.value)}
                   disabled={timeFieldsDisabled}
-                  className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed disabled:bg-slate-50"
-                  style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+                  className="h-[2.625rem] w-full rounded-[10px] px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed disabled:bg-[var(--surface-subtle)]"
+                  style={{
+                    background: "var(--surface-panel)",
+                    border: "1.5px solid var(--border-default)",
+                    color: "var(--text-primary)",
+                  }}
                 />
               </Field>
               <Field label="Seats" htmlFor="slot-capacity">
@@ -575,29 +590,34 @@ function SlotDialog({
                   value={capacity}
                   onChange={(event) => setCapacity(event.target.value)}
                   disabled={pending}
-                  className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed"
-                  style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+                  className="h-[2.625rem] w-full rounded-[10px] px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed"
+                  style={{
+                    background: "var(--surface-panel)",
+                    border: "1.5px solid var(--border-default)",
+                    color: "var(--text-primary)",
+                  }}
                 />
               </Field>
             </div>
           </div>
 
-          <div className="mt-5 flex flex-col-reverse gap-2 border-t border-[#F3F4F6] pt-4 sm:flex-row sm:justify-end">
+          <div className="mt-5 flex flex-col-reverse gap-2 border-t border-[var(--border-subtle)] pt-4 sm:flex-row sm:justify-end">
             <button
               type="button"
               onClick={onClose}
               disabled={pending}
-              className="inline-flex h-[2.625rem] items-center justify-center rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
-              style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+              className="inline-flex h-[2.625rem] items-center justify-center rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-[var(--surface-subtle)] disabled:cursor-not-allowed"
+              style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={pending || !canSubmit}
-              className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
+              className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 disabled:cursor-not-allowed"
               style={{
-                background: pending || !canSubmit ? "#93C5FD" : "#2563EB",
+                color: "var(--text-on-accent)",
+                background: pending || !canSubmit ? "var(--accent-disabled)" : "var(--accent-color)",
                 boxShadow:
                   pending || !canSubmit
                     ? "none"
@@ -628,7 +648,7 @@ function Field({
       <label
         htmlFor={htmlFor}
         className="mb-1.5 block text-[0.8125rem] font-medium"
-        style={{ color: "#374151" }}
+        style={{ color: "var(--text-body)" }}
       >
         {label}
       </label>

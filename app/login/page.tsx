@@ -64,7 +64,7 @@ export default function LoginPage() {
     <div
       style={{
         minHeight: "100vh",
-        background: "#f7f8fa",
+        background: "var(--surface-page)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -78,7 +78,7 @@ export default function LoginPage() {
           position: "fixed",
           inset: 0,
           backgroundImage:
-            "linear-gradient(#e4e8ef 1px, transparent 1px), linear-gradient(90deg, #e4e8ef 1px, transparent 1px)",
+            "linear-gradient(var(--border-default) 1px, transparent 1px), linear-gradient(90deg, var(--border-default) 1px, transparent 1px)",
           backgroundSize: "40px 40px",
           opacity: 0.35,
           pointerEvents: "none",
@@ -105,7 +105,7 @@ export default function LoginPage() {
               width: 30,
               height: 30,
               borderRadius: 8,
-              background: "#2563eb",
+              background: "var(--accent-color)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -138,7 +138,7 @@ export default function LoginPage() {
             style={{
               fontSize: "0.95rem",
               fontWeight: 600,
-              color: "#111827",
+              color: "var(--text-primary)",
               letterSpacing: "-0.01em",
             }}
           >
@@ -157,7 +157,7 @@ export default function LoginPage() {
               style={{
                 fontSize: "1.35rem",
                 fontWeight: 700,
-                color: "#111827",
+                color: "var(--text-primary)",
                 letterSpacing: "-0.025em",
                 marginBottom: "0.4rem",
                 lineHeight: 1.25,
@@ -168,7 +168,7 @@ export default function LoginPage() {
             <p
               style={{
                 fontSize: "0.875rem",
-                color: "#6b7280",
+                color: "var(--text-secondary)",
                 lineHeight: 1.5,
               }}
             >
@@ -177,7 +177,7 @@ export default function LoginPage() {
             <p
               style={{
                 fontSize: "1rem",
-                color: "#6b7280",
+                color: "var(--text-secondary)",
                 lineHeight: 1.5,
                 fontWeight: "bold",
                 paddingTop: "0.4rem",
@@ -200,7 +200,7 @@ export default function LoginPage() {
                   display: "block",
                   fontSize: "0.8125rem",
                   fontWeight: 500,
-                  color: "#374151",
+                  color: "var(--text-body)",
                   marginBottom: "0.4rem",
                 }}
               >
@@ -219,22 +219,22 @@ export default function LoginPage() {
                   width: "100%",
                   height: "2.625rem",
                   borderRadius: 10,
-                  border: "1.5px solid #e4e8ef",
-                  background: "#ffffff",
+                  border: "1.5px solid var(--border-default)",
+                  background: "var(--surface-panel)",
                   padding: "0 0.875rem",
                   fontSize: "0.9375rem",
-                  color: "#111827",
+                  color: "var(--text-primary)",
                   outline: "none",
                   transition: "border-color 150ms, box-shadow 150ms",
                   boxSizing: "border-box",
                 }}
                 onFocus={(e) => {
-                  e.currentTarget.style.borderColor = "#3b82f6";
+                  e.currentTarget.style.borderColor = "var(--accent-bright)";
                   e.currentTarget.style.boxShadow =
                     "0 0 0 3px rgba(59,130,246,0.12)";
                 }}
                 onBlur={(e) => {
-                  e.currentTarget.style.borderColor = "#e4e8ef";
+                  e.currentTarget.style.borderColor = "var(--border-default)";
                   e.currentTarget.style.boxShadow = "none";
                 }}
               />
@@ -245,9 +245,9 @@ export default function LoginPage() {
                 className="anim-fade-in"
                 style={{
                   fontSize: "0.8125rem",
-                  color: "#dc2626",
-                  background: "#fef2f2",
-                  border: "1px solid #fecaca",
+                  color: "var(--danger)",
+                  background: "var(--danger-subtle)",
+                  border: "1px solid var(--danger-border)",
                   borderRadius: 8,
                   padding: "0.5rem 0.75rem",
                   margin: 0,
@@ -265,9 +265,9 @@ export default function LoginPage() {
                 borderRadius: 10,
                 background:
                   loading || submitCooldown > 0 || !name.trim()
-                    ? "#93c5fd"
-                    : "#2563eb",
-                color: "#ffffff",
+                    ? "var(--accent-disabled)"
+                    : "var(--accent-color)",
+                color: "var(--text-on-accent)",
                 fontWeight: 600,
                 fontSize: "0.9375rem",
                 border: "none",
@@ -289,14 +289,14 @@ export default function LoginPage() {
               }}
               onMouseEnter={(e) => {
                 if (!loading && submitCooldown === 0 && name.trim()) {
-                  e.currentTarget.style.background = "#1d4ed8";
+                  e.currentTarget.style.background = "var(--accent-strong)";
                   e.currentTarget.style.boxShadow =
                     "0 2px 6px rgba(37,99,235,0.3), 0 6px 18px rgba(37,99,235,0.18)";
                 }
               }}
               onMouseLeave={(e) => {
                 if (!loading && submitCooldown === 0 && name.trim()) {
-                  e.currentTarget.style.background = "#2563eb";
+                  e.currentTarget.style.background = "var(--accent-color)";
                   e.currentTarget.style.boxShadow =
                     "0 1px 3px rgba(37,99,235,0.25), 0 4px 12px rgba(37,99,235,0.12)";
                 }

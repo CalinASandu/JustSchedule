@@ -25,7 +25,7 @@ export default function RegisterSchoolForm() {
       <label
         htmlFor="schoolName"
         className="block text-[0.8125rem] font-medium"
-        style={{ color: "#374151" }}
+        style={{ color: "var(--text-body)" }}
       >
         School name
       </label>
@@ -35,7 +35,7 @@ export default function RegisterSchoolForm() {
             aria-hidden="true"
             className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2"
             size={16}
-            color="#9CA3AF"
+            color="var(--text-muted)"
             strokeWidth={1.8}
           />
           <input
@@ -45,17 +45,18 @@ export default function RegisterSchoolForm() {
             minLength={2}
             required
             placeholder="e.g. State University"
-            className="h-[2.625rem] w-full rounded-[10px] bg-white pl-9 pr-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] duration-150"
+            className="h-[2.625rem] w-full rounded-[10px] pl-9 pr-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] duration-150"
             style={{
-              border: "1.5px solid #E4E8EF",
-              color: "#111827",
+              background: "var(--surface-panel)",
+              border: "1.5px solid var(--border-default)",
+              color: "var(--text-primary)",
             }}
             onFocus={(event) => {
-              event.currentTarget.style.borderColor = "#3B82F6";
+              event.currentTarget.style.borderColor = "var(--accent-bright)";
               event.currentTarget.style.boxShadow = "0 0 0 3px rgba(59,130,246,0.12)";
             }}
             onBlur={(event) => {
-              event.currentTarget.style.borderColor = "#E4E8EF";
+              event.currentTarget.style.borderColor = "var(--border-default)";
               event.currentTarget.style.boxShadow = "none";
             }}
           />
@@ -63,9 +64,10 @@ export default function RegisterSchoolForm() {
         <button
           type="submit"
           disabled={pending}
-          className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold text-white transition-colors duration-150 hover:bg-[#1d4ed8] disabled:cursor-not-allowed disabled:bg-[#93c5fd]"
+          className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 disabled:cursor-not-allowed"
           style={{
-            background: pending ? "#93C5FD" : "#2563EB",
+            color: "var(--text-on-accent)",
+            background: pending ? "var(--accent-disabled)" : "var(--accent-color)",
             boxShadow: pending
               ? "none"
               : "0 1px 3px rgba(37,99,235,0.25), 0 4px 12px rgba(37,99,235,0.12)",
@@ -80,9 +82,9 @@ export default function RegisterSchoolForm() {
         <p
           className="anim-fade-in text-[0.8125rem]"
           style={{
-            color: "#DC2626",
-            background: "#FEF2F2",
-            border: "1px solid #FECACA",
+            color: "var(--danger)",
+            background: "var(--danger-subtle)",
+            border: "1px solid var(--danger-border)",
             borderRadius: 8,
             padding: "0.5rem 0.75rem",
           }}
@@ -92,7 +94,7 @@ export default function RegisterSchoolForm() {
       )}
 
       {state.success && (
-        <p className="anim-fade-in text-[0.8125rem] font-medium" style={{ color: "#1D4ED8" }}>
+        <p className="anim-fade-in text-[0.8125rem] font-medium" style={{ color: "var(--accent-strong)" }}>
           School registered.
         </p>
       )}

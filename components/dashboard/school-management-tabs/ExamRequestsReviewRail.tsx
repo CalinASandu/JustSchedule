@@ -58,12 +58,12 @@ export function ExamRequestsReviewRail({
   if (!request) {
     return (
       <aside
-        className="hidden rounded-[12px] border bg-white p-4 lg:block"
-        style={{ borderColor: "#E4E8EF" }}
+        className="hidden rounded-[12px] border p-4 lg:block"
+        style={{ background: "var(--surface-panel)", borderColor: "var(--border-default)" }}
       >
         <div
           className="flex min-h-[320px] items-center justify-center rounded-[10px] border border-dashed px-4 text-center text-sm"
-          style={{ borderColor: "#E4E8EF", color: "#94A3B8", background: "#FAFAFA" }}
+          style={{ borderColor: "var(--border-default)", color: "var(--text-faint)", background: "var(--surface-inset)" }}
         >
           Select a request to review.
         </div>
@@ -81,20 +81,20 @@ export function ExamRequestsReviewRail({
 
   return (
     <aside
-      className="rounded-[12px] border bg-white p-4 xl:sticky xl:top-20"
-      style={{ borderColor: "#E4E8EF" }}
+      className="rounded-[12px] border p-4 xl:sticky xl:top-20"
+      style={{ background: "var(--surface-panel)", borderColor: "var(--border-default)" }}
       aria-label="Review selected exam request"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: "#94A3B8" }}>
+          <p className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: "var(--text-faint)" }}>
             Review request
           </p>
-          <h3 className="mt-1 break-words text-base font-semibold" style={{ color: "#111827" }}>
+          <h3 className="mt-1 break-words text-base font-semibold" style={{ color: "var(--text-primary)" }}>
             {request.studentName}
           </h3>
           {request.studentEmail && (
-            <p className="mt-1 flex min-w-0 items-center gap-1.5 text-xs" style={{ color: "#6B7280" }}>
+            <p className="mt-1 flex min-w-0 items-center gap-1.5 text-xs" style={{ color: "var(--text-secondary)" }}>
               <Mail size={12} aria-hidden="true" />
               <span className="truncate">{request.studentEmail}</span>
             </p>
@@ -103,7 +103,7 @@ export function ExamRequestsReviewRail({
         <div className="flex shrink-0 items-center gap-2">
           <span
             className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold"
-            style={{ background: "#FEF3C7", color: "#B45309" }}
+            style={{ background: "var(--warning-subtle)", color: "var(--warning)" }}
           >
             <Clock size={12} aria-hidden="true" />
             {getTimeToExpiry(request.expiresAt, nowMs)}
@@ -111,8 +111,8 @@ export function ExamRequestsReviewRail({
           <button
             type="button"
             onClick={onHide}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-xl border transition-colors duration-150 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-            style={{ borderColor: "#E4E8EF", color: "#6B7280" }}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-xl border transition-colors duration-150 hover:bg-[var(--surface-subtle)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)]"
+            style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)" }}
             aria-label="Hide review rail"
           >
             <PanelRightClose size={15} aria-hidden="true" />
@@ -120,20 +120,20 @@ export function ExamRequestsReviewRail({
         </div>
       </div>
 
-      <div className="mt-4 rounded-[10px] border p-3" style={{ borderColor: "#E4E8EF", background: "#F8FAFC" }}>
-        <p className="truncate text-sm font-semibold" style={{ color: "#111827" }}>
+      <div className="mt-4 rounded-[10px] border p-3" style={{ borderColor: "var(--border-default)", background: "var(--surface-alt)" }}>
+        <p className="truncate text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
           {request.examName}
         </p>
         <div className="mt-2 flex flex-wrap gap-1.5">
           <span
             className="rounded-full px-2 py-0.5 text-[11px] font-semibold"
-            style={{ background: "#DBEAFE", color: "#1D4ED8" }}
+            style={{ background: "var(--accent-muted)", color: "var(--accent-strong)" }}
           >
             {formatExamType(request.examType)}
           </span>
           <span
             className="rounded-full px-2 py-0.5 text-[11px] font-semibold"
-            style={{ background: "#FFFFFF", color: "#64748B", border: "1px solid #E4E8EF" }}
+            style={{ background: "var(--surface-panel)", color: "var(--text-slate)", border: "1px solid var(--border-default)" }}
           >
             Pending
           </span>
@@ -171,7 +171,7 @@ export function ExamRequestsReviewRail({
       </div>
 
       <label className="mt-4 block">
-        <span className="mb-1.5 block text-[0.8125rem] font-medium" style={{ color: "#374151" }}>
+        <span className="mb-1.5 block text-[0.8125rem] font-medium" style={{ color: "var(--text-body)" }}>
           Optional message
         </span>
         <input
@@ -180,8 +180,12 @@ export function ExamRequestsReviewRail({
           value={message}
           onChange={(event) => onMessageChange(request.id, event.target.value)}
           placeholder="Add a note for the student…"
-          className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] focus:border-blue-500 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.12)]"
-          style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+          className="h-[2.625rem] w-full rounded-[10px] px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] focus:border-[var(--accent-bright)] focus:shadow-[0_0_0_3px_rgba(59,130,246,0.12)]"
+          style={{
+            background: "var(--surface-panel)",
+            border: "1.5px solid var(--border-default)",
+            color: "var(--text-primary)",
+          }}
         />
       </label>
 
@@ -190,8 +194,8 @@ export function ExamRequestsReviewRail({
           type="button"
           onClick={() => onReview(request, "declined")}
           disabled={reviewDisabled}
-          className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-sm font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
-          style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+          className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-sm font-semibold transition-colors duration-150 hover:bg-[var(--surface-subtle)] disabled:cursor-not-allowed"
+          style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
         >
           {isReviewing ? <Loader2 size={15} className="animate-spin" /> : <X size={15} />}
           Decline
@@ -200,9 +204,10 @@ export function ExamRequestsReviewRail({
           type="button"
           onClick={() => onReview(request, "approved")}
           disabled={reviewDisabled}
-          className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-sm font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
+          className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-sm font-semibold transition-colors duration-150 disabled:cursor-not-allowed"
           style={{
-            background: reviewDisabled ? "#93C5FD" : "#2563EB",
+            color: "var(--text-on-accent)",
+            background: reviewDisabled ? "var(--accent-disabled)" : "var(--accent-color)",
             boxShadow: reviewDisabled
               ? "none"
               : "0 1px 3px rgba(37,99,235,0.25), 0 4px 12px rgba(37,99,235,0.12)",
@@ -218,11 +223,11 @@ export function ExamRequestsReviewRail({
 
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col gap-1 border-b border-[#F3F4F6] py-2 last:border-b-0 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-      <dt className="shrink-0 text-xs font-medium" style={{ color: "#94A3B8" }}>
+    <div className="flex flex-col gap-1 border-b border-[var(--border-subtle)] py-2 last:border-b-0 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+      <dt className="shrink-0 text-xs font-medium" style={{ color: "var(--text-faint)" }}>
         {label}
       </dt>
-      <dd className="min-w-0 break-words font-medium sm:text-right" style={{ color: "#111827" }}>
+      <dd className="min-w-0 break-words font-medium sm:text-right" style={{ color: "var(--text-primary)" }}>
         {value}
       </dd>
     </div>
@@ -231,19 +236,19 @@ function DetailRow({ label, value }: { label: string; value: string }) {
 
 function CapacityRow({ label, value, full }: { label: string; value: string; full: boolean }) {
   return (
-    <div className="rounded-[10px] border px-3 py-2" style={{ borderColor: "#E4E8EF" }}>
+    <div className="rounded-[10px] border px-3 py-2" style={{ borderColor: "var(--border-default)" }}>
       <div className="flex items-center justify-between gap-3">
-        <span className="text-xs font-semibold" style={{ color: "#6B7280" }}>
+        <span className="text-xs font-semibold" style={{ color: "var(--text-secondary)" }}>
           {label}
         </span>
         <span
           className="rounded-full px-2 py-0.5 text-[11px] font-semibold"
-          style={full ? { background: "#E2E8F0", color: "#64748B" } : { background: "#DBEAFE", color: "#1D4ED8" }}
+          style={full ? { background: "var(--surface-subtle)", color: "var(--text-slate)" } : { background: "var(--accent-muted)", color: "var(--accent-strong)" }}
         >
           {full ? "Full" : "Open"}
         </span>
       </div>
-      <p className="mt-1 text-sm font-semibold" style={{ color: "#111827" }}>
+      <p className="mt-1 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
         {value}
       </p>
     </div>

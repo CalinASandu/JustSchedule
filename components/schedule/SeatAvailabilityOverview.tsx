@@ -40,23 +40,23 @@ export default function SeatAvailabilityOverview({
       <div className="flex items-center gap-2.5">
         <div
           className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{ background: '#F0FDF4' }}
+          style={{ background: 'var(--success-subtle)' }}
         >
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
             <path
               d="M3 12.5C3 9.5 5.5 7 8.5 7h1C12.5 7 15 9.5 15 12.5"
-              stroke="#16A34A"
+              stroke="var(--success)"
               strokeWidth="1.5"
               strokeLinecap="round"
             />
-            <circle cx="9" cy="4.5" r="2" stroke="#16A34A" strokeWidth="1.5" />
-            <circle cx="4" cy="9.5" r="1.5" stroke="#16A34A" strokeWidth="1.3" />
-            <circle cx="14" cy="9.5" r="1.5" stroke="#16A34A" strokeWidth="1.3" />
+            <circle cx="9" cy="4.5" r="2" stroke="var(--success)" strokeWidth="1.5" />
+            <circle cx="4" cy="9.5" r="1.5" stroke="var(--success)" strokeWidth="1.3" />
+            <circle cx="14" cy="9.5" r="1.5" stroke="var(--success)" strokeWidth="1.3" />
           </svg>
         </div>
         <div className="min-w-0">
-          <h2 className="text-sm font-semibold" style={{ color: '#111827' }}>Seat availability</h2>
-          <p className="truncate text-xs" style={{ color: '#9CA3AF' }}>
+          <h2 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Seat availability</h2>
+          <p className="truncate text-xs" style={{ color: 'var(--text-muted)' }}>
             {selectedDate ? formatDate(selectedDate) : 'No date selected'}
           </p>
         </div>
@@ -65,7 +65,7 @@ export default function SeatAvailabilityOverview({
       {/* Segmented bar */}
       <div
         className="h-2.5 rounded-full overflow-hidden flex"
-        style={{ background: '#F3F4F6' }}
+        style={{ background: 'var(--surface-subtle)' }}
         role="img"
         aria-label={`${availableSeats} seats available, ${occupiedSeats} occupied out of ${totalSeats} total`}
       >
@@ -74,7 +74,7 @@ export default function SeatAvailabilityOverview({
             className="h-full transition-all duration-500"
             style={{
               width: `${occupiedPct}%`,
-              background: '#F59E0B',
+              background: 'var(--warning-accent)',
               borderRadius: occupiedPct === 100 ? '9999px' : '9999px 0 0 9999px',
             }}
           />
@@ -84,7 +84,7 @@ export default function SeatAvailabilityOverview({
             className="h-full transition-all duration-500"
             style={{
               width: `${availablePct}%`,
-              background: '#22C55E',
+              background: 'var(--success)',
               borderRadius: occupiedPct === 0 ? '9999px' : '0 9999px 9999px 0',
             }}
           />
@@ -94,9 +94,9 @@ export default function SeatAvailabilityOverview({
       {/* 3 stat boxes */}
       <div className="grid grid-cols-3 gap-2">
         {[
-          { count: availableSeats, label: 'Available', color: '#15803D', bg: '#F0FDF4' },
-          { count: occupiedSeats,  label: 'Occupied',  color: '#B45309', bg: '#FFFBEB' },
-          { count: totalSeats,     label: 'Total',     color: '#111827', bg: '#F3F4F6' },
+          { count: availableSeats, label: 'Available', color: 'var(--success-strong)', bg: 'var(--success-subtle)' },
+          { count: occupiedSeats,  label: 'Occupied',  color: 'var(--warning)', bg: 'var(--warning-surface)' },
+          { count: totalSeats,     label: 'Total',     color: 'var(--text-primary)', bg: 'var(--surface-subtle)' },
         ].map(({ count, label, color, bg }) => (
           <div
             key={label}
@@ -104,7 +104,7 @@ export default function SeatAvailabilityOverview({
             style={{ background: bg }}
           >
             <span className="text-xl font-bold leading-none sm:text-2xl" style={{ color }}>{count}</span>
-            <span className="text-[11px]" style={{ color: '#9CA3AF' }}>{label}</span>
+            <span className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{label}</span>
           </div>
         ))}
       </div>
@@ -126,18 +126,18 @@ export default function SeatAvailabilityOverview({
             <div
               key={slot.id}
               className="flex items-center justify-between gap-3 rounded-xl px-3 py-2"
-              style={{ background: '#F9FAFB' }}
+              style={{ background: 'var(--surface-inset)' }}
               role="listitem"
             >
-              <span className="min-w-0 truncate text-xs font-medium" style={{ color: '#374151' }}>{slot.label}</span>
+              <span className="min-w-0 truncate text-xs font-medium" style={{ color: 'var(--text-body)' }}>{slot.label}</span>
               <span
                 className="flex-shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold"
                 style={
                   isFull
-                    ? { background: '#F3F4F6', color: '#9CA3AF' }
+                    ? { background: 'var(--surface-subtle)', color: 'var(--text-muted)' }
                     : isLimited
-                    ? { background: '#FFFBEB', color: '#B45309' }
-                    : { background: '#F0FDF4', color: '#15803D' }
+                    ? { background: 'var(--warning-surface)', color: 'var(--warning)' }
+                    : { background: 'var(--success-subtle)', color: 'var(--success-strong)' }
                 }
               >
                 {isFull ? 'Full' : `${remaining} left`}
@@ -148,7 +148,7 @@ export default function SeatAvailabilityOverview({
         {slots.length === 0 && (
           <div
             className="py-4 text-center text-xs"
-            style={{ color: '#9CA3AF' }}
+            style={{ color: 'var(--text-muted)' }}
             role="listitem"
           >
             No active slots are configured.

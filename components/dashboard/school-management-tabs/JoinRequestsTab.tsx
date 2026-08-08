@@ -95,10 +95,10 @@ export function JoinRequestsTab({
     <div className="p-5">
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h2 className="text-sm font-semibold" style={{ color: "#111827" }}>
+          <h2 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
             Join requests
           </h2>
-          <p className="mt-1 text-sm" style={{ color: "#6B7280" }}>
+          <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)" }}>
             Review pending requests created from invite links.
           </p>
         </div>
@@ -106,12 +106,13 @@ export function JoinRequestsTab({
           type="button"
           onClick={reviewRequests}
           disabled={reviewState.pending || selectedDecisions.length === 0}
-          className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
+          className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 disabled:cursor-not-allowed"
           style={{
+            color: "var(--text-on-accent)",
             background:
               reviewState.pending || selectedDecisions.length === 0
-                ? "#93C5FD"
-                : "#2563EB",
+                ? "var(--accent-disabled)"
+                : "var(--accent-color)",
             boxShadow:
               reviewState.pending || selectedDecisions.length === 0
                 ? "none"
@@ -134,7 +135,7 @@ export function JoinRequestsTab({
       {reviewState.success && (
         <p
           className="anim-fade-in mb-4 text-[0.8125rem] font-medium"
-          style={{ color: "#1D4ED8" }}
+          style={{ color: "var(--accent-strong)" }}
         >
           {reviewState.success}
         </p>
@@ -150,27 +151,30 @@ export function JoinRequestsTab({
           visibleJoinRequests.map((request) => (
             <div
               key={request.id}
-              className="rounded-[10px] border border-[#E4E8EF] p-4"
-              style={{ background: "#FFFFFF" }}
+              className="rounded-[10px] p-4"
+              style={{
+                border: "1px solid var(--border-default)",
+                background: "var(--surface-panel)",
+              }}
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex min-w-0 items-center gap-3">
                   <div
                     className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
-                    style={{ background: "#EFF6FF" }}
+                    style={{ background: "var(--accent-subtle)" }}
                   >
-                    <UserPlus size={16} color="#2563EB" strokeWidth={1.8} />
+                    <UserPlus size={16} color="var(--accent-color)" strokeWidth={1.8} />
                   </div>
                   <div className="min-w-0">
                     <p
                       className="truncate text-sm font-semibold"
-                      style={{ color: "#111827" }}
+                      style={{ color: "var(--text-primary)" }}
                     >
                       {request.name}
                     </p>
                     <div
                       className="mt-1 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs"
-                      style={{ color: "#9CA3AF" }}
+                      style={{ color: "var(--text-muted)" }}
                     >
                       <span className="inline-flex min-w-0 items-center gap-1">
                         <Mail size={12} />
@@ -196,8 +200,12 @@ export function JoinRequestsTab({
                       return next;
                     });
                   }}
-                  className="h-[2.625rem] rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
-                  style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+                  className="h-[2.625rem] rounded-[10px] px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
+                  style={{
+                    background: "var(--surface-panel)",
+                    border: "1.5px solid var(--border-default)",
+                    color: "var(--text-primary)",
+                  }}
                 >
                   <option value="">Choose</option>
                   <option value="approved">Accept</option>

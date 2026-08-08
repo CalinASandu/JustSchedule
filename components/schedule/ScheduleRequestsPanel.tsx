@@ -62,15 +62,15 @@ export default function ScheduleRequestsPanel({
       <div className="mb-4 flex items-center gap-2.5">
         <div
           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl"
-          style={{ background: "#EFF6FF" }}
+          style={{ background: "var(--accent-subtle)" }}
         >
-          <Clock3 size={16} color="#2563EB" strokeWidth={1.8} />
+          <Clock3 size={16} color="var(--accent-color)" strokeWidth={1.8} />
         </div>
         <div className="min-w-0">
-          <h2 className="text-sm font-semibold" style={{ color: "#111827" }}>
+          <h2 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
             Exam requests
           </h2>
-          <p className="text-xs" style={{ color: "#9CA3AF" }}>
+          <p className="text-xs" style={{ color: "var(--text-muted)" }}>
             Requests do not hold seats until approved.
           </p>
         </div>
@@ -80,9 +80,9 @@ export default function ScheduleRequestsPanel({
         <p
           className="anim-fade-in mb-4 text-[0.8125rem]"
           style={{
-            color: "#DC2626",
-            background: "#FEF2F2",
-            border: "1px solid #FECACA",
+            color: "var(--danger)",
+            background: "var(--danger-subtle)",
+            border: "1px solid var(--danger-border)",
             borderRadius: 8,
             padding: "0.5rem 0.75rem",
           }}
@@ -92,11 +92,11 @@ export default function ScheduleRequestsPanel({
       )}
 
       {requests.length === 0 ? (
-        <div className="rounded-[10px] border border-dashed border-[#C7D2FE] p-4">
-          <p className="text-sm font-medium" style={{ color: "#111827" }}>
+        <div className="rounded-[10px] border border-dashed border-[var(--accent-border)] p-4">
+          <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
             No exam requests
           </p>
-          <p className="mt-1 text-sm" style={{ color: "#6B7280" }}>
+          <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)" }}>
             Requests you send to professors will appear here.
           </p>
         </div>
@@ -111,35 +111,35 @@ export default function ScheduleRequestsPanel({
             return (
               <div
                 key={request.id}
-                className="rounded-[10px] border border-[#E4E8EF] p-4"
-                style={{ background: "#FFFFFF" }}
+                className="rounded-[10px] border border-[var(--border-default)] p-4"
+                style={{ background: "var(--surface-panel)" }}
               >
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="break-words text-sm font-semibold" style={{ color: "#111827" }}>
+                      <p className="break-words text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                         {request.examName}
                       </p>
                       <span
                         className="rounded-full px-2.5 py-1 text-xs font-semibold"
                         style={{
-                          background: pending ? "#EFF6FF" : "#F3F4F6",
-                          color: pending ? "#1D4ED8" : "#6B7280",
+                          background: pending ? "var(--accent-subtle)" : "var(--surface-subtle)",
+                          color: pending ? "var(--accent-strong)" : "var(--text-secondary)",
                         }}
                       >
                         {status.label}
                       </span>
                     </div>
-                    <p className="mt-1 text-sm" style={{ color: "#6B7280" }}>
+                    <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)" }}>
                       {formatDate(request.reservationDate)} at {formatTime(request.startsAt)}
                       {" - "}
                       {formatTime(request.endsAt)}
                     </p>
-                    <p className="mt-1 text-xs" style={{ color: "#9CA3AF" }}>
+                    <p className="mt-1 text-xs" style={{ color: "var(--text-muted)" }}>
                       Sent to {request.teacherName}. {status.description}
                     </p>
                     {request.reviewerMessage && (
-                      <p className="mt-2 text-sm" style={{ color: "#374151" }}>
+                      <p className="mt-2 text-sm" style={{ color: "var(--text-body)" }}>
                         {request.reviewerMessage}
                       </p>
                     )}
@@ -150,8 +150,8 @@ export default function ScheduleRequestsPanel({
                       type="button"
                       onClick={() => onCancelRequest(request)}
                       disabled={cancelingRequestId === request.id || !!markingSeenRequestId}
-                      className="inline-flex h-10 w-full shrink-0 items-center justify-center gap-2 rounded-[10px] px-3 text-sm font-semibold transition-colors duration-150 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed sm:h-9 sm:w-auto"
-                      style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+                      className="inline-flex h-10 w-full shrink-0 items-center justify-center gap-2 rounded-[10px] px-3 text-sm font-semibold transition-colors duration-150 hover:bg-[var(--surface-subtle)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)] disabled:cursor-not-allowed sm:h-9 sm:w-auto"
+                      style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
                     >
                       {cancelingRequestId === request.id ? (
                         <Loader2 size={14} className="animate-spin" />
@@ -165,8 +165,8 @@ export default function ScheduleRequestsPanel({
                       type="button"
                       onClick={() => onMarkSeen(request)}
                       disabled={markingSeen || !!cancelingRequestId}
-                      className="inline-flex h-10 w-full shrink-0 items-center justify-center gap-2 rounded-[10px] px-3 text-sm font-semibold transition-colors duration-150 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed sm:h-9 sm:w-auto"
-                      style={{ border: "1px solid #E4E8EF", color: "#2563EB" }}
+                      className="inline-flex h-10 w-full shrink-0 items-center justify-center gap-2 rounded-[10px] px-3 text-sm font-semibold transition-colors duration-150 hover:bg-[var(--surface-subtle)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)] disabled:cursor-not-allowed sm:h-9 sm:w-auto"
+                      style={{ border: "1px solid var(--border-default)", color: "var(--accent-color)" }}
                     >
                       {markingSeen ? (
                         <Loader2 size={14} className="animate-spin" />

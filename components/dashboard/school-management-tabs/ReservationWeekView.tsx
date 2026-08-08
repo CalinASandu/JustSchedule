@@ -44,27 +44,30 @@ export function ReservationWeekView({
             return (
               <section
                 key={dateKey}
-                className="flex min-h-[360px] flex-col overflow-hidden rounded-[12px] border bg-white"
-                style={{ borderColor: isToday ? "#93C5FD" : "#E4E8EF" }}
+                className="flex min-h-[360px] flex-col overflow-hidden rounded-[12px] border"
+                style={{
+                  background: "var(--surface-panel)",
+                  borderColor: isToday ? "var(--accent-border-strong)" : "var(--border-default)",
+                }}
               >
                 <div
                   className="px-3 py-3"
                   style={{
-                    background: isToday ? "#EFF6FF" : "#FAFAFA",
-                    borderBottom: `1px solid ${isToday ? "#BFDBFE" : "#F3F4F6"}`,
+                    background: isToday ? "var(--accent-subtle)" : "var(--surface-inset)",
+                    borderBottom: `1px solid ${isToday ? "var(--accent-border)" : "var(--border-subtle)"}`,
                   }}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p
                         className="text-[11px] font-semibold uppercase"
-                        style={{ color: isToday ? "#2563EB" : "#94A3B8" }}
+                        style={{ color: isToday ? "var(--accent-color)" : "var(--text-faint)" }}
                       >
                         {dayLabel}
                       </p>
                       <p
                         className="mt-0.5 text-sm font-semibold"
-                        style={{ color: isToday ? "#1D4ED8" : "#111827" }}
+                        style={{ color: isToday ? "var(--accent-strong)" : "var(--text-primary)" }}
                       >
                         {dayNum}
                       </p>
@@ -73,8 +76,8 @@ export function ReservationWeekView({
                       className="rounded-full px-2 py-0.5 text-[11px] font-semibold"
                       style={
                         dayReservations.length > 0
-                          ? { background: "#DBEAFE", color: "#1D4ED8" }
-                          : { background: "#E2E8F0", color: "#64748B" }
+                          ? { background: "var(--accent-muted)", color: "var(--accent-strong)" }
+                          : { background: "var(--surface-subtle)", color: "var(--text-slate)" }
                       }
                     >
                       {dayReservations.length}
@@ -85,8 +88,12 @@ export function ReservationWeekView({
                 <div className="flex flex-1 flex-col gap-2 p-2.5">
                   {dayReservations.length === 0 ? (
                     <div
-                      className="flex flex-1 items-center justify-center rounded-[10px] border border-dashed bg-[#FAFAFA] px-3 text-center text-xs"
-                      style={{ borderColor: "#E4E8EF", color: "#94A3B8" }}
+                      className="flex flex-1 items-center justify-center rounded-[10px] border border-dashed px-3 text-center text-xs"
+                      style={{
+                        background: "var(--surface-inset)",
+                        borderColor: "var(--border-default)",
+                        color: "var(--text-faint)",
+                      }}
                     >
                       No reservations
                     </div>
@@ -99,31 +106,31 @@ export function ReservationWeekView({
                           key={reservation.id}
                           type="button"
                           onClick={() => setSelectedWeekReservationId(reservation.id)}
-                          className="group w-full rounded-[10px] border bg-white p-2.5 text-left transition-[background,border-color] duration-150 hover:bg-[#EFF6FF]"
-                          style={{ borderColor: "#E4E8EF" }}
+                          className="group w-full rounded-[10px] border p-2.5 text-left transition-[background,border-color] duration-150 hover:bg-[var(--accent-subtle)]"
+                          style={{ background: "var(--surface-panel)", borderColor: "var(--border-default)" }}
                         >
                           <div className="flex items-start gap-2">
                             <span
                               className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full"
-                              style={{ background: "#EFF6FF", color: "#2563EB" }}
+                              style={{ background: "var(--accent-subtle)", color: "var(--accent-color)" }}
                             >
                               <UserRound size={12} />
                             </span>
                             <div className="min-w-0 flex-1">
                               <p
                                 className="truncate text-[12px] font-semibold leading-tight"
-                                style={{ color: "#111827" }}
+                                style={{ color: "var(--text-primary)" }}
                               >
                                 {memberNamesByUserId.get(reservation.userId) ?? "Unnamed student"}
                               </p>
-                              <p className="mt-1 truncate text-[12px]" style={{ color: "#374151" }}>
+                              <p className="mt-1 truncate text-[12px]" style={{ color: "var(--text-body)" }}>
                                 {reservation.examName}
                               </p>
                               <div className="mt-2 flex flex-wrap items-center gap-1.5">
                                 {slot && (
                                   <span
                                     className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold"
-                                    style={{ background: "#DBEAFE", color: "#1D4ED8" }}
+                                    style={{ background: "var(--accent-muted)", color: "var(--accent-strong)" }}
                                   >
                                     <Clock size={10} />
                                     {formatSlotTime(slot.startsAt)}
@@ -132,9 +139,9 @@ export function ReservationWeekView({
                                 <span
                                   className="rounded-full px-2 py-0.5 text-[10px] font-semibold capitalize"
                                   style={{
-                                    background: "#F8FAFC",
-                                    color: "#64748B",
-                                    border: "1px solid #E4E8EF",
+                                    background: "var(--surface-alt)",
+                                    color: "var(--text-slate)",
+                                    border: "1px solid var(--border-default)",
                                   }}
                                 >
                                   {reservation.examType}

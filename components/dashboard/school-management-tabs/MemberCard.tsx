@@ -79,29 +79,29 @@ export function MemberCard({
 
   return (
     <div
-      className="rounded-[10px] border border-[#E4E8EF] p-4"
-      style={{ background: "#FFFFFF" }}
+      className="rounded-[10px] border p-4"
+      style={{ borderColor: "var(--border-default)", background: "var(--surface-panel)" }}
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex min-w-0 items-start gap-3 sm:items-center">
           <div
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
-            style={{ background: "#EFF6FF" }}
+            style={{ background: "var(--accent-subtle)" }}
           >
-            <UserRound size={16} color="#2563EB" strokeWidth={1.8} />
+            <UserRound size={16} color="var(--accent-color)" strokeWidth={1.8} />
           </div>
           <div className="min-w-0">
             <div className="flex min-w-0 flex-wrap items-center gap-2">
-              <p className="min-w-0 break-words text-sm font-semibold" style={{ color: "#111827" }}>
+              <p className="min-w-0 break-words text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                 {member.name}
               </p>
               {member.isCurrentUser && (
-                <span className="text-xs font-medium" style={{ color: "#9CA3AF" }}>
+                <span className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>
                   You
                 </span>
               )}
             </div>
-            <p className="break-words text-xs" style={{ color: "#9CA3AF" }}>
+            <p className="break-words text-xs" style={{ color: "var(--text-muted)" }}>
               {member.email ?? `Joined ${formatDate(member.joinedAt)}`}
             </p>
             {member.role === "student" && (
@@ -110,14 +110,14 @@ export function MemberCard({
                   className="rounded-full px-2.5 py-0.5 text-xs font-medium"
                   style={
                     member.canSelfBook
-                      ? { background: "#DBEAFE", color: "#1D4ED8" }
-                      : { background: "#E2E8F0", color: "#64748B" }
+                      ? { background: "var(--accent-muted)", color: "var(--accent-strong)" }
+                      : { background: "var(--surface-subtle)", color: "var(--text-slate)" }
                   }
                 >
                   {member.canSelfBook ? "Self-booking on" : "Teacher scheduled"}
                 </span>
                 {selfBookingPending && (
-                  <Loader2 size={13} className="animate-spin" style={{ color: "#9CA3AF" }} />
+                  <Loader2 size={13} className="animate-spin" style={{ color: "var(--text-muted)" }} />
                 )}
               </div>
             )}
@@ -141,8 +141,8 @@ export function MemberCard({
                   setRoleSubmenuMemberId(null);
                   setOpenMenuMemberId(openMenuMemberId === member.id ? null : member.id);
                 }}
-                className="flex h-10 w-10 items-center justify-center rounded-[10px] transition-colors hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-                style={{ color: "#6B7280" }}
+                className="flex h-10 w-10 items-center justify-center rounded-[10px] transition-colors hover:bg-[var(--surface-subtle)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)]"
+                style={{ color: "var(--text-secondary)" }}
                 aria-label="Member actions"
                 aria-expanded={openMenuMemberId === member.id}
               >
@@ -167,8 +167,8 @@ export function MemberCard({
                         setOpenMenuMemberId(null);
                       }}
                       disabled={schedulePending}
-                      className="flex w-full items-center gap-2.5 px-3 py-2 text-sm transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-                      style={{ color: "#2563EB" }}
+                      className="flex w-full items-center gap-2.5 px-3 py-2 text-sm transition-colors hover:bg-[var(--surface-subtle)] disabled:cursor-not-allowed disabled:opacity-50"
+                      style={{ color: "var(--accent-color)" }}
                     >
                       <CalendarPlus size={15} />
                       Schedule exam
@@ -182,8 +182,8 @@ export function MemberCard({
                         setOpenMenuMemberId(null);
                       }}
                       disabled={anySelfBookingPending}
-                      className="flex w-full items-center gap-2.5 px-3 py-2 text-sm transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-                      style={{ color: "#374151" }}
+                      className="flex w-full items-center gap-2.5 px-3 py-2 text-sm transition-colors hover:bg-[var(--surface-subtle)] disabled:cursor-not-allowed disabled:opacity-50"
+                      style={{ color: "var(--text-body)" }}
                     >
                       {member.canSelfBook ? <Ban size={15} /> : <Check size={15} />}
                       {member.canSelfBook ? "Restrict booking" : "Allow booking"}
@@ -192,7 +192,7 @@ export function MemberCard({
                   {canManage && (
                     <>
                       {(canScheduleForStudent || canToggleSelfBooking) && (
-                        <div className="my-1 border-t border-[#F3F4F6]" />
+                        <div className="my-1 border-t border-[var(--border-subtle)]" />
                       )}
                       <div>
                         <button
@@ -204,21 +204,21 @@ export function MemberCard({
                             )
                           }
                           disabled={roleState.pending}
-                          className="flex w-full items-center justify-between px-3 py-2 text-sm transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-                          style={{ color: "#374151" }}
+                          className="flex w-full items-center justify-between px-3 py-2 text-sm transition-colors hover:bg-[var(--surface-subtle)] disabled:cursor-not-allowed disabled:opacity-50"
+                          style={{ color: "var(--text-body)" }}
                         >
                           <span className="flex items-center gap-2.5">
                             <UserRound size={15} />
                             Change role
                           </span>
-                          <ChevronRight size={13} style={{ color: "#9CA3AF" }} />
+                          <ChevronRight size={13} style={{ color: "var(--text-muted)" }} />
                         </button>
                       </div>
                     </>
                   )}
                   {canKick && (
                     <>
-                      <div className="my-1 border-t border-[#F3F4F6]" />
+                      <div className="my-1 border-t border-[var(--border-subtle)]" />
                       <button
                         type="button"
                         onClick={() => {
@@ -226,8 +226,8 @@ export function MemberCard({
                           setOpenMenuMemberId(null);
                         }}
                         disabled={kickPending}
-                        className="flex w-full items-center gap-2.5 px-3 py-2 text-sm transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
-                        style={{ color: "#DC2626" }}
+                        className="flex w-full items-center gap-2.5 px-3 py-2 text-sm transition-colors hover:bg-[var(--danger-subtle)] disabled:cursor-not-allowed disabled:opacity-50"
+                        style={{ color: "var(--danger)" }}
                       >
                         <UserMinus size={15} />
                         Remove from school
@@ -261,9 +261,9 @@ export function MemberCard({
                       setRoleSubmenuMemberId(null);
                       setOpenMenuMemberId(null);
                     }}
-                    className="flex w-full items-center gap-2.5 px-3 py-2 text-sm capitalize transition-colors hover:bg-slate-50"
+                    className="flex w-full items-center gap-2.5 px-3 py-2 text-sm capitalize transition-colors hover:bg-[var(--surface-subtle)]"
                     style={{
-                      color: role === member.role ? "#2563EB" : "#374151",
+                      color: role === member.role ? "var(--accent-color)" : "var(--text-body)",
                       fontWeight: role === member.role ? 600 : 400,
                     }}
                   >

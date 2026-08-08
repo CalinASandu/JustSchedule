@@ -8,9 +8,157 @@
   --font-serif: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
 }
 
+/* ---------------------------------------------------------------
+   Semantic color tokens.
+
+   Every color in the app resolves through one of these. Do not put a
+   raw hex in a component - add or reuse a token here instead, or the
+   value cannot follow the theme. Inline `style={{}}` props must use
+   `var(--token)`, since an inline style outranks any `.dark` selector.
+
+   Light values are the historical palette, unchanged.
+   --------------------------------------------------------------- */
+:root {
+  color-scheme: light;
+
+  /* Surfaces */
+  --surface-page: #f7f8fa;
+  --surface-panel: #ffffff;
+  --surface-subtle: #f3f4f6;
+  --surface-alt: #f8fafc;
+  --surface-inset: #fafafa;
+
+  /* Borders */
+  --border-default: #e4e8ef;
+  --border-subtle: #e2e8f0;
+  --border-strong: #d1d5db;
+
+  /* Text */
+  --text-primary: #111827;
+  --text-body: #374151;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --text-faint: #94a3b8;
+  --text-slate: #64748b;
+  --text-on-accent: #ffffff;
+
+  /* Accent */
+  --accent-color: #2563eb;
+  --accent-strong: #1d4ed8;
+  --accent-bright: #3b82f6;
+  --accent-subtle: #eff6ff;
+  --accent-muted: #dbeafe;
+  --accent-border: #bfdbfe;
+  --accent-border-strong: #93c5fd;
+  --accent-disabled: #93c5fd;
+
+  /* Status - danger */
+  --danger: #dc2626;
+  --danger-subtle: #fef2f2;
+  --danger-border: #fecaca;
+
+  /* Status - success */
+  --success: #16a34a;
+  --success-strong: #15803d;
+  --success-subtle: #f0fdf4;
+  --success-border: #34d399;
+
+  /* Status - warning */
+  --warning: #b45309;
+  --warning-accent: #f59e0b;
+  --warning-subtle: #fef3c7;
+  --warning-surface: #fffbeb;
+  --warning-border: #fcd34d;
+
+  /* Role badges - distinct from the single UI accent, used only for role pills */
+  --role-admin-bg: #d1fae5;
+  --role-admin-text: #065f46;
+  --role-professor-bg: #ede9fe;
+  --role-professor-text: #5b21b6;
+  --role-supervisor-bg: #fef3c7;
+  --role-supervisor-text: #92400e;
+
+  /* Skeleton placeholders */
+  --skeleton-base: #eceff4;
+  --skeleton-sheen: rgba(255, 255, 255, 0.75);
+
+  /* Overlays / elevation */
+  --overlay-scrim: rgba(15, 23, 42, 0.2);
+  --shadow-dialog: 0 18px 60px rgba(15, 23, 42, 0.18);
+}
+
+.dark {
+  color-scheme: dark;
+
+  /* Surfaces - page sits below panels, mirroring the light hierarchy */
+  --surface-page: #0b0f17;
+  --surface-panel: #141a24;
+  --surface-subtle: #1b2230;
+  --surface-alt: #10161f;
+  --surface-inset: #0f141d;
+
+  /* Borders */
+  --border-default: #232b38;
+  --border-subtle: #2a3342;
+  --border-strong: #364052;
+
+  /* Text */
+  --text-primary: #e6eaf2;
+  --text-body: #c7d0de;
+  --text-secondary: #a3afc2;
+  --text-muted: #94a3b8;
+  --text-faint: #7a8699;
+  --text-slate: #8b97ab;
+  --text-on-accent: #ffffff;
+
+  /* Accent - brightened so it stays legible on dark surfaces */
+  --accent-color: #3b82f6;
+  --accent-strong: #60a5fa;
+  --accent-bright: #60a5fa;
+  --accent-subtle: #172554;
+  --accent-muted: #1e3a8a;
+  --accent-border: #1e40af;
+  --accent-border-strong: #2f5fc4;
+  --accent-disabled: #2f5fc4;
+
+  /* Status - danger */
+  --danger: #f87171;
+  --danger-subtle: #2a1416;
+  --danger-border: #7f1d1d;
+
+  /* Status - success */
+  --success: #4ade80;
+  --success-strong: #86efac;
+  --success-subtle: #0d2318;
+  --success-border: #166534;
+
+  /* Status - warning */
+  --warning: #fbbf24;
+  --warning-accent: #f59e0b;
+  --warning-subtle: #2a1f08;
+  --warning-surface: #1f1806;
+  --warning-border: #78511a;
+
+  /* Role badges */
+  --role-admin-bg: #0d2318;
+  --role-admin-text: #4ade80;
+  --role-professor-bg: #2a1f4a;
+  --role-professor-text: #c4b5fd;
+  --role-supervisor-bg: #2a1f08;
+  --role-supervisor-text: #fbbf24;
+
+  /* Skeleton placeholders */
+  --skeleton-base: #1b2230;
+  --skeleton-sheen: rgba(255, 255, 255, 0.07);
+
+  /* Overlays / elevation */
+  --overlay-scrim: rgba(0, 0, 0, 0.6);
+  --shadow-dialog: 0 18px 60px rgba(0, 0, 0, 0.55);
+}
+
 body {
-  background-color: #f7f8fa;
-  color: #111827;
+  background-color: var(--surface-page);
+  color: var(--text-primary);
 }
 
 /* Layout grids */
@@ -39,8 +187,8 @@ body {
 
 /* Panel surface */
 .panel {
-  background: #ffffff;
-  border: 1px solid #e4e8ef;
+  background: var(--surface-panel);
+  border: 1px solid var(--border-default);
   border-radius: 18px;
 }
 
@@ -150,10 +298,40 @@ body {
   animation-delay: 210ms;
 }
 
+/* Skeleton placeholders (route loading states) */
+@keyframes skeletonShimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+.skeleton {
+  background-color: var(--skeleton-base);
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--skeleton-sheen) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  border-radius: 8px;
+  animation: skeletonShimmer 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
 /* Scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #e4e8ef transparent;
+  scrollbar-color: var(--border-default) transparent;
 }
 
 /* Landing / Hero animations */

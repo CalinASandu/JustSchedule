@@ -89,10 +89,10 @@ export function InvitesTab({
     <div className={embedded ? "" : "p-5"}>
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h2 className="text-sm font-semibold" style={{ color: "#111827" }}>
+          <h2 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
             Invite links
           </h2>
-          <p className="mt-1 text-sm" style={{ color: "#6B7280" }}>
+          <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)" }}>
             Generate links like /invite/invitetoken.
           </p>
         </div>
@@ -104,7 +104,7 @@ export function InvitesTab({
             <label
               htmlFor="invite-expires-on"
               className="mb-1.5 block text-[0.8125rem] font-medium"
-              style={{ color: "#374151" }}
+              style={{ color: "var(--text-body)" }}
             >
               Expires on
             </label>
@@ -115,15 +115,19 @@ export function InvitesTab({
               min={getTodayKey()}
               value={expiresOn}
               onChange={(event) => setExpiresOn(event.target.value)}
-              className="h-[2.625rem] rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
-              style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+              className="h-[2.625rem] rounded-[10px] px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
+              style={{
+                background: "var(--surface-panel)",
+                border: "1.5px solid var(--border-default)",
+                color: "var(--text-primary)",
+              }}
               onFocus={(event) => {
-                event.currentTarget.style.borderColor = "#3B82F6";
+                event.currentTarget.style.borderColor = "var(--accent-bright)";
                 event.currentTarget.style.boxShadow =
                   "0 0 0 3px rgba(59,130,246,0.12)";
               }}
               onBlur={(event) => {
-                event.currentTarget.style.borderColor = "#E4E8EF";
+                event.currentTarget.style.borderColor = "var(--border-default)";
                 event.currentTarget.style.boxShadow = "none";
               }}
             />
@@ -131,9 +135,10 @@ export function InvitesTab({
           <button
             type="submit"
             disabled={inviteState.pending}
-            className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
+            className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 disabled:cursor-not-allowed"
             style={{
-              background: inviteState.pending ? "#93C5FD" : "#2563EB",
+              color: "var(--text-on-accent)",
+              background: inviteState.pending ? "var(--accent-disabled)" : "var(--accent-color)",
               boxShadow: inviteState.pending
                 ? "none"
                 : "0 1px 3px rgba(37,99,235,0.25), 0 4px 12px rgba(37,99,235,0.12)",
@@ -163,18 +168,21 @@ export function InvitesTab({
           visibleInvites.map((invite) => (
             <div
               key={invite.id}
-              className="rounded-[10px] border border-[#E4E8EF] p-4"
-              style={{ background: "#FFFFFF" }}
+              className="rounded-[10px] p-4"
+              style={{
+                border: "1px solid var(--border-default)",
+                background: "var(--surface-panel)",
+              }}
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="min-w-0">
                   <p
                     className="truncate text-sm font-semibold"
-                    style={{ color: "#111827" }}
+                    style={{ color: "var(--text-primary)" }}
                   >
                     {invite.url}
                   </p>
-                  <p className="mt-1 text-xs" style={{ color: "#9CA3AF" }}>
+                  <p className="mt-1 text-xs" style={{ color: "var(--text-muted)" }}>
                     Expires {formatDate(invite.expiresAt)}{" \u00b7 "}
                     {invite.isActive ? "Active" : "Inactive"}
                   </p>
@@ -182,8 +190,8 @@ export function InvitesTab({
                 <button
                   type="button"
                   onClick={() => copyInvite(invite.url)}
-                  className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-xl px-3 text-sm font-semibold transition-colors duration-150 hover:bg-slate-50"
-                  style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+                  className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-xl px-3 text-sm font-semibold transition-colors duration-150 hover:bg-[var(--surface-subtle)]"
+                  style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
                 >
                   {copiedUrl === invite.url ? (
                     <Check size={15} />

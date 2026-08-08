@@ -22,22 +22,23 @@ export function MemberKickDialog({
 }: MemberKickDialogProps) {
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center px-4"
+      style={{ background: "var(--overlay-scrim)" }}
       role="dialog"
       aria-modal="true"
       aria-labelledby="kick-student-title"
     >
-      <div className="panel w-full max-w-[420px] p-5 shadow-[0_18px_60px_rgba(15,23,42,0.18)]">
+      <div className="panel w-full max-w-[420px] p-5" style={{ boxShadow: "var(--shadow-dialog)" }}>
         <div className="mb-4 flex items-start justify-between gap-4">
           <div>
             <h2
               id="kick-student-title"
               className="text-sm font-semibold"
-              style={{ color: "#111827" }}
+              style={{ color: "var(--text-primary)" }}
             >
               Kick {member.name}
             </h2>
-            <p className="mt-1 text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
+            <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}>
               This removes the member from {schoolName}. They will need a new approved join request
               to return.
             </p>
@@ -46,8 +47,8 @@ export function MemberKickDialog({
             type="button"
             onClick={onClose}
             disabled={state.pending}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
-            style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-[var(--surface-subtle)] disabled:cursor-not-allowed"
+            style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
             aria-label="Close dialog"
           >
             <X size={15} />
@@ -61,8 +62,8 @@ export function MemberKickDialog({
             type="button"
             onClick={onClose}
             disabled={state.pending}
-            className="inline-flex h-[2.625rem] items-center justify-center rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
-            style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+            className="inline-flex h-[2.625rem] items-center justify-center rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-[var(--surface-subtle)] disabled:cursor-not-allowed"
+            style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
           >
             Cancel
           </button>
@@ -70,9 +71,11 @@ export function MemberKickDialog({
             type="button"
             onClick={onConfirm}
             disabled={state.pending || secondsRemaining > 0}
-            className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
+            className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 disabled:cursor-not-allowed"
             style={{
-              background: state.pending || secondsRemaining > 0 ? "#93C5FD" : "#2563EB",
+              color: "var(--text-on-accent)",
+              background:
+                state.pending || secondsRemaining > 0 ? "var(--accent-disabled)" : "var(--accent-color)",
               boxShadow:
                 state.pending || secondsRemaining > 0
                   ? "none"

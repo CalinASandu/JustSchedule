@@ -38,10 +38,10 @@ export function SettingsTab({
   return (
     <div className="p-5">
       <div className="mb-4">
-        <h2 className="text-sm font-semibold" style={{ color: "#111827" }}>
+        <h2 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
           School settings
         </h2>
-        <p className="mt-1 text-sm" style={{ color: "#6B7280" }}>
+        <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)" }}>
           Configure school-level scheduling details.
         </p>
       </div>
@@ -58,14 +58,14 @@ export function SettingsTab({
             style={
               activeSection === section.id
                 ? {
-                    background: "#EFF6FF",
-                    border: "1px solid #BFDBFE",
-                    color: "#1D4ED8",
+                    background: "var(--accent-subtle)",
+                    border: "1px solid var(--accent-border)",
+                    color: "var(--accent-strong)",
                   }
                 : {
-                    background: "#FFFFFF",
-                    border: "1px solid #E4E8EF",
-                    color: "#6B7280",
+                    background: "var(--surface-panel)",
+                    border: "1px solid var(--border-default)",
+                    color: "var(--text-secondary)",
                   }
             }
           >

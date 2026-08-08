@@ -73,7 +73,7 @@ export default async function InvitePage({
     <div
       className="min-h-dvh"
       style={{
-        background: "#F7F8FA",
+        background: "var(--surface-page)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -86,7 +86,7 @@ export default async function InvitePage({
           position: "fixed",
           inset: 0,
           backgroundImage:
-            "linear-gradient(#e4e8ef 1px, transparent 1px), linear-gradient(90deg, #e4e8ef 1px, transparent 1px)",
+            "linear-gradient(var(--border-default) 1px, transparent 1px), linear-gradient(90deg, var(--border-default) 1px, transparent 1px)",
           backgroundSize: "40px 40px",
           opacity: 0.35,
           pointerEvents: "none",
@@ -97,13 +97,13 @@ export default async function InvitePage({
         <Link
           href="/dashboard"
           className="mb-6 flex items-center justify-center gap-2"
-          style={{ color: "#111827" }}
+          style={{ color: "var(--text-primary)" }}
         >
           <div
             className="flex h-[30px] w-[30px] items-center justify-center rounded-lg"
-            style={{ background: "#2563EB" }}
+            style={{ background: "var(--accent-color)" }}
           >
-            <CalendarDays size={16} color="white" strokeWidth={2} />
+            <CalendarDays size={16} color="var(--text-on-accent)" strokeWidth={2} />
           </div>
           <span className="text-[0.95rem] font-semibold">JustSchedule</span>
         </Link>
@@ -112,17 +112,17 @@ export default async function InvitePage({
           <div className="mb-7">
             <div
               className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl"
-              style={{ background: "#EFF6FF" }}
+              style={{ background: "var(--accent-subtle)" }}
             >
-              <GraduationCap size={21} color="#2563EB" strokeWidth={1.8} />
+              <GraduationCap size={21} color="var(--accent-color)" strokeWidth={1.8} />
             </div>
             <h1
               className="text-[1.35rem] font-bold"
-              style={{ color: "#111827", letterSpacing: "-0.025em", lineHeight: 1.25 }}
+              style={{ color: "var(--text-primary)", letterSpacing: "-0.025em", lineHeight: 1.25 }}
             >
               {schoolRow ? `Join ${schoolRow.name}` : "Join school"}
             </h1>
-            <p className="mt-2 text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
+            <p className="mt-2 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}>
               {isAvailable
                 ? "Request access with this invite link. An admin can approve you from the school management panel."
                 : "This invite link is unavailable or has expired."}
@@ -132,7 +132,7 @@ export default async function InvitePage({
           {inviteRow && (
             <div
               className="mb-5 flex items-center gap-2 rounded-[10px] px-3 py-2 text-sm"
-              style={{ background: "#F8FAFC", border: "1px solid #E4E8EF", color: "#6B7280" }}
+              style={{ background: "var(--surface-alt)", border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
             >
               <Clock size={15} strokeWidth={1.8} />
               Expires {formatDate(inviteRow.expires_at)}
@@ -144,9 +144,10 @@ export default async function InvitePage({
           ) : (
             <Link
               href="/dashboard"
-              className="inline-flex h-[2.625rem] w-full items-center justify-center rounded-[10px] text-[0.9375rem] font-semibold text-white"
+              className="inline-flex h-[2.625rem] w-full items-center justify-center rounded-[10px] text-[0.9375rem] font-semibold"
               style={{
-                background: "#2563EB",
+                color: "var(--text-on-accent)",
+                background: "var(--accent-color)",
                 boxShadow: "0 1px 3px rgba(37,99,235,0.25), 0 4px 12px rgba(37,99,235,0.12)",
               }}
             >

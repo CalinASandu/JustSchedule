@@ -7,6 +7,7 @@ import NotificationBell, {
   type NotificationBellItem,
 } from "@/components/dashboard/NotificationBell";
 import SchoolManagementTabs from "@/components/dashboard/SchoolManagementTabs";
+import ThemeToggle from "@/components/theme/ThemeToggle";
 import { getCompletedProfileName, getProfileNameSetupPath } from "@/lib/profile-name";
 import { createClient } from "@/lib/supabase/server";
 import { getUserFacingErrorMessage } from "@/lib/user-facing-errors";
@@ -477,21 +478,24 @@ export default async function SchoolDashboardPage({
   );
 
   return (
-    <div className="min-h-dvh bg-[#F7F8FA]">
+    <div className="min-h-dvh" style={{ background: "var(--surface-page)" }}>
       <header
-        className="sticky top-0 z-30 flex h-14 items-center bg-white px-4 sm:px-6"
-        style={{ borderBottom: "1px solid #E4E8EF" }}
+        className="sticky top-0 z-30 flex h-14 items-center px-4 sm:px-6"
+        style={{
+          background: "var(--surface-panel)",
+          borderBottom: "1px solid var(--border-default)",
+        }}
       >
         <Link href="/dashboard" className="flex min-w-0 items-center gap-2.5">
           <div
             className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl"
-            style={{ background: "#2563EB" }}
+            style={{ background: "var(--accent-color)" }}
           >
-            <CalendarDays size={17} color="white" strokeWidth={2} />
+            <CalendarDays size={17} color="var(--text-on-accent)" strokeWidth={2} />
           </div>
           <span
             className="text-[15px] font-semibold"
-            style={{ color: "#111827" }}
+            style={{ color: "var(--text-primary)" }}
           >
             JustSchedule
           </span>
@@ -501,10 +505,11 @@ export default async function SchoolDashboardPage({
 
         <div className="flex items-center gap-2">
           {isProfessor && <NotificationBell notifications={notifications} />}
+          <ThemeToggle />
           <DashboardSignOutButton />
           <div
-            className="hidden h-8 w-8 select-none items-center justify-center rounded-full text-[11px] font-semibold text-white sm:flex"
-            style={{ background: "#2563EB" }}
+            className="hidden h-8 w-8 select-none items-center justify-center rounded-full text-[11px] font-semibold sm:flex"
+            style={{ background: "var(--accent-color)", color: "var(--text-on-accent)" }}
             title={user.email ?? "Signed in with Google"}
           >
             {initials}
@@ -516,7 +521,7 @@ export default async function SchoolDashboardPage({
         <Link
           href="/dashboard"
           className="mb-5 inline-flex items-center gap-2 text-sm font-medium"
-          style={{ color: "#6B7280" }}
+          style={{ color: "var(--text-secondary)" }}
         >
           <ArrowLeft size={15} strokeWidth={1.8} />
           Schools
@@ -527,25 +532,25 @@ export default async function SchoolDashboardPage({
             <h1
               className="break-words text-[1.35rem] font-bold"
               style={{
-                color: "#111827",
+                color: "var(--text-primary)",
                 letterSpacing: "-0.025em",
                 lineHeight: 1.25,
               }}
             >
               {school.name}
             </h1>
-            <p className="mt-1.5 text-sm" style={{ color: "#6B7280" }}>
+            <p className="mt-1.5 text-sm" style={{ color: "var(--text-secondary)" }}>
               Manage members and invite links for this school.
             </p>
           </div>
 
           <div className="panel anim-slide-up anim-d1 p-4">
             <div className="flex items-center gap-3">
-              <ShieldCheck size={17} color="#2563EB" strokeWidth={1.9} />
+              <ShieldCheck size={17} color="var(--accent-color)" strokeWidth={1.9} />
               <div className="min-w-0">
                 <p
                   className="text-sm font-semibold"
-                  style={{ color: "#111827" }}
+                  style={{ color: "var(--text-primary)" }}
                 >
                   {isAdmin
                     ? "Admin access"
@@ -553,7 +558,7 @@ export default async function SchoolDashboardPage({
                       ? "Professor access"
                       : "Exam supervisor access"}
                 </p>
-                <p className="truncate text-xs" style={{ color: "#9CA3AF" }}>
+                <p className="truncate text-xs" style={{ color: "var(--text-muted)" }}>
                   Signed in as {displayName}
                 </p>
               </div>

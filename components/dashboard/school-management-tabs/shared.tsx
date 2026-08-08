@@ -3,9 +3,9 @@ export function ErrorBanner({ message }: { message: string }) {
     <p
       className="anim-fade-in mb-4 text-[0.8125rem]"
       style={{
-        color: "#DC2626",
-        background: "#FEF2F2",
-        border: "1px solid #FECACA",
+        color: "var(--danger)",
+        background: "var(--danger-subtle)",
+        border: "1px solid var(--danger-border)",
         borderRadius: 8,
         padding: "0.5rem 0.75rem",
       }}
@@ -23,11 +23,11 @@ export function EmptyState({
   description: string;
 }) {
   return (
-    <div className="rounded-[10px] border border-dashed border-[#C7D2FE] p-4">
-      <p className="text-sm font-medium" style={{ color: "#111827" }}>
+    <div className="rounded-[10px] border border-dashed border-[var(--accent-border)] p-4">
+      <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
         {title}
       </p>
-      <p className="mt-1 text-sm" style={{ color: "#6B7280" }}>
+      <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)" }}>
         {description}
       </p>
     </div>

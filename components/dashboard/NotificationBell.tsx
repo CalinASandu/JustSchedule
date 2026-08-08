@@ -54,16 +54,16 @@ export default function NotificationBell({ notifications }: NotificationBellProp
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
-        className="relative flex h-8 w-8 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50"
-        style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+        className="relative flex h-8 w-8 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-[var(--surface-subtle)]"
+        style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
         aria-label="Notifications"
         aria-expanded={open}
       >
         <Bell size={15} strokeWidth={1.9} />
         {unreadCount > 0 && (
           <span
-            className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-semibold text-white"
-            style={{ background: "#2563EB" }}
+            className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-semibold"
+            style={{ background: "var(--accent-color)", color: "var(--text-on-accent)" }}
           >
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
@@ -72,18 +72,19 @@ export default function NotificationBell({ notifications }: NotificationBellProp
 
       {open && (
         <div
-          className="absolute right-0 top-full z-40 mt-2 w-[min(360px,calc(100vw-2rem))] overflow-hidden rounded-[12px] bg-white"
+          className="absolute right-0 top-full z-40 mt-2 w-[min(360px,calc(100vw-2rem))] overflow-hidden rounded-[12px]"
           style={{
-            border: "1px solid #E4E8EF",
-            boxShadow: "0 14px 40px rgba(15,23,42,0.14)",
+            background: "var(--surface-panel)",
+            border: "1px solid var(--border-default)",
+            boxShadow: "var(--shadow-dialog)",
           }}
         >
-          <div className="flex items-center justify-between gap-3 border-b border-[#E4E8EF] px-4 py-3">
+          <div className="flex items-center justify-between gap-3 border-b border-[var(--border-default)] px-4 py-3">
             <div>
-              <p className="text-sm font-semibold" style={{ color: "#111827" }}>
+              <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                 Notifications
               </p>
-              <p className="text-xs" style={{ color: "#9CA3AF" }}>
+              <p className="text-xs" style={{ color: "var(--text-muted)" }}>
                 Loaded when this page opened
               </p>
             </div>
@@ -91,8 +92,8 @@ export default function NotificationBell({ notifications }: NotificationBellProp
               type="button"
               onClick={() => markRead(items.map((item) => item.id))}
               disabled={unreadCount === 0}
-              className="inline-flex h-8 items-center gap-1.5 rounded-[10px] px-2.5 text-xs font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-              style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+              className="inline-flex h-8 items-center gap-1.5 rounded-[10px] px-2.5 text-xs font-semibold transition-colors duration-150 hover:bg-[var(--surface-subtle)] disabled:cursor-not-allowed disabled:opacity-50"
+              style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
             >
               <CheckCheck size={13} />
               Seen
@@ -102,29 +103,32 @@ export default function NotificationBell({ notifications }: NotificationBellProp
           <div className="max-h-[360px] overflow-y-auto">
             {items.length === 0 ? (
               <div className="px-4 py-5">
-                <p className="text-sm font-medium" style={{ color: "#111827" }}>
+                <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
                   No notices
                 </p>
-                <p className="mt-1 text-sm" style={{ color: "#6B7280" }}>
+                <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)" }}>
                   Exam request updates will appear here.
                 </p>
               </div>
             ) : (
               items.map((notification) => {
                 const content = (
-                  <div className="flex gap-3 px-4 py-3 transition-colors duration-150 hover:bg-slate-50">
+                  <div className="flex gap-3 px-4 py-3 transition-colors duration-150 hover:bg-[var(--surface-subtle)]">
                     <span
                       className="mt-1 h-2 w-2 shrink-0 rounded-full"
-                      style={{ background: "#2563EB" }}
+                      style={{ background: "var(--accent-color)" }}
                     />
                     <span className="min-w-0">
-                      <span className="block text-sm font-semibold" style={{ color: "#111827" }}>
+                      <span className="block text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                         {notification.title}
                       </span>
-                      <span className="mt-1 block text-sm" style={{ color: "#6B7280", lineHeight: 1.45 }}>
+                      <span
+                        className="mt-1 block text-sm"
+                        style={{ color: "var(--text-secondary)", lineHeight: 1.45 }}
+                      >
                         {notification.body}
                       </span>
-                      <span className="mt-1.5 block text-xs" style={{ color: "#9CA3AF" }}>
+                      <span className="mt-1.5 block text-xs" style={{ color: "var(--text-muted)" }}>
                         {formatNoticeTime(notification.createdAt)}
                       </span>
                     </span>
@@ -139,7 +143,7 @@ export default function NotificationBell({ notifications }: NotificationBellProp
                       void markRead([notification.id]);
                       setOpen(false);
                     }}
-                    className="block border-b border-[#F3F4F6] last:border-b-0"
+                    className="block border-b border-[var(--border-subtle)] last:border-b-0"
                   >
                     {content}
                   </Link>
@@ -148,7 +152,7 @@ export default function NotificationBell({ notifications }: NotificationBellProp
                     key={notification.id}
                     type="button"
                     onClick={() => markRead([notification.id])}
-                    className="block w-full border-b border-[#F3F4F6] text-left last:border-b-0"
+                    className="block w-full border-b border-[var(--border-subtle)] text-left last:border-b-0"
                   >
                     {content}
                   </button>

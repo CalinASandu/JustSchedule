@@ -125,7 +125,7 @@ export function FloatingActionMenu({
   return createPortal(
     <div
       ref={menuRef}
-      className="anim-scale-in fixed rounded-[10px] bg-white py-1"
+      className="anim-scale-in fixed rounded-[10px] py-1"
       style={{
         left: position.left,
         top: position.top,
@@ -133,8 +133,9 @@ export function FloatingActionMenu({
         maxHeight: `calc(100vh - ${VIEWPORT_MARGIN * 2}px)`,
         overflowY: "auto",
         zIndex: 60,
-        border: "1px solid #E4E8EF",
-        boxShadow: "0 8px 28px rgba(15,23,42,0.12)",
+        background: "var(--surface-panel)",
+        border: "1px solid var(--border-default)",
+        boxShadow: "var(--shadow-dialog)",
       }}
     >
       {children}
