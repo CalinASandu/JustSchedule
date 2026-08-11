@@ -122,14 +122,14 @@ export default function SubjectCommandPalette({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}
-        className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
-        style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+        className="h-[2.625rem] w-full rounded-[10px] bg-[var(--surface-panel)] px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
+        style={{ border: "1.5px solid var(--border-default)", color: "var(--text-primary)" }}
         onFocus={(e) => {
-          e.currentTarget.style.borderColor = "#3B82F6";
+          e.currentTarget.style.borderColor = "var(--accent-bright)";
           e.currentTarget.style.boxShadow = "0 0 0 3px rgba(59,130,246,0.12)";
         }}
         onBlur={(e) => {
-          e.currentTarget.style.borderColor = "#E4E8EF";
+          e.currentTarget.style.borderColor = "var(--border-default)";
           e.currentTarget.style.boxShadow = "none";
         }}
       />
@@ -142,7 +142,7 @@ export default function SubjectCommandPalette({
         size={14}
         aria-hidden="true"
         className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2"
-        style={{ color: "#9CA3AF" }}
+        style={{ color: "var(--text-muted)" }}
       />
       <input
         id={id}
@@ -157,12 +157,12 @@ export default function SubjectCommandPalette({
         onFocus={(event) => {
           openPalette();
           event.currentTarget.select();
-          event.currentTarget.style.borderColor = "#3B82F6";
+          event.currentTarget.style.borderColor = "var(--accent-bright)";
           event.currentTarget.style.boxShadow = "0 0 0 3px rgba(59,130,246,0.12)";
         }}
         onClick={openPalette}
         onBlur={(event) => {
-          event.currentTarget.style.borderColor = "#E4E8EF";
+          event.currentTarget.style.borderColor = "var(--border-default)";
           event.currentTarget.style.boxShadow = "none";
         }}
         onKeyDown={handleKeyDown}
@@ -174,18 +174,18 @@ export default function SubjectCommandPalette({
         aria-controls={listboxId}
         aria-expanded={open}
         aria-haspopup="listbox"
-        className="h-[2.625rem] w-full rounded-[10px] bg-white py-0 pl-9 pr-9 text-[0.9375rem] outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed"
+        className="h-[2.625rem] w-full rounded-[10px] bg-[var(--surface-panel)] py-0 pl-9 pr-9 text-[0.9375rem] outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed"
         style={{
-          border: "1.5px solid #E4E8EF",
-          color: disabled ? "#9CA3AF" : "#111827",
+          border: "1.5px solid var(--border-default)",
+          color: disabled ? "var(--text-muted)" : "var(--text-primary)",
         }}
       />
       {value && !disabled && (
         <button
           type="button"
           aria-label="Clear subject"
-          className="absolute right-2.5 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-full transition-colors hover:bg-slate-100"
-          style={{ color: "#9CA3AF" }}
+          className="absolute right-2.5 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-full transition-colors hover:bg-[var(--surface-subtle)]"
+          style={{ color: "var(--text-muted)" }}
           onPointerDown={(event) => {
             event.preventDefault();
             event.stopPropagation();
@@ -201,9 +201,9 @@ export default function SubjectCommandPalette({
 
       {open && (
         <div
-          className="anim-scale-in absolute left-0 right-0 top-[calc(100%+0.375rem)] z-[80] overflow-hidden rounded-[10px] bg-white"
+          className="anim-scale-in absolute left-0 right-0 top-[calc(100%+0.375rem)] z-[80] overflow-hidden rounded-[10px] bg-[var(--surface-panel)]"
           style={{
-            border: "1px solid #E4E8EF",
+            border: "1px solid var(--border-default)",
             boxShadow: "0 14px 36px rgba(15,23,42,0.14)",
           }}
         >
@@ -227,8 +227,8 @@ export default function SubjectCommandPalette({
                   onMouseEnter={() => setActiveIndex(index)}
                   className="flex cursor-pointer items-center rounded-[8px] px-3 py-2 text-[0.9375rem] transition-colors duration-75"
                   style={{
-                    color: "#111827",
-                    background: index === activeIndex ? "#EEF4FF" : "transparent",
+                    color: "var(--text-primary)",
+                    background: index === activeIndex ? "var(--accent-subtle)" : "transparent",
                   }}
                 >
                   <span className="truncate">{subject.name}</span>
@@ -238,7 +238,7 @@ export default function SubjectCommandPalette({
           ) : (
             <div
               className="flex h-[12.5rem] items-center px-3 py-3 text-sm"
-              style={{ color: "#9CA3AF" }}
+              style={{ color: "var(--text-muted)" }}
             >
               No subjects match &ldquo;{query}&rdquo;
             </div>

@@ -15,13 +15,16 @@ export function MemberRoleChangesPanel({
   onConfirm,
 }: MemberRoleChangesPanelProps) {
   return (
-    <div className="anim-fade-in mb-4 rounded-[10px] border border-[#E4E8EF] bg-white p-4">
+    <div
+      className="anim-fade-in mb-4 rounded-[10px] p-4"
+      style={{ border: "1px solid var(--border-default)", background: "var(--surface-panel)" }}
+    >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm font-semibold" style={{ color: "#111827" }}>
+          <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
             Pending role changes
           </p>
-          <p className="mt-1 text-sm" style={{ color: "#6B7280" }}>
+          <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)" }}>
             {pendingRoleChanges.length} member{pendingRoleChanges.length === 1 ? "" : "s"} will
             be updated.
           </p>
@@ -31,8 +34,8 @@ export function MemberRoleChangesPanel({
             type="button"
             onClick={onClear}
             disabled={pending}
-            className="inline-flex h-[2.625rem] items-center justify-center rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
-            style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+            className="inline-flex h-[2.625rem] items-center justify-center rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-[var(--surface-subtle)] disabled:cursor-not-allowed"
+            style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
           >
             Cancel
           </button>
@@ -40,9 +43,10 @@ export function MemberRoleChangesPanel({
             type="button"
             onClick={onConfirm}
             disabled={pending}
-            className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
+            className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 disabled:cursor-not-allowed"
             style={{
-              background: pending ? "#93C5FD" : "#2563EB",
+              color: "var(--text-on-accent)",
+              background: pending ? "var(--accent-disabled)" : "var(--accent-color)",
               boxShadow: pending
                 ? "none"
                 : "0 1px 3px rgba(37,99,235,0.25), 0 4px 12px rgba(37,99,235,0.12)",

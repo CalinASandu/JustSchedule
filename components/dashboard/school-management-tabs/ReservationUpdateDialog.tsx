@@ -72,20 +72,22 @@ export function ReservationUpdateDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4 py-6"
+      className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6"
+      style={{ background: "var(--overlay-scrim)" }}
       role="dialog"
       aria-modal="true"
       aria-labelledby="update-reservation-title"
     >
       <form
         onSubmit={submit}
-        className="panel anim-scale-in w-full max-w-[620px] shadow-[0_18px_60px_rgba(15,23,42,0.18)]"
+        className="panel anim-scale-in w-full max-w-[620px]"
+        style={{ boxShadow: "var(--shadow-dialog)" }}
       >
         <div className="flex items-start justify-between gap-4 px-5 py-4 sm:px-6">
           <div className="flex min-w-0 items-start gap-3">
             <div
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
-              style={{ background: "#EFF6FF", color: "#2563EB" }}
+              style={{ background: "var(--accent-subtle)", color: "var(--accent-color)" }}
             >
               <Pencil size={17} />
             </div>
@@ -93,11 +95,11 @@ export function ReservationUpdateDialog({
               <h2
                 id="update-reservation-title"
                 className="text-[0.9375rem] font-semibold"
-                style={{ color: "#111827", letterSpacing: "-0.01em" }}
+                style={{ color: "var(--text-primary)", letterSpacing: "-0.01em" }}
               >
                 Update reservation
               </h2>
-              <p className="mt-1 truncate text-sm" style={{ color: "#6B7280" }}>
+              <p className="mt-1 truncate text-sm" style={{ color: "var(--text-secondary)" }}>
                 {studentName}
               </p>
             </div>
@@ -106,8 +108,8 @@ export function ReservationUpdateDialog({
             type="button"
             onClick={onClose}
             disabled={pending}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
-            style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-[var(--surface-subtle)] disabled:cursor-not-allowed"
+            style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
             aria-label="Close"
           >
             <X size={15} />
@@ -119,7 +121,7 @@ export function ReservationUpdateDialog({
 
           <div
             className="mb-4 grid gap-0 overflow-hidden rounded-2xl sm:grid-cols-3"
-            style={{ border: "1px solid #E4E8EF", background: "#F8FAFC" }}
+            style={{ border: "1px solid var(--border-default)", background: "var(--surface-alt)" }}
           >
             <SummaryItem icon={<CalendarDays size={15} />} label="Date" value={formatReservationDate(reservationDate)} />
             <SummaryItem
@@ -145,8 +147,12 @@ export function ReservationUpdateDialog({
                 onChange={(event) => setReservationDate(event.target.value)}
                 onClick={openDatePicker}
                 disabled={pending}
-                className="h-[2.625rem] w-full cursor-pointer rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed"
-                style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+                className="h-[2.625rem] w-full cursor-pointer rounded-[10px] px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed"
+                style={{
+                  background: "var(--surface-panel)",
+                  border: "1.5px solid var(--border-default)",
+                  color: "var(--text-primary)",
+                }}
               />
             </Field>
 
@@ -156,8 +162,12 @@ export function ReservationUpdateDialog({
                 value={slotId}
                 onChange={(event) => setSlotId(event.target.value)}
                 disabled={pending || selectableSlots.length === 0}
-                className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed"
-                style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+                className="h-[2.625rem] w-full rounded-[10px] px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed"
+                style={{
+                  background: "var(--surface-panel)",
+                  border: "1.5px solid var(--border-default)",
+                  color: "var(--text-primary)",
+                }}
               >
                 {selectableSlots.length === 0 ? (
                   <option value="">No active slots</option>
@@ -177,8 +187,12 @@ export function ReservationUpdateDialog({
                 value={examType}
                 onChange={(event) => setExamType(event.target.value as ExamType)}
                 disabled={pending}
-                className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] capitalize outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed"
-                style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+                className="h-[2.625rem] w-full rounded-[10px] px-3 text-[0.9375rem] capitalize outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed"
+                style={{
+                  background: "var(--surface-panel)",
+                  border: "1.5px solid var(--border-default)",
+                  color: "var(--text-primary)",
+                }}
               >
                 <option value="midterm">Midterm</option>
                 <option value="final">Final</option>
@@ -195,29 +209,30 @@ export function ReservationUpdateDialog({
                 disabled={pending}
               />
               {!hasValidExamName && examName.trim() && (
-                <p className="mt-1.5 text-xs font-medium" style={{ color: "#DC2626" }}>
+                <p className="mt-1.5 text-xs font-medium" style={{ color: "var(--danger)" }}>
                   Choose an exam from the school subject list.
                 </p>
               )}
             </Field>
           </div>
 
-          <div className="mt-5 flex flex-col-reverse gap-2 border-t border-[#F3F4F6] pt-4 sm:flex-row sm:justify-end">
+          <div className="mt-5 flex flex-col-reverse gap-2 border-t border-[var(--border-subtle)] pt-4 sm:flex-row sm:justify-end">
             <button
               type="button"
               onClick={onClose}
               disabled={pending}
-              className="inline-flex h-[2.625rem] items-center justify-center rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
-              style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+              className="inline-flex h-[2.625rem] items-center justify-center rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-[var(--surface-subtle)] disabled:cursor-not-allowed"
+              style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={pending || !canSubmit}
-              className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
+              className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 disabled:cursor-not-allowed"
               style={{
-                background: pending || !canSubmit ? "#93C5FD" : "#2563EB",
+                color: "var(--text-on-accent)",
+                background: pending || !canSubmit ? "var(--accent-disabled)" : "var(--accent-color)",
                 boxShadow:
                   pending || !canSubmit
                     ? "none"
@@ -248,7 +263,7 @@ function Field({
       <label
         htmlFor={htmlFor}
         className="mb-1.5 block text-[0.8125rem] font-medium"
-        style={{ color: "#374151" }}
+        style={{ color: "var(--text-body)" }}
       >
         {label}
       </label>
@@ -267,18 +282,18 @@ function SummaryItem({
   value: string;
 }) {
   return (
-    <div className="flex items-center gap-3 px-4 py-3 sm:border-r sm:border-[#E4E8EF] last:sm:border-r-0">
+    <div className="flex items-center gap-3 px-4 py-3 sm:border-r sm:border-[var(--border-default)] last:sm:border-r-0">
       <div
         className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
-        style={{ background: "#FFFFFF", color: "#2563EB", border: "1px solid #E4E8EF" }}
+        style={{ background: "var(--surface-panel)", color: "var(--accent-color)", border: "1px solid var(--border-default)" }}
       >
         {icon}
       </div>
       <div className="min-w-0">
-        <p className="text-[11px] font-medium uppercase" style={{ color: "#94A3B8" }}>
+        <p className="text-[11px] font-medium uppercase" style={{ color: "var(--text-faint)" }}>
           {label}
         </p>
-        <p className="truncate text-sm font-semibold" style={{ color: "#111827" }}>
+        <p className="truncate text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
           {value}
         </p>
       </div>

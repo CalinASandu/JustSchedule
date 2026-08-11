@@ -322,16 +322,16 @@ export function MembersTab({
       <div className="p-4 sm:p-5">
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h2 className="text-sm font-semibold" style={{ color: "#111827" }}>
+          <h2 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
             School members
           </h2>
-          <p className="mt-1 text-sm" style={{ color: "#6B7280" }}>
+          <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)" }}>
             Current users and their roles in this school.
           </p>
         </div>
         <span
           className="rounded-full px-3 py-1 text-xs font-semibold"
-          style={{ background: "#DBEAFE", color: "#1D4ED8" }}
+          style={{ background: "var(--accent-muted)", color: "var(--accent-strong)" }}
         >
           {memberSearchQuery.trim()
             ? `${filteredMembers.length} of ${visibleMembers.length}`
@@ -343,7 +343,7 @@ export function MembersTab({
         <Search
           size={16}
           className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2"
-          color="#94A3B8"
+          color="var(--text-faint)"
           aria-hidden="true"
         />
         <input
@@ -351,15 +351,19 @@ export function MembersTab({
           value={memberSearchQuery}
           onChange={(event) => setMemberSearchQuery(event.target.value)}
           placeholder="Search members by name, email, or role"
-          className="h-[2.625rem] w-full rounded-[10px] bg-white pl-10 pr-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
-          style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+          className="h-[2.625rem] w-full rounded-[10px] pl-10 pr-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
+          style={{
+            background: "var(--surface-panel)",
+            border: "1.5px solid var(--border-default)",
+            color: "var(--text-primary)",
+          }}
           onFocus={(event) => {
-            event.currentTarget.style.borderColor = "#3B82F6";
+            event.currentTarget.style.borderColor = "var(--accent-bright)";
             event.currentTarget.style.boxShadow =
               "0 0 0 3px rgba(59,130,246,0.12)";
           }}
           onBlur={(event) => {
-            event.currentTarget.style.borderColor = "#E4E8EF";
+            event.currentTarget.style.borderColor = "var(--border-default)";
             event.currentTarget.style.boxShadow = "none";
           }}
         />
@@ -374,7 +378,7 @@ export function MembersTab({
       {(roleState.success || selfBookingState.success) && (
         <p
           className="anim-fade-in mb-4 text-[0.8125rem] font-medium"
-          style={{ color: "#1D4ED8" }}
+          style={{ color: "var(--accent-strong)" }}
         >
           {selfBookingState.success ?? roleState.success}
         </p>
@@ -383,7 +387,7 @@ export function MembersTab({
       {scheduleState.success && (
         <p
           className="anim-fade-in mb-4 text-[0.8125rem] font-medium"
-          style={{ color: "#1D4ED8" }}
+          style={{ color: "var(--accent-strong)" }}
         >
           {scheduleState.success}
         </p>

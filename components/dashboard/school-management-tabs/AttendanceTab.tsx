@@ -124,10 +124,10 @@ export function AttendanceTab({
     <div className="p-5">
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h2 className="text-sm font-semibold" style={{ color: "#111827" }}>
+          <h2 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
             Attendance
           </h2>
-          <p className="mt-1 text-sm" style={{ color: "#6B7280" }}>
+          <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)" }}>
             Track attendance by exam slot. Only the selected slot is shown.
           </p>
         </div>
@@ -135,23 +135,23 @@ export function AttendanceTab({
           <button
             type="button"
             onClick={() => setAttendanceDate((current) => addDays(current, -1))}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50"
-            style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-[var(--surface-subtle)]"
+            style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
             aria-label="Previous attendance day"
           >
             <ChevronLeft size={16} />
           </button>
           <span
             className="min-w-[148px] rounded-xl px-3 py-2 text-center text-sm font-semibold"
-            style={{ border: "1px solid #E4E8EF", color: "#111827" }}
+            style={{ border: "1px solid var(--border-default)", color: "var(--text-primary)" }}
           >
             {formatReservationDate(attendanceDate)}
           </span>
           <button
             type="button"
             onClick={() => setAttendanceDate((current) => addDays(current, 1))}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50"
-            style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-[var(--surface-subtle)]"
+            style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
             aria-label="Next attendance day"
           >
             <ChevronRight size={16} />
@@ -173,21 +173,21 @@ export function AttendanceTab({
                 style={
                   isSelected
                     ? {
-                        background: "#EFF6FF",
-                        color: "#2563EB",
-                        border: "1.5px solid #BFDBFE",
+                        background: "var(--accent-subtle)",
+                        color: "var(--accent-color)",
+                        border: "1.5px solid var(--accent-border)",
                       }
                     : {
-                        background: "#FFFFFF",
-                        color: "#6B7280",
-                        border: "1.5px solid #E4E8EF",
+                        background: "var(--surface-panel)",
+                        color: "var(--text-secondary)",
+                        border: "1.5px solid var(--border-default)",
                       }
                 }
               >
                 <span>{slot.name}</span>
                 <span
                   className="text-xs font-medium"
-                  style={{ color: isSelected ? "#93C5FD" : "#9CA3AF" }}
+                  style={{ color: isSelected ? "var(--accent-border-strong)" : "var(--text-muted)" }}
                 >
                   {formatSlotTime(slot.startsAt)}-{formatSlotTime(slot.endsAt)}
                 </span>
@@ -201,7 +201,7 @@ export function AttendanceTab({
       {attendanceState.success && (
         <p
           className="anim-fade-in mb-4 text-[0.8125rem] font-medium"
-          style={{ color: "#1D4ED8" }}
+          style={{ color: "var(--accent-strong)" }}
         >
           {attendanceState.success}
         </p>
@@ -209,15 +209,15 @@ export function AttendanceTab({
 
       <div
         className="mb-4 flex items-center justify-between gap-3 rounded-[10px] px-4 py-3"
-        style={{ border: "1px solid #E4E8EF", background: "#FAFAFA" }}
+        style={{ border: "1px solid var(--border-default)", background: "var(--surface-inset)" }}
       >
         <div className="flex items-center gap-3">
           <span
             className="rounded-full px-2.5 py-1 text-xs font-semibold"
             style={
               selectedAttendanceSession
-                ? { background: "#DBEAFE", color: "#1D4ED8" }
-                : { background: "#E2E8F0", color: "#64748B" }
+                ? { background: "var(--accent-muted)", color: "var(--accent-strong)" }
+                : { background: "var(--surface-subtle)", color: "var(--text-slate)" }
             }
           >
             {getAttendanceWindowLabel(
@@ -226,7 +226,7 @@ export function AttendanceTab({
               selectedAttendanceSession,
             )}
           </span>
-          <span className="text-sm" style={{ color: "#6B7280" }}>
+          <span className="text-sm" style={{ color: "var(--text-secondary)" }}>
             {selectedAttendanceSlot
               ? `${formatSlotTime(selectedAttendanceSlot.startsAt)} - ${formatSlotTime(
                   selectedAttendanceSlot.endsAt,
@@ -244,18 +244,18 @@ export function AttendanceTab({
       ) : (
         <div
           className="overflow-x-auto rounded-[10px]"
-          style={{ border: "1px solid #E4E8EF" }}
+          style={{ border: "1px solid var(--border-default)" }}
         >
           <table className="w-full text-sm" style={{ borderCollapse: "collapse" }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid #E4E8EF" }}>
+              <tr style={{ borderBottom: "1px solid var(--border-default)" }}>
                 {["Student", "Exam", "Type", "Status"].map((column) => (
                   <th
                     key={column}
                     className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider"
                     style={{
-                      color: "#9CA3AF",
-                      background: "#FAFAFA",
+                      color: "var(--text-muted)",
+                      background: "var(--surface-inset)",
                       whiteSpace: "nowrap",
                     }}
                   >
@@ -276,32 +276,33 @@ export function AttendanceTab({
                   Boolean(reservation.attendanceMarkedAt) || hasLocalAttendanceMark;
                 const isLast = index === attendanceReservations.length - 1;
                 const statusBadgeStyle = !isAttendanceMarked
-                  ? { background: "#E2E8F0", color: "#64748B" }
+                  ? { background: "var(--surface-subtle)", color: "var(--text-slate)" }
                   : reservation.attendanceStatus === "absent"
-                    ? { background: "#FEF2F2", color: "#DC2626" }
-                    : { background: "#DBEAFE", color: "#1D4ED8" };
+                    ? { background: "var(--danger-subtle)", color: "var(--danger)" }
+                    : { background: "var(--accent-muted)", color: "var(--accent-strong)" };
 
                 return (
                   <tr
                     key={reservation.id}
-                    className="anim-slide-up bg-white"
-                    style={
-                      isLast ? undefined : { borderBottom: "1px solid #F3F4F6" }
-                    }
+                    className="anim-slide-up"
+                    style={{
+                      background: "var(--surface-panel)",
+                      ...(isLast ? {} : { borderBottom: "1px solid var(--border-subtle)" }),
+                    }}
                   >
                     <td className="px-4 py-3">
-                      <p className="font-semibold" style={{ color: "#111827" }}>
+                      <p className="font-semibold" style={{ color: "var(--text-primary)" }}>
                         {memberNamesByUserId.get(reservation.userId) ??
                           "Unnamed student"}
                       </p>
                     </td>
-                    <td className="px-4 py-3" style={{ color: "#374151" }}>
+                    <td className="px-4 py-3" style={{ color: "var(--text-body)" }}>
                       {reservation.examName}
                     </td>
                     <td className="px-4 py-3">
                       <span
                         className="rounded-full px-2.5 py-1 text-xs font-semibold"
-                        style={{ background: "#EFF6FF", color: "#2563EB" }}
+                        style={{ background: "var(--accent-subtle)", color: "var(--accent-color)" }}
                       >
                         {formatExamType(reservation.examType)}
                       </span>
@@ -318,8 +319,8 @@ export function AttendanceTab({
                         <div
                           className="inline-flex rounded-xl p-1"
                           style={{
-                            border: "1px solid #E4E8EF",
-                            background: "#F8FAFC",
+                            border: "1px solid var(--border-default)",
+                            background: "var(--surface-alt)",
                           }}
                           role="group"
                           aria-label={`Attendance for ${
@@ -344,20 +345,20 @@ export function AttendanceTab({
                                   isAttendanceMarked &&
                                   reservation.attendanceStatus === status
                                     ? {
-                                        background: "#FFFFFF",
+                                        background: "var(--surface-panel)",
                                         color:
                                           status === "absent"
-                                            ? "#DC2626"
-                                            : "#1D4ED8",
+                                            ? "var(--danger)"
+                                            : "var(--accent-strong)",
                                         border: `1px solid ${
                                           status === "absent"
-                                            ? "#FECACA"
-                                            : "#BFDBFE"
+                                            ? "var(--danger-border)"
+                                            : "var(--accent-border)"
                                         }`,
                                       }
                                     : {
                                         background: "transparent",
-                                        color: "#9CA3AF",
+                                        color: "var(--text-muted)",
                                         border: "1px solid transparent",
                                   }
                                 }

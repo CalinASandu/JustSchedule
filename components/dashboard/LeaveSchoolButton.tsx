@@ -78,8 +78,8 @@ export default function LeaveSchoolButton({
         type="button"
         onClick={openDialog}
         disabled={pending}
-        className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-70"
-        style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+        className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-[var(--surface-subtle)] disabled:cursor-not-allowed disabled:opacity-70"
+        style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
       >
         <LogOut size={16} />
         Leave school
@@ -87,22 +87,26 @@ export default function LeaveSchoolButton({
 
       {open && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4"
+          className="fixed inset-0 z-50 flex items-center justify-center px-4"
+          style={{ background: "var(--overlay-scrim)" }}
           role="dialog"
           aria-modal="true"
           aria-labelledby="leave-school-title"
         >
-          <div className="panel w-full max-w-[420px] p-5 shadow-[0_18px_60px_rgba(15,23,42,0.18)]">
+          <div
+            className="panel w-full max-w-[420px] p-5"
+            style={{ boxShadow: "var(--shadow-dialog)" }}
+          >
             <div className="mb-4 flex items-start justify-between gap-4">
               <div>
                 <h2
                   id="leave-school-title"
                   className="text-sm font-semibold"
-                  style={{ color: "#111827" }}
+                  style={{ color: "var(--text-primary)" }}
                 >
                   Leave {schoolName}
                 </h2>
-                <p className="mt-1 text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
+                <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}>
                   You will lose access to this school&apos;s schedule until an admin approves a new request.
                 </p>
               </div>
@@ -110,8 +114,8 @@ export default function LeaveSchoolButton({
                 type="button"
                 onClick={closeDialog}
                 disabled={pending}
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
-                style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-[var(--surface-subtle)] disabled:cursor-not-allowed"
+                style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
                 aria-label="Close dialog"
               >
                 <X size={15} />
@@ -122,9 +126,9 @@ export default function LeaveSchoolButton({
               <p
                 className="mb-4 text-[0.8125rem]"
                 style={{
-                  color: "#DC2626",
-                  background: "#FEF2F2",
-                  border: "1px solid #FECACA",
+                  color: "var(--danger)",
+                  background: "var(--danger-subtle)",
+                  border: "1px solid var(--danger-border)",
                   borderRadius: 8,
                   padding: "0.5rem 0.75rem",
                 }}
@@ -138,8 +142,8 @@ export default function LeaveSchoolButton({
                 type="button"
                 onClick={closeDialog}
                 disabled={pending}
-                className="inline-flex h-[2.625rem] items-center justify-center rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
-                style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+                className="inline-flex h-[2.625rem] items-center justify-center rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-[var(--surface-subtle)] disabled:cursor-not-allowed"
+                style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
               >
                 Cancel
               </button>
@@ -147,9 +151,11 @@ export default function LeaveSchoolButton({
                 type="button"
                 onClick={leaveSchool}
                 disabled={pending || secondsRemaining > 0}
-                className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
+                className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 disabled:cursor-not-allowed"
                 style={{
-                  background: pending || secondsRemaining > 0 ? "#93C5FD" : "#2563EB",
+                  color: "var(--text-on-accent)",
+                  background:
+                    pending || secondsRemaining > 0 ? "var(--accent-disabled)" : "var(--accent-color)",
                   boxShadow:
                     pending || secondsRemaining > 0
                       ? "none"

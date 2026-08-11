@@ -41,20 +41,20 @@ export function SettingsDangerZonePanel({
   return (
     <div
       className="rounded-[10px] border p-4"
-      style={{ background: "#FFFFFF", borderColor: "#FECACA" }}
+      style={{ background: "var(--surface-panel)", borderColor: "var(--danger-border)" }}
     >
       <div className="mb-4 flex items-start gap-3">
         <div
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
-          style={{ background: "#FEF2F2" }}
+          style={{ background: "var(--danger-subtle)" }}
         >
-          <Trash2 size={16} color="#DC2626" strokeWidth={1.8} />
+          <Trash2 size={16} color="var(--danger)" strokeWidth={1.8} />
         </div>
         <div>
-          <p className="text-sm font-semibold" style={{ color: "#111827" }}>
+          <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
             Delete school
           </p>
-          <p className="mt-1 text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
+          <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}>
             This disables {schoolName} and preserves dependent records for audit history.
             Type the school name exactly to confirm.
           </p>
@@ -66,7 +66,7 @@ export function SettingsDangerZonePanel({
       <label
         htmlFor="delete-school-confirmation"
         className="mb-1.5 block text-[0.8125rem] font-medium"
-        style={{ color: "#374151" }}
+        style={{ color: "var(--text-body)" }}
       >
         School name
       </label>
@@ -77,17 +77,24 @@ export function SettingsDangerZonePanel({
           value={deleteConfirmation}
           onChange={(event) => setDeleteConfirmation(event.target.value)}
           placeholder={schoolName}
-          className="h-[2.625rem] min-w-0 flex-1 rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
-          style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+          className="h-[2.625rem] min-w-0 flex-1 rounded-[10px] px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
+          style={{
+            background: "var(--surface-panel)",
+            border: "1.5px solid var(--border-default)",
+            color: "var(--text-primary)",
+          }}
         />
         <button
           type="button"
           onClick={deleteSchool}
           disabled={deleteState.pending || deleteConfirmation !== schoolName}
-          className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
+          className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 disabled:cursor-not-allowed"
           style={{
+            color: "var(--text-on-accent)",
             background:
-              deleteState.pending || deleteConfirmation !== schoolName ? "#93C5FD" : "#2563EB",
+              deleteState.pending || deleteConfirmation !== schoolName
+                ? "var(--accent-disabled)"
+                : "var(--accent-color)",
             boxShadow:
               deleteState.pending || deleteConfirmation !== schoolName
                 ? "none"

@@ -116,8 +116,8 @@ export default function CalendarPanel({
   }
 
   const dotColor: Record<DayStatus, string> = {
-    available: '#16A34A',
-    limited: '#D97706',
+    available: 'var(--success)',
+    limited: 'var(--warning)',
     unavailable: 'transparent',
   }
 
@@ -128,21 +128,21 @@ export default function CalendarPanel({
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           {/* Student name */}
           <div className="flex flex-col gap-1.5 min-w-0 flex-1">
-            <label className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: '#9CA3AF' }}>
+            <label className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
               Student name
             </label>
             <div
               className="relative w-full rounded-xl py-2.5 pl-8 pr-3 text-sm"
               style={{
-                border: '1px solid #E4E8EF',
-                color: '#111827',
-                background: '#F8FAFC',
+                border: '1px solid var(--border-default)',
+                color: 'var(--text-primary)',
+                background: 'var(--surface-alt)',
               }}
             >
               <span className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                  <circle cx="7" cy="5" r="2.5" stroke="#9CA3AF" strokeWidth="1.3" />
-                  <path d="M1.5 12.5c0-2.485 2.462-4.5 5.5-4.5s5.5 2.015 5.5 4.5" stroke="#9CA3AF" strokeWidth="1.3" strokeLinecap="round" />
+                  <circle cx="7" cy="5" r="2.5" stroke="var(--text-muted)" strokeWidth="1.3" />
+                  <path d="M1.5 12.5c0-2.485 2.462-4.5 5.5-4.5s5.5 2.015 5.5 4.5" stroke="var(--text-muted)" strokeWidth="1.3" strokeLinecap="round" />
                 </svg>
               </span>
               <span className="block truncate font-medium">{studentName}</span>
@@ -151,7 +151,7 @@ export default function CalendarPanel({
 
           {/* Exam name */}
           <div className="flex flex-col gap-1.5 min-w-0 flex-1">
-            <label className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: '#9CA3AF' }}>
+            <label className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
               Exam
             </label>
             <SubjectCommandPalette
@@ -164,12 +164,12 @@ export default function CalendarPanel({
 
           {/* Exam type toggle */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: '#9CA3AF' }}>
+            <label className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
               Exam type
             </label>
             <div
               className="flex rounded-xl p-0.5 gap-0.5"
-              style={{ border: '1px solid #E4E8EF', background: '#F7F8FA' }}
+              style={{ border: '1px solid var(--border-default)', background: 'var(--surface-page)' }}
               role="group"
               aria-label="Exam type"
             >
@@ -178,11 +178,11 @@ export default function CalendarPanel({
                   key={t}
                   onClick={() => onExamTypeChange(t)}
                   aria-pressed={examType === t}
-                  className="px-4 py-2 text-sm font-medium rounded-[10px] transition-all duration-150 cursor-pointer capitalize focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                  className="px-4 py-2 text-sm font-medium rounded-[10px] transition-all duration-150 cursor-pointer capitalize focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)]"
                   style={
                     examType === t
-                      ? { background: '#ffffff', color: '#1D4ED8', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', border: '1px solid #BFDBFE' }
-                      : { background: 'transparent', color: '#6B7280', border: '1px solid transparent' }
+                      ? { background: 'var(--surface-panel)', color: 'var(--accent-strong)', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', border: '1px solid var(--accent-border)' }
+                      : { background: 'transparent', color: 'var(--text-secondary)', border: '1px solid transparent' }
                   }
                 >
                   {t.charAt(0).toUpperCase() + t.slice(1)}
@@ -201,13 +201,13 @@ export default function CalendarPanel({
             onClick={prevMonth}
             disabled={isCurrentMonth}
             aria-label="Previous month"
-            className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)]"
             style={
               isCurrentMonth
-                ? { color: '#D1D5DB', cursor: 'not-allowed' }
-                : { color: '#6B7280', cursor: 'pointer' }
+                ? { color: 'var(--text-muted)', cursor: 'not-allowed' }
+                : { color: 'var(--text-secondary)', cursor: 'pointer' }
             }
-            onMouseEnter={e => { if (!isCurrentMonth) e.currentTarget.style.background = '#F3F4F6' }}
+            onMouseEnter={e => { if (!isCurrentMonth) e.currentTarget.style.background = 'var(--surface-subtle)' }}
             onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -216,7 +216,7 @@ export default function CalendarPanel({
           </button>
           <h3
             className="text-[15px] font-semibold"
-            style={{ color: '#111827', fontFamily: 'var(--font-sans)' }}
+            style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-sans)' }}
             aria-live="polite"
           >
             {MONTH_NAMES[viewMonth]} {viewYear}
@@ -224,9 +224,9 @@ export default function CalendarPanel({
           <button
             onClick={nextMonth}
             aria-label="Next month"
-            className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-            style={{ color: '#6B7280' }}
-            onMouseEnter={e => { e.currentTarget.style.background = '#F3F4F6' }}
+            className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)]"
+            style={{ color: 'var(--text-secondary)' }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'var(--surface-subtle)' }}
             onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -241,7 +241,7 @@ export default function CalendarPanel({
             <div
               key={label}
               className="text-center text-[11px] font-semibold py-1.5 uppercase tracking-wide"
-              style={{ color: i === 0 || i === 6 ? '#D1D5DB' : '#9CA3AF' }}
+              style={{ color: i === 0 || i === 6 ? 'var(--text-muted)' : 'var(--text-muted)' }}
             >
               {label}
             </div>
@@ -268,23 +268,23 @@ export default function CalendarPanel({
                 disabled={isDisabled}
                 aria-label={`${MONTH_NAMES[viewMonth]} ${day}, ${viewYear}${isDisabled ? ', unavailable' : ''}`}
                 aria-pressed={isSelected}
-                className="group flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-xl transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                className="group flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-xl transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)]"
                 style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
               >
                 <span
                   className="flex h-9 w-9 items-center justify-center rounded-full text-sm transition-colors duration-150"
                   style={
                     isSelected
-                      ? { background: '#2563EB', color: '#ffffff', fontWeight: 600 }
+                      ? { background: 'var(--accent-color)', color: 'var(--text-on-accent)', fontWeight: 600 }
                       : isToday
-                      ? { border: '2px solid #2563EB', color: '#2563EB', fontWeight: 600 }
+                      ? { border: '2px solid var(--accent-color)', color: 'var(--accent-color)', fontWeight: 600 }
                       : isDisabled
-                      ? { color: '#D1D5DB' }
-                      : { color: '#111827', fontWeight: 400 }
+                      ? { color: 'var(--text-muted)' }
+                      : { color: 'var(--text-primary)', fontWeight: 400 }
                   }
                   onMouseEnter={e => {
                     if (!isDisabled && !isSelected) {
-                      e.currentTarget.style.background = '#EFF6FF'
+                      e.currentTarget.style.background = 'var(--accent-subtle)'
                     }
                   }}
                   onMouseLeave={e => {
@@ -298,7 +298,7 @@ export default function CalendarPanel({
                 {/* Availability dot */}
                 <span
                   className="w-1 h-1 rounded-full transition-colors duration-150"
-                  style={{ background: isSelected ? '#2563EB' : dotColor[status] }}
+                  style={{ background: isSelected ? 'var(--accent-color)' : dotColor[status] }}
                   aria-hidden="true"
                 />
               </button>
@@ -310,10 +310,10 @@ export default function CalendarPanel({
       {/* ── Legend ──────────────────────────────────── */}
       <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 pt-1">
         {[
-          { label: 'Available', color: '#16A34A', filled: true },
-          { label: 'Limited', color: '#D97706', filled: true },
-          { label: 'Unavailable', color: '#D1D5DB', filled: true },
-          { label: 'Selected', color: '#2563EB', filled: false },
+          { label: 'Available', color: 'var(--success)', filled: true },
+          { label: 'Limited', color: 'var(--warning)', filled: true },
+          { label: 'Unavailable', color: 'var(--text-muted)', filled: true },
+          { label: 'Selected', color: 'var(--accent-color)', filled: false },
         ].map(({ label, color, filled }) => (
           <div key={label} className="flex items-center gap-1.5">
             <span
@@ -325,7 +325,7 @@ export default function CalendarPanel({
               }
               aria-hidden="true"
             />
-            <span className="text-[11px]" style={{ color: '#9CA3AF' }}>{label}</span>
+            <span className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{label}</span>
           </div>
         ))}
       </div>

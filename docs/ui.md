@@ -280,10 +280,10 @@ Wrap in `className="anim-fade-in"` so it appears smoothly.
 
 ## Don'ts
 
-- No dark mode — build light only.
+- No hardcoded hex colors or raw Tailwind gray/blue utility classes in components — every color in this doc has a `var(--token)` equivalent in `app/globals.css` with both light and dark values; use the token (see `AGENTS.md` UI Design System section for the full rule and the dark mode architecture). This doc's hex values below describe the light-mode palette only.
 - No gradients on backgrounds or cards (grid overlay is the only atmospheric effect).
 - No Inter, Roboto, or system fonts — Geist is already loaded globally.
-- No purple accents — blue (`#2563eb`) is the sole accent color.
+- No purple accents — blue (`--accent-color`, `#2563eb` light / `#3b82f6` dark) is the sole accent color.
 - No Tailwind `shadow-*` utilities on panels — the `.panel` border is the only elevation signal.
 - Do not recreate `.panel` inline — always use the class.
 - Do not add animation durations longer than 400ms for UI transitions.

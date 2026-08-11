@@ -70,17 +70,18 @@ export function MemberScheduleDialog({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4 py-6"
+      className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6"
+      style={{ background: "var(--overlay-scrim)" }}
       role="dialog"
       aria-modal="true"
       aria-labelledby="schedule-student-title"
     >
-      <div className="panel w-full max-w-[620px] shadow-[0_18px_60px_rgba(15,23,42,0.18)]">
+      <div className="panel w-full max-w-[620px]" style={{ boxShadow: "var(--shadow-dialog)" }}>
         <div className="flex items-start justify-between gap-4 px-5 py-4 sm:px-6">
           <div className="flex min-w-0 items-start gap-3">
             <div
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
-              style={{ background: "#EFF6FF", color: "#2563EB" }}
+              style={{ background: "var(--accent-subtle)", color: "var(--accent-color)" }}
               aria-hidden="true"
             >
               <CalendarPlus size={18} />
@@ -89,11 +90,11 @@ export function MemberScheduleDialog({
               <h2
                 id="schedule-student-title"
                 className="text-[0.9375rem] font-semibold"
-                style={{ color: "#111827", letterSpacing: "-0.01em" }}
+                style={{ color: "var(--text-primary)", letterSpacing: "-0.01em" }}
               >
                 Schedule exam
               </h2>
-              <p className="mt-1 text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
+              <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}>
                 Create a confirmed booking for this student.
               </p>
             </div>
@@ -102,8 +103,8 @@ export function MemberScheduleDialog({
             type="button"
             onClick={onClose}
             disabled={state.pending}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
-            style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-[var(--surface-subtle)] disabled:cursor-not-allowed"
+            style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
             aria-label="Close dialog"
           >
             <X size={15} />
@@ -115,52 +116,64 @@ export function MemberScheduleDialog({
 
           <div
             className="mb-4 grid gap-0 overflow-hidden rounded-2xl sm:grid-cols-3"
-            style={{ border: "1px solid #E4E8EF", background: "#F8FAFC" }}
+            style={{ border: "1px solid var(--border-default)", background: "var(--surface-alt)" }}
           >
-            <div className="flex items-center gap-3 px-4 py-3 sm:border-r sm:border-[#E4E8EF]">
+            <div className="flex items-center gap-3 px-4 py-3 sm:border-r sm:border-[var(--border-default)]">
               <div
                 className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
-                style={{ background: "#FFFFFF", color: "#2563EB", border: "1px solid #E4E8EF" }}
+                style={{
+                  background: "var(--surface-panel)",
+                  color: "var(--accent-color)",
+                  border: "1px solid var(--border-default)",
+                }}
               >
                 <UserRound size={15} />
               </div>
               <div className="min-w-0">
-                <p className="text-[11px] font-medium uppercase" style={{ color: "#94A3B8" }}>
+                <p className="text-[11px] font-medium uppercase" style={{ color: "var(--text-faint)" }}>
                   Student
                 </p>
-                <p className="truncate text-sm font-semibold" style={{ color: "#111827" }}>
+                <p className="truncate text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                   {member.name}
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-3 border-t border-[#E4E8EF] px-4 py-3 sm:border-r sm:border-t-0">
+            <div className="flex items-center gap-3 border-t border-[var(--border-default)] px-4 py-3 sm:border-r sm:border-t-0">
               <div
                 className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
-                style={{ background: "#FFFFFF", color: "#2563EB", border: "1px solid #E4E8EF" }}
+                style={{
+                  background: "var(--surface-panel)",
+                  color: "var(--accent-color)",
+                  border: "1px solid var(--border-default)",
+                }}
               >
                 <CalendarDays size={15} />
               </div>
               <div className="min-w-0">
-                <p className="text-[11px] font-medium uppercase" style={{ color: "#94A3B8" }}>
+                <p className="text-[11px] font-medium uppercase" style={{ color: "var(--text-faint)" }}>
                   Date
                 </p>
-                <p className="truncate text-sm font-semibold" style={{ color: "#111827" }}>
+                <p className="truncate text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                   {formatReservationDate(scheduleDate)}
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-3 border-t border-[#E4E8EF] px-4 py-3 sm:border-t-0">
+            <div className="flex items-center gap-3 border-t border-[var(--border-default)] px-4 py-3 sm:border-t-0">
               <div
                 className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
-                style={{ background: "#FFFFFF", color: "#2563EB", border: "1px solid #E4E8EF" }}
+                style={{
+                  background: "var(--surface-panel)",
+                  color: "var(--accent-color)",
+                  border: "1px solid var(--border-default)",
+                }}
               >
                 <Clock size={15} />
               </div>
               <div className="min-w-0">
-                <p className="text-[11px] font-medium uppercase" style={{ color: "#94A3B8" }}>
+                <p className="text-[11px] font-medium uppercase" style={{ color: "var(--text-faint)" }}>
                   Slot
                 </p>
-                <p className="truncate text-sm font-semibold" style={{ color: "#111827" }}>
+                <p className="truncate text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                   {selectedScheduleSlot
                     ? `${formatSlotTime(selectedScheduleSlot.startsAt)} - ${formatSlotTime(
                         selectedScheduleSlot.endsAt,
@@ -176,7 +189,7 @@ export function MemberScheduleDialog({
               <label
                 htmlFor="schedule-student-date"
                 className="mb-1.5 block text-[0.8125rem] font-medium"
-                style={{ color: "#374151" }}
+                style={{ color: "var(--text-body)" }}
               >
                 Date
               </label>
@@ -187,14 +200,18 @@ export function MemberScheduleDialog({
                 min={getTodayKey()}
                 max={getMaxBookingDate()}
                 onChange={(event) => setScheduleDate(event.target.value)}
-                className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
-                style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+                className="h-[2.625rem] w-full rounded-[10px] px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
+                style={{
+                  background: "var(--surface-panel)",
+                  border: "1.5px solid var(--border-default)",
+                  color: "var(--text-primary)",
+                }}
                 onFocus={(event) => {
-                  event.currentTarget.style.borderColor = "#3B82F6";
+                  event.currentTarget.style.borderColor = "var(--accent-bright)";
                   event.currentTarget.style.boxShadow = "0 0 0 3px rgba(59,130,246,0.12)";
                 }}
                 onBlur={(event) => {
-                  event.currentTarget.style.borderColor = "#E4E8EF";
+                  event.currentTarget.style.borderColor = "var(--border-default)";
                   event.currentTarget.style.boxShadow = "none";
                 }}
               />
@@ -204,7 +221,7 @@ export function MemberScheduleDialog({
               <label
                 htmlFor="schedule-student-slot"
                 className="mb-1.5 block text-[0.8125rem] font-medium"
-                style={{ color: "#374151" }}
+                style={{ color: "var(--text-body)" }}
               >
                 Slot
               </label>
@@ -212,14 +229,18 @@ export function MemberScheduleDialog({
                 id="schedule-student-slot"
                 value={scheduleSlotId}
                 onChange={(event) => setScheduleSlotId(event.target.value)}
-                className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
-                style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+                className="h-[2.625rem] w-full rounded-[10px] px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow]"
+                style={{
+                  background: "var(--surface-panel)",
+                  border: "1.5px solid var(--border-default)",
+                  color: "var(--text-primary)",
+                }}
                 onFocus={(event) => {
-                  event.currentTarget.style.borderColor = "#3B82F6";
+                  event.currentTarget.style.borderColor = "var(--accent-bright)";
                   event.currentTarget.style.boxShadow = "0 0 0 3px rgba(59,130,246,0.12)";
                 }}
                 onBlur={(event) => {
-                  event.currentTarget.style.borderColor = "#E4E8EF";
+                  event.currentTarget.style.borderColor = "var(--border-default)";
                   event.currentTarget.style.boxShadow = "none";
                 }}
               >
@@ -249,7 +270,7 @@ export function MemberScheduleDialog({
               <label
                 htmlFor="schedule-student-exam-type"
                 className="mb-1.5 block text-[0.8125rem] font-medium"
-                style={{ color: "#374151" }}
+                style={{ color: "var(--text-body)" }}
               >
                 Exam type
               </label>
@@ -257,14 +278,18 @@ export function MemberScheduleDialog({
                 id="schedule-student-exam-type"
                 value={scheduleExamType}
                 onChange={(event) => setScheduleExamType(event.target.value as ExamType)}
-                className="h-[2.625rem] w-full rounded-[10px] bg-white px-3 text-[0.9375rem] capitalize outline-none transition-[border-color,box-shadow]"
-                style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+                className="h-[2.625rem] w-full rounded-[10px] px-3 text-[0.9375rem] capitalize outline-none transition-[border-color,box-shadow]"
+                style={{
+                  background: "var(--surface-panel)",
+                  border: "1.5px solid var(--border-default)",
+                  color: "var(--text-primary)",
+                }}
                 onFocus={(event) => {
-                  event.currentTarget.style.borderColor = "#3B82F6";
+                  event.currentTarget.style.borderColor = "var(--accent-bright)";
                   event.currentTarget.style.boxShadow = "0 0 0 3px rgba(59,130,246,0.12)";
                 }}
                 onBlur={(event) => {
-                  event.currentTarget.style.borderColor = "#E4E8EF";
+                  event.currentTarget.style.borderColor = "var(--border-default)";
                   event.currentTarget.style.boxShadow = "none";
                 }}
               >
@@ -277,7 +302,7 @@ export function MemberScheduleDialog({
               <label
                 htmlFor="schedule-student-exam-name"
                 className="mb-1.5 flex items-center gap-1.5 text-[0.8125rem] font-medium"
-                style={{ color: "#374151" }}
+                style={{ color: "var(--text-body)" }}
               >
                 <FileText size={14} />
                 Exam name
@@ -296,9 +321,9 @@ export function MemberScheduleDialog({
             <p
               className="anim-fade-in mt-3 rounded-[8px] px-3 py-2 text-[0.8125rem]"
               style={{
-                background: "#FEF2F2",
-                border: "1px solid #FECACA",
-                color: "#DC2626",
+                background: "var(--danger-subtle)",
+                border: "1px solid var(--danger-border)",
+                color: "var(--danger)",
               }}
             >
               This student already has a reservation in this time slot for this date.
@@ -308,9 +333,9 @@ export function MemberScheduleDialog({
             <p
               className="anim-fade-in mt-3 rounded-[8px] px-3 py-2 text-[0.8125rem]"
               style={{
-                background: "#FEF2F2",
-                border: "1px solid #FECACA",
-                color: "#DC2626",
+                background: "var(--danger-subtle)",
+                border: "1px solid var(--danger-border)",
+                color: "var(--danger)",
               }}
             >
               This student already has a future reservation for this exam and type.
@@ -318,13 +343,13 @@ export function MemberScheduleDialog({
             </p>
           ) : null}
 
-          <div className="mt-5 flex flex-col-reverse gap-2 border-t border-[#F3F4F6] pt-4 sm:flex-row sm:justify-end">
+          <div className="mt-5 flex flex-col-reverse gap-2 border-t border-[var(--border-subtle)] pt-4 sm:flex-row sm:justify-end">
             <button
               type="button"
               onClick={onClose}
               disabled={state.pending}
-              className="inline-flex h-[2.625rem] items-center justify-center rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
-              style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+              className="inline-flex h-[2.625rem] items-center justify-center rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 hover:bg-[var(--surface-subtle)] disabled:cursor-not-allowed"
+              style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
             >
               Cancel
             </button>
@@ -339,8 +364,9 @@ export function MemberScheduleDialog({
                 hasRepeatedExam ||
                 examSlots.length === 0
               }
-              className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
+              className="inline-flex h-[2.625rem] items-center justify-center gap-2 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 disabled:cursor-not-allowed"
               style={{
+                color: "var(--text-on-accent)",
                 background:
                   state.pending ||
                   !scheduleSlotId ||
@@ -348,8 +374,8 @@ export function MemberScheduleDialog({
                   hasSameTimeReservation ||
                   hasRepeatedExam ||
                   examSlots.length === 0
-                    ? "#93C5FD"
-                    : "#2563EB",
+                    ? "var(--accent-disabled)"
+                    : "var(--accent-color)",
                 boxShadow:
                   state.pending ||
                   !scheduleSlotId ||
@@ -402,8 +428,18 @@ function SlotRemainingPill({
       slotGroupIds.has(reservation.slotId),
   );
   const remaining = slot.capacity - booked;
-  const bg = hasStudentConflict || remaining <= 0 ? "#FEF2F2" : remaining <= 2 ? "#FEF3C7" : "#DBEAFE";
-  const color = hasStudentConflict || remaining <= 0 ? "#DC2626" : remaining <= 2 ? "#B45309" : "#1D4ED8";
+  const bg =
+    hasStudentConflict || remaining <= 0
+      ? "var(--danger-subtle)"
+      : remaining <= 2
+        ? "var(--warning-subtle)"
+        : "var(--accent-muted)";
+  const color =
+    hasStudentConflict || remaining <= 0
+      ? "var(--danger)"
+      : remaining <= 2
+        ? "var(--warning)"
+        : "var(--accent-strong)";
   const label =
     hasStudentConflict
       ? "Student already booked at this time"

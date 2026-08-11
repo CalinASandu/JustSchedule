@@ -6,6 +6,7 @@ import DirectJoinCard from "@/components/dashboard/DirectJoinCard";
 import NotificationBell, {
   type NotificationBellItem,
 } from "@/components/dashboard/NotificationBell";
+import ThemeToggle from "@/components/theme/ThemeToggle";
 import { getCompletedProfileName, getProfileNameSetupPath } from "@/lib/profile-name";
 import { createClient } from "@/lib/supabase/server";
 
@@ -202,19 +203,22 @@ export default async function DashboardPage() {
   }));
 
   return (
-    <div className="min-h-dvh" style={{ background: "#F7F8FA" }}>
+    <div className="min-h-dvh" style={{ background: "var(--surface-page)" }}>
       <header
-        className="h-14 bg-white flex items-center px-6 sticky top-0 z-30"
-        style={{ borderBottom: "1px solid #E4E8EF" }}
+        className="h-14 flex items-center px-6 sticky top-0 z-30"
+        style={{
+          background: "var(--surface-panel)",
+          borderBottom: "1px solid var(--border-default)",
+        }}
       >
         <Link href="/dashboard" className="flex items-center gap-2.5">
           <div
             className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-            style={{ background: "#2563EB" }}
+            style={{ background: "var(--accent-color)" }}
           >
-            <CalendarDays size={17} color="white" strokeWidth={2} />
+            <CalendarDays size={17} color="var(--text-on-accent)" strokeWidth={2} />
           </div>
-          <span className="text-[15px] font-semibold" style={{ color: "#111827" }}>
+          <span className="text-[15px] font-semibold" style={{ color: "var(--text-primary)" }}>
             JustSchedule
           </span>
         </Link>
@@ -223,10 +227,11 @@ export default async function DashboardPage() {
 
         <div className="flex items-center gap-2">
           <NotificationBell notifications={notifications} />
+          <ThemeToggle />
           <DashboardSignOutButton />
           <div
             className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[11px] font-semibold select-none"
-            style={{ background: "#2563EB" }}
+            style={{ background: "var(--accent-color)" }}
             title={user.email ?? "Signed in with Google"}
           >
             {initials}
@@ -240,14 +245,14 @@ export default async function DashboardPage() {
             <h1
               className="text-[1.35rem] font-bold"
               style={{
-                color: "#111827",
+                color: "var(--text-primary)",
                 letterSpacing: "-0.025em",
                 lineHeight: 1.25,
               }}
             >
               Your schools
             </h1>
-            <p className="mt-1.5 text-sm" style={{ color: "#6B7280" }}>
+            <p className="mt-1.5 text-sm" style={{ color: "var(--text-secondary)" }}>
               Choose a school to continue.
             </p>
           </div>
@@ -256,15 +261,15 @@ export default async function DashboardPage() {
             <div className="flex items-center gap-3">
               <div
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold text-white"
-                style={{ background: "#2563EB" }}
+                style={{ background: "var(--accent-color)" }}
               >
                 {initials}
               </div>
               <div className="min-w-0">
-                <p className="truncate text-sm font-semibold" style={{ color: "#111827" }}>
+                <p className="truncate text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                   {displayName}
                 </p>
-                <p className="truncate text-xs" style={{ color: "#9CA3AF" }}>
+                <p className="truncate text-xs" style={{ color: "var(--text-muted)" }}>
                   {user.email ?? "Signed in with Google"}
                 </p>
               </div>
@@ -292,27 +297,27 @@ export default async function DashboardPage() {
                 >
                   <Link
                     href={href}
-                    className="group block rounded-[10px] transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                    className="group block rounded-[10px] transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)]"
                   >
                     <div className="mb-5 flex items-start justify-between gap-3">
                       <div
                         className="flex h-10 w-10 items-center justify-center rounded-xl"
-                        style={{ background: "#EFF6FF" }}
+                        style={{ background: "var(--accent-subtle)" }}
                       >
-                        <GraduationCap size={19} color="#2563EB" strokeWidth={1.8} />
+                        <GraduationCap size={19} color="var(--accent-color)" strokeWidth={1.8} />
                       </div>
                       <ChevronRight
                         size={17}
-                        color="#9CA3AF"
+                        color="var(--text-muted)"
                         strokeWidth={1.8}
                         className="transition-transform duration-150 group-hover:translate-x-0.5"
                       />
                     </div>
 
-                    <h2 className="text-[0.9375rem] font-semibold" style={{ color: "#111827" }}>
+                    <h2 className="text-[0.9375rem] font-semibold" style={{ color: "var(--text-primary)" }}>
                       {membership.school.name}
                     </h2>
-                    <p className="mt-1 text-xs" style={{ color: "#9CA3AF" }}>
+                    <p className="mt-1 text-xs" style={{ color: "var(--text-muted)" }}>
                       Joined {formatDate(membership.joined_at)}
                     </p>
                   </Link>
@@ -323,14 +328,20 @@ export default async function DashboardPage() {
                         className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold capitalize"
                         style={
                           isAdmin
-                            ? { background: "#DBEAFE", color: "#1D4ED8" }
-                            : { background: "#E2E8F0", color: "#64748B" }
+                            ? {
+                                background: "var(--accent-muted)",
+                                color: "var(--accent-strong)",
+                              }
+                            : {
+                                background: "var(--surface-subtle)",
+                                color: "var(--text-slate)",
+                              }
                         }
                       >
                         {isAdmin && <ShieldCheck size={13} strokeWidth={1.8} />}
                         {displayRole(membership.role)}
                       </span>
-                      <span className="text-xs font-medium" style={{ color: "#6B7280" }}>
+                      <span className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
                         {isAdmin
                           ? "Manage school"
                           : membership.role === "professor"

@@ -34,18 +34,18 @@ export function ReservationToolbar({
         <div className="flex items-center gap-2">
           <div
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
-            style={{ background: "#EFF6FF", color: "#2563EB" }}
+            style={{ background: "var(--accent-subtle)", color: "var(--accent-color)" }}
           >
             <CalendarDays size={17} />
           </div>
           <div className="min-w-0">
             <h2
               className="truncate text-[0.9375rem] font-semibold"
-              style={{ color: "#111827", letterSpacing: "-0.01em" }}
+              style={{ color: "var(--text-primary)", letterSpacing: "-0.01em" }}
             >
               Reservations
             </h2>
-            <p className="mt-0.5 truncate text-sm" style={{ color: "#6B7280" }}>
+            <p className="mt-0.5 truncate text-sm" style={{ color: "var(--text-secondary)" }}>
               {reservationViewMode === "day" ? "Daily slot load" : "Weekday agenda"}
             </p>
           </div>
@@ -53,7 +53,10 @@ export function ReservationToolbar({
       </div>
 
       <div className="flex flex-col gap-2 md:flex-row md:items-center">
-        <div className="flex w-full min-w-0 items-center gap-2 rounded-[12px] bg-white md:w-auto">
+        <div
+          className="flex w-full min-w-0 items-center gap-2 rounded-[12px] md:w-auto"
+          style={{ background: "var(--surface-panel)" }}
+        >
           <button
             type="button"
             onClick={() =>
@@ -61,8 +64,8 @@ export function ReservationToolbar({
                 addDays(current, reservationViewMode === "day" ? -1 : -7),
               )
             }
-            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-            style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-[var(--surface-subtle)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)]"
+            style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
             aria-label={
               reservationViewMode === "day" ? "Previous day" : "Previous week"
             }
@@ -71,7 +74,7 @@ export function ReservationToolbar({
           </button>
           <span
             className="min-w-0 flex-1 rounded-xl px-3 py-2 text-center text-sm font-semibold md:min-w-[210px]"
-            style={{ border: "1px solid #E4E8EF", color: "#111827" }}
+            style={{ border: "1px solid var(--border-default)", color: "var(--text-primary)" }}
           >
             {rangeLabel}
           </span>
@@ -82,8 +85,8 @@ export function ReservationToolbar({
                 addDays(current, reservationViewMode === "day" ? 1 : 7),
               )
             }
-            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-            style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-[var(--surface-subtle)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)]"
+            style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
             aria-label={
               reservationViewMode === "day" ? "Next day" : "Next week"
             }
@@ -94,7 +97,7 @@ export function ReservationToolbar({
 
         <div
           className="flex w-full rounded-xl p-1 md:w-fit"
-          style={{ border: "1px solid #E4E8EF", background: "#F8FAFC" }}
+          style={{ border: "1px solid var(--border-default)", background: "var(--surface-alt)" }}
           role="group"
           aria-label="Reservation view"
         >
@@ -103,17 +106,17 @@ export function ReservationToolbar({
               key={mode}
               type="button"
               onClick={() => setReservationViewMode(mode)}
-              className="h-9 flex-1 rounded-[10px] px-3 text-sm font-semibold capitalize transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 md:flex-none"
+              className="h-9 flex-1 rounded-[10px] px-3 text-sm font-semibold capitalize transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)] md:flex-none"
               style={
                 reservationViewMode === mode
                   ? {
-                      background: "#FFFFFF",
-                      color: "#1D4ED8",
-                      border: "1px solid #BFDBFE",
+                      background: "var(--surface-panel)",
+                      color: "var(--accent-strong)",
+                      border: "1px solid var(--accent-border)",
                     }
                   : {
                       background: "transparent",
-                      color: "#6B7280",
+                      color: "var(--text-secondary)",
                       border: "1px solid transparent",
                     }
               }

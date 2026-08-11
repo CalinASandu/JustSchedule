@@ -189,15 +189,15 @@ export function ExamRequestsTab({
           <div className="flex items-center gap-2">
             <div
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
-              style={{ background: "#EFF6FF", color: "#2563EB" }}
+              style={{ background: "var(--accent-subtle)", color: "var(--accent-color)" }}
             >
               <CalendarDays size={17} aria-hidden="true" />
             </div>
             <div className="min-w-0">
-              <h2 className="truncate text-[0.9375rem] font-semibold" style={{ color: "#111827" }}>
+              <h2 className="truncate text-[0.9375rem] font-semibold" style={{ color: "var(--text-primary)" }}>
                 Exam requests
               </h2>
-              <p className="mt-0.5 truncate text-sm" style={{ color: "#6B7280" }}>
+              <p className="mt-0.5 truncate text-sm" style={{ color: "var(--text-secondary)" }}>
                 Pending requests expire two hours before the selected exam slot.
               </p>
             </div>
@@ -206,14 +206,17 @@ export function ExamRequestsTab({
 
         <div className="flex flex-col gap-2 lg:flex-row lg:items-center">
           {currentUserRole === "admin" && (
-            <label className="flex min-h-10 w-full items-center gap-2 rounded-[12px] border bg-white px-3 py-2 lg:w-auto" style={{ borderColor: "#E4E8EF" }}>
-              <Filter size={14} aria-hidden="true" style={{ color: "#6B7280" }} />
+            <label
+              className="flex min-h-10 w-full items-center gap-2 rounded-[12px] border px-3 py-2 lg:w-auto"
+              style={{ borderColor: "var(--border-default)", background: "var(--surface-panel)" }}
+            >
+              <Filter size={14} aria-hidden="true" style={{ color: "var(--text-secondary)" }} />
               <span className="sr-only">Assigned teacher filter</span>
               <select
                 value={teacherFilter}
                 onChange={(event) => setTeacherFilter(event.target.value)}
-                className="min-h-5 min-w-0 flex-1 bg-transparent text-sm font-semibold outline-none focus-visible:ring-2 focus-visible:ring-blue-500 lg:min-w-[150px]"
-                style={{ color: "#111827" }}
+                className="min-h-5 min-w-0 flex-1 bg-transparent text-sm font-semibold outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)] lg:min-w-[150px]"
+                style={{ color: "var(--text-primary)" }}
               >
                 <option value="all">All requests</option>
                 {teacherOptions.map((teacher) => (
@@ -225,27 +228,30 @@ export function ExamRequestsTab({
             </label>
           )}
 
-          <div className="flex w-full min-w-0 items-center gap-2 rounded-[12px] bg-white lg:w-auto">
+          <div
+            className="flex w-full min-w-0 items-center gap-2 rounded-[12px] lg:w-auto"
+            style={{ background: "var(--surface-panel)" }}
+          >
             <button
               type="button"
               onClick={() => moveWeek(-7)}
-              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-              style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-[var(--surface-subtle)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)]"
+              style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
               aria-label="Previous week"
             >
               <ChevronLeft size={16} aria-hidden="true" />
             </button>
             <span
               className="min-w-0 flex-1 rounded-xl px-3 py-2 text-center text-sm font-semibold lg:min-w-[210px]"
-              style={{ border: "1px solid #E4E8EF", color: "#111827" }}
+              style={{ border: "1px solid var(--border-default)", color: "var(--text-primary)" }}
             >
               {rangeLabel}
             </span>
             <button
               type="button"
               onClick={() => moveWeek(7)}
-              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-              style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-[var(--surface-subtle)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)]"
+              style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
               aria-label="Next week"
             >
               <ChevronRight size={16} aria-hidden="true" />
@@ -267,7 +273,7 @@ export function ExamRequestsTab({
       {reviewState.success && (
         <p
           className="anim-fade-in mb-4 text-[0.8125rem] font-medium"
-          style={{ color: "#1D4ED8" }}
+          style={{ color: "var(--accent-strong)" }}
         >
           {reviewState.success}
         </p>
@@ -326,14 +332,17 @@ function SummaryPill({
     <div
       className="rounded-[12px] border px-3 py-2"
       style={{
-        background: emphasis ? "#EFF6FF" : "#FFFFFF",
-        borderColor: emphasis ? "#BFDBFE" : "#E4E8EF",
+        background: emphasis ? "var(--accent-subtle)" : "var(--surface-panel)",
+        borderColor: emphasis ? "var(--accent-border)" : "var(--border-default)",
       }}
     >
-      <p className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: "#94A3B8" }}>
+      <p className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: "var(--text-faint)" }}>
         {label}
       </p>
-      <p className="mt-0.5 text-lg font-semibold tabular-nums" style={{ color: emphasis ? "#1D4ED8" : "#111827" }}>
+      <p
+        className="mt-0.5 text-lg font-semibold tabular-nums"
+        style={{ color: emphasis ? "var(--accent-strong)" : "var(--text-primary)" }}
+      >
         {value}
       </p>
     </div>

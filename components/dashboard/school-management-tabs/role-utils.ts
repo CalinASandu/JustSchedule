@@ -6,12 +6,12 @@ export const roleOptions: SchoolRole[] = ["student", "exam_supervisor", "profess
 export function getRolePillStyle(role: SchoolRole): CSSProperties {
   switch (role) {
     case "admin":
-      return { background: "#D1FAE5", color: "#065F46" };
+      return { background: "var(--role-admin-bg)", color: "var(--role-admin-text)" };
     case "professor":
-      return { background: "#EDE9FE", color: "#5B21B6" };
+      return { background: "var(--role-professor-bg)", color: "var(--role-professor-text)" };
     case "exam_supervisor":
-      return { background: "#FEF3C7", color: "#92400E" };
+      return { background: "var(--role-supervisor-bg)", color: "var(--role-supervisor-text)" };
     case "student":
-      return { background: "#DBEAFE", color: "#1D4ED8" };
+      return { background: "var(--accent-muted)", color: "var(--accent-strong)" };
   }
 }

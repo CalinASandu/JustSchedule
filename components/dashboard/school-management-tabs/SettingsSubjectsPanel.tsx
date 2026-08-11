@@ -62,12 +62,12 @@ export function SettingsSubjectsPanel({
   return (
     <div
       className="rounded-[10px] border p-4"
-      style={{ background: "#FFFFFF", borderColor: "#E4E8EF" }}
+      style={{ background: "var(--surface-panel)", borderColor: "var(--border-default)" }}
     >
-      <p className="mb-1 text-sm font-semibold" style={{ color: "#111827" }}>
+      <p className="mb-1 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
         Subjects
       </p>
-      <p className="mb-4 text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
+      <p className="mb-4 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}>
         Students select from these subjects when scheduling an exam.
       </p>
 
@@ -78,9 +78,9 @@ export function SettingsSubjectsPanel({
               key={subject.id}
               className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium"
               style={{
-                background: "#F0F5FF",
-                color: "#1D4ED8",
-                border: "1px solid #DBEAFE",
+                background: "var(--accent-subtle)",
+                color: "var(--accent-strong)",
+                border: "1px solid var(--accent-muted)",
               }}
             >
               {subject.name}
@@ -88,7 +88,7 @@ export function SettingsSubjectsPanel({
                 type="button"
                 onClick={() => removeSubject(subject.id)}
                 disabled={subjectState.pending}
-                className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full transition-colors duration-150 hover:bg-blue-200 disabled:cursor-not-allowed"
+                className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full transition-colors duration-150 hover:bg-[var(--accent-muted)] disabled:cursor-not-allowed"
                 aria-label={`Remove ${subject.name}`}
               >
                 <X size={10} strokeWidth={2.5} />
@@ -97,7 +97,7 @@ export function SettingsSubjectsPanel({
           ))}
         </div>
       ) : (
-        <p className="mb-4 text-sm" style={{ color: "#9CA3AF" }}>
+        <p className="mb-4 text-sm" style={{ color: "var(--text-muted)" }}>
           No subjects yet. Add one below.
         </p>
       )}
@@ -115,16 +115,24 @@ export function SettingsSubjectsPanel({
           }}
           placeholder="Add a subject..."
           disabled={subjectState.pending}
-          className="h-[2.625rem] min-w-0 flex-1 rounded-[10px] bg-white px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed"
-          style={{ border: "1.5px solid #E4E8EF", color: "#111827" }}
+          className="h-[2.625rem] min-w-0 flex-1 rounded-[10px] px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed"
+          style={{
+            background: "var(--surface-panel)",
+            border: "1.5px solid var(--border-default)",
+            color: "var(--text-primary)",
+          }}
         />
         <button
           type="button"
           onClick={addSubject}
           disabled={subjectState.pending || !newSubjectName.trim()}
-          className="inline-flex h-[2.625rem] items-center justify-center gap-1.5 rounded-[10px] px-4 text-[0.9375rem] font-semibold text-white transition-colors duration-150 disabled:cursor-not-allowed"
+          className="inline-flex h-[2.625rem] items-center justify-center gap-1.5 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 disabled:cursor-not-allowed"
           style={{
-            background: subjectState.pending || !newSubjectName.trim() ? "#93C5FD" : "#2563EB",
+            color: "var(--text-on-accent)",
+            background:
+              subjectState.pending || !newSubjectName.trim()
+                ? "var(--accent-disabled)"
+                : "var(--accent-color)",
             boxShadow:
               subjectState.pending || !newSubjectName.trim()
                 ? "none"
@@ -144,9 +152,9 @@ export function SettingsSubjectsPanel({
         <p
           className="anim-fade-in mt-3 rounded-lg px-3 py-2 text-[0.8125rem]"
           style={{
-            background: "#FEF2F2",
-            border: "1px solid #FECACA",
-            color: "#DC2626",
+            background: "var(--danger-subtle)",
+            border: "1px solid var(--danger-border)",
+            color: "var(--danger)",
           }}
         >
           {subjectState.error}

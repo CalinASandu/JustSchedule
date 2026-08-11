@@ -47,16 +47,16 @@ export function ReservationDayView({
         return (
           <section
             key={slot.id}
-            className="overflow-hidden rounded-[12px] border bg-white"
-            style={{ borderColor: "#E4E8EF" }}
+            className="overflow-hidden rounded-[12px] border"
+            style={{ background: "var(--surface-panel)", borderColor: "var(--border-default)" }}
           >
             <div className="p-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <h3 className="truncate text-sm font-semibold" style={{ color: "#111827" }}>
+                  <h3 className="truncate text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                     {slot.name}
                   </h3>
-                  <p className="mt-1 flex items-center gap-1.5 text-xs" style={{ color: "#6B7280" }}>
+                  <p className="mt-1 flex items-center gap-1.5 text-xs" style={{ color: "var(--text-secondary)" }}>
                     <Clock size={13} />
                     {formatSlotTime(slot.startsAt)} - {formatSlotTime(slot.endsAt)}
                   </p>
@@ -71,30 +71,37 @@ export function ReservationDayView({
 
               <div className="mt-4">
                 <div className="mb-1.5 flex items-center justify-between text-xs">
-                  <span style={{ color: "#6B7280" }}>
+                  <span style={{ color: "var(--text-secondary)" }}>
                     {slotReservations.length} of {slot.capacity} seats booked
                   </span>
-                  <span className="font-semibold" style={{ color: "#111827" }}>
+                  <span className="font-semibold" style={{ color: "var(--text-primary)" }}>
                     {usedPercent}%
                   </span>
                 </div>
-                <div className="h-2 overflow-hidden rounded-full" style={{ background: "#E2E8F0" }}>
+                <div className="h-2 overflow-hidden rounded-full" style={{ background: "var(--border-strong)" }}>
                   <div
                     className="h-full rounded-full transition-[width] duration-300"
                     style={{
                       width: `${usedPercent}%`,
-                      background: remaining === 0 ? "#94A3B8" : "#2563EB",
+                      background: remaining === 0 ? "var(--text-faint)" : "var(--accent-color)",
                     }}
                   />
                 </div>
               </div>
             </div>
 
-            <div className="space-y-2 border-t border-[#F3F4F6] bg-[#FAFAFA] p-3">
+            <div
+              className="space-y-2 border-t p-3"
+              style={{ borderColor: "var(--border-subtle)", background: "var(--surface-inset)" }}
+            >
               {slotReservations.length === 0 ? (
                 <div
-                  className="flex min-h-[84px] items-center justify-center rounded-[10px] border border-dashed bg-white px-3 text-center text-sm"
-                  style={{ borderColor: "#E4E8EF", color: "#94A3B8" }}
+                  className="flex min-h-[84px] items-center justify-center rounded-[10px] border border-dashed px-3 text-center text-sm"
+                  style={{
+                    background: "var(--surface-panel)",
+                    borderColor: "var(--border-default)",
+                    color: "var(--text-faint)",
+                  }}
                 >
                   No reservations in this slot.
                 </div>
@@ -107,36 +114,36 @@ export function ReservationDayView({
                   return (
                     <article
                       key={reservation.id}
-                      className="rounded-[10px] border bg-white p-3"
-                      style={{ borderColor: "#E4E8EF" }}
+                      className="rounded-[10px] border p-3"
+                      style={{ background: "var(--surface-panel)", borderColor: "var(--border-default)" }}
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <p
                             className="flex min-w-0 items-center gap-1.5 text-sm font-semibold"
-                            style={{ color: "#111827" }}
+                            style={{ color: "var(--text-primary)" }}
                           >
                             <UserRound size={14} className="shrink-0" />
                             <span className="truncate">
                               {memberNamesByUserId.get(reservation.userId) ?? "Unnamed student"}
                             </span>
                           </p>
-                          <p className="mt-1 truncate text-sm" style={{ color: "#374151" }}>
+                          <p className="mt-1 truncate text-sm" style={{ color: "var(--text-body)" }}>
                             {reservation.examName}
                           </p>
                           <div className="mt-2 flex flex-wrap items-center gap-1.5">
                             <span
                               className="rounded-full px-2 py-0.5 text-[11px] font-semibold"
-                              style={{ background: "#DBEAFE", color: "#1D4ED8" }}
+                              style={{ background: "var(--accent-muted)", color: "var(--accent-strong)" }}
                             >
                               Seat {index + 1}
                             </span>
                             <span
                               className="rounded-full px-2 py-0.5 text-[11px] font-semibold"
                               style={{
-                                background: "#F8FAFC",
-                                color: "#64748B",
-                                border: "1px solid #E4E8EF",
+                                background: "var(--surface-alt)",
+                                color: "var(--text-slate)",
+                                border: "1px solid var(--border-default)",
                               }}
                             >
                               {formatExamType(reservation.examType)}
@@ -166,9 +173,9 @@ export function ReservationDayView({
                       key={`${slot.id}-open-${index}`}
                       className="rounded-full px-2 py-0.5 text-[11px] font-medium"
                       style={{
-                        background: "#FFFFFF",
-                        border: "1px solid #E4E8EF",
-                        color: "#94A3B8",
+                        background: "var(--surface-panel)",
+                        border: "1px solid var(--border-default)",
+                        color: "var(--text-faint)",
                       }}
                     >
                       Seat {slotReservations.length + index + 1}
@@ -177,7 +184,7 @@ export function ReservationDayView({
                   {remaining > 4 && (
                     <span
                       className="px-1.5 py-0.5 text-[11px] font-medium"
-                      style={{ color: "#94A3B8" }}
+                      style={{ color: "var(--text-faint)" }}
                     >
                       +{remaining - 4} more
                     </span>
@@ -194,12 +201,12 @@ export function ReservationDayView({
 
 function getLoadStyle(remaining: number, capacity: number) {
   if (capacity <= 0 || remaining === 0) {
-    return { background: "#E2E8F0", color: "#64748B" };
+    return { background: "var(--surface-subtle)", color: "var(--text-slate)" };
   }
 
   if (remaining <= 2) {
-    return { background: "#FEF3C7", color: "#B45309" };
+    return { background: "var(--warning-subtle)", color: "var(--warning)" };
   }
 
-  return { background: "#DBEAFE", color: "#1D4ED8" };
+  return { background: "var(--accent-muted)", color: "var(--accent-strong)" };
 }

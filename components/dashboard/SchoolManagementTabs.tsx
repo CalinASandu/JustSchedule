@@ -93,11 +93,11 @@ export default function SchoolManagementTabs({
         onClick={() => setActiveTab(tab)}
         role="tab"
         aria-selected={selected}
-        className="h-11 shrink-0 whitespace-nowrap rounded-[12px] px-4 text-sm font-semibold transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+        className="h-11 shrink-0 whitespace-nowrap rounded-[12px] px-4 text-sm font-semibold transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)]"
         style={
           selected
-            ? { background: "#EFF6FF", color: "#1D4ED8" }
-            : { color: "#6B7280" }
+            ? { background: "var(--accent-subtle)", color: "var(--accent-strong)" }
+            : { color: "var(--text-secondary)" }
         }
       >
         {label}
@@ -107,7 +107,7 @@ export default function SchoolManagementTabs({
 
   return (
     <section className="panel anim-slide-up anim-d1 min-w-0 overflow-hidden">
-      <div className="border-b border-[#E4E8EF]">
+      <div className="border-b border-[var(--border-default)]">
         <div
           className="flex gap-1 overflow-x-auto px-2 py-2"
           role="tablist"

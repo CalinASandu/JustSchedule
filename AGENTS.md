@@ -99,6 +99,32 @@ The schedule UI is split into panels: `CalendarPanel`, `SlotPicker`, `BookingSum
 
 `ExamSlots` is now the authoritative slot source for active school slots. `components/schedule/constants.ts` only contains fallback/default slot shapes for isolated component compatibility and must not be treated as the scheduling source of truth.
 
+### Route Loading Skeletons
+
+Authenticated dashboard routes render an instant skeleton on navigation instead of blocking on server data. Each route segment has a `loading.tsx`:
+
+- `app/dashboard/loading.tsx` — school card grid skeleton (static heading kept real).
+- `app/dashboard/schools/[schoolId]/loading.tsx` — school management shell: back link, title block, tab bar, and content rows.
+- `app/dashboard/schedule/loading.tsx` — student workspace: title block, panel switcher, calendar grid, and right-rail panels.
+
+These are what make `<Link>` navigation instant: for dynamic server-rendered routes Next.js only prefetches the loading boundary, so without a `loading.tsx` the click blocks until the RSC payload arrives. Any new authenticated route should ship a `loading.tsx` alongside it.
+
+Skeletons share `components/skeletons/AppHeaderSkeleton.tsx` (the 56px app header, with the real brand mark so the header does not shift between loading and loaded) and the `Skeleton` primitive in `components/ui/skeleton.tsx`, which renders the `.skeleton` shimmer utility from `globals.css`. Skeleton markup must mirror the real layout's container widths, paddings, and grid columns so nothing jumps on hydration. Do not add spinners; do not animate skeletons with `framer-motion`.
+
+### Release Notes ("What's new")
+
+`app/dashboard/layout.tsx` is a data-free server layout whose only job is mounting `components/release/WhatsNewModal.tsx`, so the release dialog covers `/dashboard`, `/dashboard/schedule`, and `/dashboard/schools/[schoolId]` from one place. It deliberately does not cover `/`, `/login`, or `/invite/[inviteToken]` — a release dialog must not interrupt signing in or accepting an invite. Do not move authorization or data fetching into this layout; each route still builds its own shell.
+
+**To announce a release, prepend an entry to `RELEASES` in `lib/release-notes.ts`** in the same PR as the feature. Array position is the only ordering authority; the `YYYY.MM.N` version string is compared by equality and never parsed. Item icons come from the closed `RELEASE_ICONS` map, so an unknown icon name is a type error.
+
+This is intentionally separate from `UserNotifications` / `NotificationBell`, which is a per-user event feed (one row per user per event). A release announcement is the same content for everyone shown once on entry, so it lives in code and needs no database rows, migration, or RLS change.
+
+Seen state is localStorage under `js-release-seen:v1`, read through `useSyncExternalStore` in `lib/release-seen.ts` for the same reason the theme is (`lib/theme-store.ts`): the server snapshot renders nothing, which keeps hydration clean without a setState-in-effect dance. Every localStorage access for release notes lives in that one module, so moving to a `Profiles` column later is a single-file change. Known tradeoff: state is per-device and per-browser, so a release shows once per browser and is lost when site data is cleared.
+
+Behavior rules: a user with no marker sees only the latest release, not the whole history; dismissing records the newest version so catching up on several releases is one interaction; dismissal is final (there is no re-open control); and when localStorage is blocked the dialog does not render at all, since it could otherwise never be dismissed for good.
+
+`components/release/ReleaseNotesDialog.tsx` is presentation only and takes `releases` plus `onDismiss`. It follows the hand-rolled dialog pattern from `MemberKickDialog` (portal, `var(--overlay-scrim)`, `.panel`, `var(--shadow-dialog)`, `role="dialog"`), and owns focus restore, focus trap, Escape, body scroll lock, and `overscroll-behavior: contain`.
+
 ### Reservation Read Model
 
 Admin/professor reservation visibility is implemented in the school dashboard, not the student schedule workspace. `app/dashboard/schools/[schoolId]/page.tsx` loads active `ExamSlots` plus confirmed `Reservations` for the selected school and passes them into `components/dashboard/SchoolManagementTabs.tsx`.
@@ -208,7 +234,7 @@ Do not move authorization decisions into `proxy.ts`. Keep it focused on keeping 
 
 ## Disaster Recovery
 
-The full recovery plan is documented in `docs/free-database-backup-and-recovery.md`. Layers 1, 2, and 4 are implemented; Layers 3, 5, and 6 are not yet implemented.
+The full recovery plan is documented in `docs/notes/free-database-backup-and-recovery.md`. Layers 1, 2, and 4 are implemented; Layers 3, 5, and 6 are not yet implemented.
 
 Layer 1 (soft delete): `SchoolSubjects` uses `deleted_at`. Schools use `soft_delete_school` RPC. Hard-delete RLS policy on `Schools` was dropped in `20260508114018`.
 
@@ -264,11 +290,12 @@ Do not let dashboard components grow into one large file. Split substantial feat
 
 All visual conventions are documented in `docs/ui.md`. Read it before building any UI. Key rules:
 
-- Page background: `#f7f8fa`; card surfaces: `#ffffff` with the `.panel` class. Never recreate this inline.
-- Single accent: `#2563eb` blue. Do not introduce other accent colors.
+- All color is driven by semantic CSS custom properties defined in `app/globals.css` (`--surface-page`, `--surface-panel`, `--text-primary`, `--accent-color`, `--danger`, `--success`, `--warning`, etc.), with light values on `:root` and dark values under `.dark`. Never hardcode a hex color or a raw Tailwind gray/slate/blue utility class in a component — use `var(--token)` in inline `style={{}}` (inline styles outrank the `.dark` class selector, so hex literals there never adapt) or a Tailwind arbitrary value like `bg-[var(--token)]`. Add a new token to `globals.css` if nothing existing fits; do not invent a one-off color inline.
+- Single brand accent token: `--accent-color` (`#2563eb` light / `#3b82f6` dark). Do not introduce other accent colors. Note the name is `--accent-color`, not `--accent` — `--accent` is already used internally by the imported `shadcn/tailwind.css` theme for an unrelated dark gray, and colliding with it silently breaks dark mode (this happened once; see git history around the dark mode rollout).
 - Font: Geist is already loaded globally. Do not re-import it.
 - CSS animation utilities: `anim-fade-in`, `anim-slide-up`, `anim-scale-in`, and stagger delays `anim-d1` through `anim-d4`, all defined in `globals.css`.
-- No dark mode.
+- Loading placeholders use the `.skeleton` shimmer utility in `globals.css` via `components/ui/skeleton.tsx`. It honours `prefers-reduced-motion`. Never hand-roll a placeholder colour or spinner.
+- Dark mode is implemented and live. Theme preference (`light` / `dark` / `system`) is stored in a non-httpOnly `js-theme` cookie (see `lib/theme.ts`) and applied pre-paint via an inline script in `app/layout.tsx` to avoid a flash — this keeps `/login` and other routes statically rendered instead of forcing a cookie read in the root layout. `components/theme/ThemeToggle.tsx` is the user-facing control, present in every authenticated header and the school dashboard header; `lib/theme-store.ts` + `components/theme/useTheme.ts` read/write it via `useSyncExternalStore`. The landing page (`components/landing/*`) intentionally stays a fixed dark cinematic design regardless of this toggle — it is marketing, not app UI.
 
 Before editing layout, spacing, responsive behavior, page shells, tabs, tables, cards, dialogs, or navigation, read `docs/responsive-layout.md` and follow its mobile-first layout rules, breakpoint model, table-to-card guidance, touch target requirements, overflow rules, and viewport verification checklist.
 

@@ -4,7 +4,6 @@ import type { ExamSlot, Reservation, ReservationViewMode } from "./types";
 
 type ReservationSummaryStripProps = {
   viewMode: ReservationViewMode;
-  visibleReservations: Reservation[];
   dayReservations: Reservation[];
   weekReservations: Reservation[];
   examSlots: ExamSlot[];
@@ -12,7 +11,6 @@ type ReservationSummaryStripProps = {
 
 export function ReservationSummaryStrip({
   viewMode,
-  visibleReservations,
   dayReservations,
   weekReservations,
   examSlots,
@@ -38,7 +36,6 @@ export function ReservationSummaryStrip({
         icon={<UserRound size={16} />}
         label="Capacity used"
         value={`${utilization}%`}
-        detail={`${visibleReservations.length} loaded`}
       />
     </div>
   );
@@ -48,34 +45,27 @@ function SummaryCell({
   icon,
   label,
   value,
-  detail,
 }: {
   icon: React.ReactNode;
   label: string;
   value: string;
-  detail?: string;
 }) {
   return (
     <div
       className="flex items-center justify-between rounded-[10px] px-4 py-3"
-      style={{ border: "1px solid #E4E8EF", background: "#FAFAFA" }}
+      style={{ border: "1px solid var(--border-default)", background: "var(--surface-inset)" }}
     >
       <div className="min-w-0">
-        <p className="text-[11px] font-medium uppercase" style={{ color: "#94A3B8" }}>
+        <p className="text-[11px] font-medium uppercase" style={{ color: "var(--text-faint)" }}>
           {label}
         </p>
-        <p className="mt-0.5 truncate text-sm font-semibold" style={{ color: "#111827" }}>
+        <p className="mt-0.5 truncate text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
           {value}
         </p>
-        {detail && (
-          <p className="mt-0.5 text-xs" style={{ color: "#9CA3AF" }}>
-            {detail}
-          </p>
-        )}
       </div>
       <div
         className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
-        style={{ background: "#EFF6FF", color: "#2563EB" }}
+        style={{ background: "var(--accent-subtle)", color: "var(--accent-color)" }}
       >
         {icon}
       </div>

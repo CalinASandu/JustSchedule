@@ -21,24 +21,29 @@ export function ReservationCancelDialog({
 }: ReservationCancelDialogProps) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center px-4"
+      style={{ background: "var(--overlay-scrim)" }}
       role="dialog"
       aria-modal="true"
       aria-labelledby="cancel-reservation-title"
     >
-      <div className="panel w-full max-w-[420px] p-5 shadow-[0_18px_60px_rgba(15,23,42,0.18)]">
+      <div className="panel w-full max-w-[420px] p-5" style={{ boxShadow: "var(--shadow-dialog)" }}>
         <div className="mb-4 flex items-start gap-3">
           <div
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-            style={{ background: "#FEF2F2" }}
+            style={{ background: "var(--danger-subtle)" }}
           >
-            <Ban size={18} color="#DC2626" strokeWidth={1.9} />
+            <Ban size={18} color="var(--danger)" strokeWidth={1.9} />
           </div>
           <div>
-            <h3 id="cancel-reservation-title" className="text-sm font-semibold" style={{ color: "#111827" }}>
+            <h3
+              id="cancel-reservation-title"
+              className="text-sm font-semibold"
+              style={{ color: "var(--text-primary)" }}
+            >
               Cancel reservation
             </h3>
-            <p className="mt-1 text-sm" style={{ color: "#6B7280", lineHeight: 1.5 }}>
+            <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}>
               This will cancel {reservation.examName} for {studentName}.
             </p>
           </div>
@@ -51,8 +56,8 @@ export function ReservationCancelDialog({
             type="button"
             onClick={onClose}
             disabled={pending}
-            className="inline-flex h-10 items-center justify-center rounded-[10px] px-4 text-sm font-semibold transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed"
-            style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+            className="inline-flex h-10 items-center justify-center rounded-[10px] px-4 text-sm font-semibold transition-colors duration-150 hover:bg-[var(--surface-subtle)] disabled:cursor-not-allowed"
+            style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
           >
             Keep
           </button>
@@ -60,8 +65,8 @@ export function ReservationCancelDialog({
             type="button"
             onClick={onConfirm}
             disabled={pending}
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-[10px] px-4 text-sm font-semibold transition-colors duration-150 hover:bg-red-50 disabled:cursor-not-allowed"
-            style={{ border: "1px solid #FECACA", color: "#DC2626" }}
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-[10px] px-4 text-sm font-semibold transition-colors duration-150 hover:bg-[var(--danger-subtle)] disabled:cursor-not-allowed"
+            style={{ border: "1px solid var(--danger-border)", color: "var(--danger)" }}
           >
             {pending ? <Loader2 size={15} className="animate-spin" /> : <Ban size={15} />}
             Cancel reservation

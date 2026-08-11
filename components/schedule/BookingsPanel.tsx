@@ -82,11 +82,11 @@ function ReservationAction({
         type="button"
         onClick={() => onCancelReservation(booking)}
         disabled={!!cancelingReservationId}
-        className={`${fullWidth ? 'w-full justify-center' : ''} inline-flex min-h-10 items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed`}
-        style={{ background: 'transparent', color: '#DC2626', border: '1px solid #FECACA' }}
+        className={`${fullWidth ? 'w-full justify-center' : ''} inline-flex min-h-10 items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)] disabled:cursor-not-allowed`}
+        style={{ background: 'transparent', color: 'var(--danger)', border: '1px solid var(--danger-border)' }}
         onMouseEnter={e => {
           if (!cancelingReservationId) {
-            e.currentTarget.style.background = '#FEF2F2'
+            e.currentTarget.style.background = 'var(--danger-subtle)'
           }
         }}
         onMouseLeave={e => {
@@ -110,7 +110,7 @@ function ReservationAction({
     return (
       <span
         className="text-xs"
-        style={{ color: '#9CA3AF' }}
+        style={{ color: 'var(--text-muted)' }}
         title="Cancellation is closed within 2 hours of the exam"
       >
         Cutoff reached
@@ -119,7 +119,7 @@ function ReservationAction({
   }
 
   return (
-    <span className="text-xs" style={{ color: '#CBD5E1' }}>
+    <span className="text-xs" style={{ color: 'var(--text-faint)' }}>
       Not yours
     </span>
   )
@@ -156,17 +156,17 @@ export default function BookingsPanel({
         <div className="flex items-center gap-2.5">
           <div
             className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
-            style={{ background: '#EFF6FF' }}
+            style={{ background: 'var(--accent-subtle)' }}
           >
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-              <circle cx="4" cy="4.5" r="2" stroke="#2563EB" strokeWidth="1.3" />
-              <circle cx="10" cy="4.5" r="2" stroke="#2563EB" strokeWidth="1.3" />
-              <path d="M1 11c0-1.657 1.343-3 3-3h2M7 12l2-2 2 2M9 10v4" stroke="#2563EB" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="4" cy="4.5" r="2" stroke="var(--accent-color)" strokeWidth="1.3" />
+              <circle cx="10" cy="4.5" r="2" stroke="var(--accent-color)" strokeWidth="1.3" />
+              <path d="M1 11c0-1.657 1.343-3 3-3h2M7 12l2-2 2 2M9 10v4" stroke="var(--accent-color)" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
           <div>
-            <h2 className="text-sm font-semibold" style={{ color: '#111827' }}>{title}</h2>
-            <p className="text-xs" style={{ color: '#9CA3AF' }}>
+            <h2 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{title}</h2>
+            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
               {description}
             </p>
           </div>
@@ -177,9 +177,9 @@ export default function BookingsPanel({
         <p
           className="anim-fade-in mb-4 text-[0.8125rem]"
           style={{
-            color: '#DC2626',
-            background: '#FEF2F2',
-            border: '1px solid #FECACA',
+            color: 'var(--danger)',
+            background: 'var(--danger-subtle)',
+            border: '1px solid var(--danger-border)',
             borderRadius: 8,
             padding: '0.5rem 0.75rem',
           }}
@@ -197,32 +197,32 @@ export default function BookingsPanel({
             return (
               <article
                 key={booking.id}
-                className={`rounded-xl border border-[#E4E8EF] bg-[#F9FAFB] p-4 ${delayClass}`}
+                className={`rounded-xl border border-[var(--border-default)] bg-[var(--surface-inset)] p-4 ${delayClass}`}
               >
                 <div className="flex items-start gap-3">
                   <div
                     className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-semibold"
-                    style={{ background: '#EFF6FF', color: '#2563EB' }}
+                    style={{ background: 'var(--accent-color)', color: 'var(--text-on-accent)' }}
                     aria-hidden="true"
                   >
                     {getInitials(booking.studentName)}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h3 className="break-words text-sm font-semibold" style={{ color: '#111827' }}>
+                      <h3 className="break-words text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
                         {booking.examName}
                       </h3>
                       <span
                         className="rounded-full px-2.5 py-1 text-xs font-semibold"
-                        style={{ background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE' }}
+                        style={{ background: 'var(--accent-muted)', color: 'var(--accent-strong)', border: '1px solid var(--accent-border)' }}
                       >
                         {formatExamType(booking.examType)}
                       </span>
                     </div>
-                    <p className="mt-1 break-words text-sm" style={{ color: '#374151' }}>
+                    <p className="mt-1 break-words text-sm" style={{ color: 'var(--text-body)' }}>
                       {booking.studentName}
                     </p>
-                    <p className="mt-1 text-xs" style={{ color: '#6B7280' }}>
+                    <p className="mt-1 text-xs" style={{ color: 'var(--text-secondary)' }}>
                       {formatDate(booking.reservationDate)} at {formatTime(booking.startsAt)} - {formatTime(booking.endsAt)}
                     </p>
                   </div>
@@ -249,7 +249,7 @@ export default function BookingsPanel({
                   <th
                     key={col}
                     className="text-left text-[11px] font-semibold uppercase tracking-wider pb-3 pr-4"
-                    style={{ color: '#9CA3AF', whiteSpace: 'nowrap' }}
+                    style={{ color: 'var(--text-muted)', whiteSpace: 'nowrap' }}
                   >
                     {col}
                   </th>
@@ -266,35 +266,35 @@ export default function BookingsPanel({
                       <div className="flex items-center gap-2.5">
                         <div
                           className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-semibold flex-shrink-0"
-                          style={{ background: '#EFF6FF', color: '#2563EB' }}
+                          style={{ background: 'var(--accent-color)', color: 'var(--text-on-accent)' }}
                           aria-hidden="true"
                         >
                           {getInitials(booking.studentName)}
                         </div>
-                        <span className="font-medium whitespace-nowrap" style={{ color: '#111827' }}>
+                        <span className="font-medium whitespace-nowrap" style={{ color: 'var(--text-primary)' }}>
                           {booking.studentName}
                         </span>
                       </div>
                     </td>
 
                     <td className="py-3 pr-4">
-                      <span style={{ color: '#374151' }}>{booking.examName}</span>
+                      <span style={{ color: 'var(--text-body)' }}>{booking.examName}</span>
                     </td>
 
                     <td className="py-3 pr-4">
                       <span
                         className="text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap"
-                        style={{ background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE' }}
+                        style={{ background: 'var(--accent-muted)', color: 'var(--accent-strong)', border: '1px solid var(--accent-border)' }}
                       >
                         {formatExamType(booking.examType)}
                       </span>
                     </td>
 
                     <td className="py-3 pr-4">
-                      <span className="whitespace-nowrap" style={{ color: '#374151' }}>
+                      <span className="whitespace-nowrap" style={{ color: 'var(--text-body)' }}>
                         {formatDate(booking.reservationDate)}
                       </span>
-                      <span className="ml-2 text-xs whitespace-nowrap" style={{ color: '#9CA3AF' }}>
+                      <span className="ml-2 text-xs whitespace-nowrap" style={{ color: 'var(--text-muted)' }}>
                         {formatTime(booking.startsAt)} - {formatTime(booking.endsAt)}
                       </span>
                     </td>
@@ -315,16 +315,16 @@ export default function BookingsPanel({
         </div>
         </>
       ) : (
-        <div className="rounded-xl border border-[#E4E8EF] bg-[#F9FAFB] px-4 py-8 text-center">
-          <p className="text-sm font-medium" style={{ color: '#6B7280' }}>{emptyTitle}</p>
-          <p className="mt-1 text-xs" style={{ color: '#9CA3AF' }}>
+        <div className="rounded-xl border border-[var(--border-default)] bg-[var(--surface-inset)] px-4 py-8 text-center">
+          <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>{emptyTitle}</p>
+          <p className="mt-1 text-xs" style={{ color: 'var(--text-muted)' }}>
             {emptyDescription}
           </p>
         </div>
       )}
 
-      <div className="mt-4 pt-4 flex items-center justify-center gap-1" style={{ borderTop: '1px solid #F3F4F6' }}>
-        <span className="text-xs" style={{ color: '#9CA3AF' }}>
+      <div className="mt-4 pt-4 flex items-center justify-center gap-1" style={{ borderTop: '1px solid var(--border-subtle)' }}>
+        <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
           You can cancel reservations assigned to you.
         </span>
       </div>

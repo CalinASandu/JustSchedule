@@ -274,7 +274,7 @@ export function ReservationsTab({
       {(cancelReservationState.success || updateReservationState.success) && (
         <p
           className="anim-fade-in mb-4 text-[0.8125rem] font-medium"
-          style={{ color: "#1D4ED8" }}
+          style={{ color: "var(--accent-strong)" }}
         >
           {updateReservationState.success ?? cancelReservationState.success}
         </p>
@@ -282,7 +282,6 @@ export function ReservationsTab({
 
       <ReservationSummaryStrip
         viewMode={reservationViewMode}
-        visibleReservations={visibleReservations}
         dayReservations={dayReservations}
         weekReservations={weekReservations}
         examSlots={examSlots}
@@ -321,33 +320,35 @@ export function ReservationsTab({
 
       {selectedWeekReservation && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4"
+          className="fixed inset-0 z-50 flex items-center justify-center px-4"
+          style={{ background: "var(--overlay-scrim)" }}
           role="dialog"
           aria-modal="true"
           aria-labelledby="week-reservation-detail-title"
           onClick={() => setSelectedWeekReservationId(null)}
         >
           <div
-            className="panel anim-scale-in w-full max-w-[400px] shadow-[0_18px_60px_rgba(15,23,42,0.18)]"
+            className="panel anim-scale-in w-full max-w-[400px]"
+            style={{ boxShadow: "var(--shadow-dialog)" }}
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-4 px-5 py-4">
               <div className="flex min-w-0 items-center gap-3">
                 <div
                   className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
-                  style={{ background: "#EFF6FF" }}
+                  style={{ background: "var(--accent-subtle)" }}
                 >
-                  <CalendarDays size={18} color="#2563EB" />
+                  <CalendarDays size={18} color="var(--accent-color)" />
                 </div>
                 <div className="min-w-0">
                   <h2
                     id="week-reservation-detail-title"
                     className="truncate text-[0.9375rem] font-semibold"
-                    style={{ color: "#111827", letterSpacing: "-0.01em" }}
+                    style={{ color: "var(--text-primary)", letterSpacing: "-0.01em" }}
                   >
                     {memberNamesByUserId.get(selectedWeekReservation.userId) ?? "Unnamed student"}
                   </h2>
-                  <p className="mt-0.5 text-sm" style={{ color: "#6B7280" }}>
+                  <p className="mt-0.5 text-sm" style={{ color: "var(--text-secondary)" }}>
                     {formatReservationDate(selectedWeekReservation.reservationDate)}
                   </p>
                 </div>
@@ -355,34 +356,37 @@ export function ReservationsTab({
               <button
                 type="button"
                 onClick={() => setSelectedWeekReservationId(null)}
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-slate-50"
-                style={{ border: "1px solid #E4E8EF", color: "#6B7280" }}
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-[var(--surface-subtle)]"
+                style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
                 aria-label="Close"
               >
                 <X size={15} />
               </button>
             </div>
 
-            <div style={{ borderTop: "1px solid #E4E8EF" }}>
+            <div style={{ borderTop: "1px solid var(--border-default)" }}>
               <div className="grid grid-cols-2">
                 <div
                   className="px-4 py-3"
-                  style={{ borderRight: "1px solid #E4E8EF", borderBottom: "1px solid #E4E8EF" }}
+                  style={{
+                    borderRight: "1px solid var(--border-default)",
+                    borderBottom: "1px solid var(--border-default)",
+                  }}
                 >
-                  <p className="text-[11px] font-medium uppercase" style={{ color: "#94A3B8" }}>
+                  <p className="text-[11px] font-medium uppercase" style={{ color: "var(--text-faint)" }}>
                     Exam
                   </p>
-                  <p className="mt-0.5 text-sm font-semibold" style={{ color: "#111827" }}>
+                  <p className="mt-0.5 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                     {selectedWeekReservation.examName}
                   </p>
                 </div>
-                <div className="px-4 py-3" style={{ borderBottom: "1px solid #E4E8EF" }}>
-                  <p className="text-[11px] font-medium uppercase" style={{ color: "#94A3B8" }}>
+                <div className="px-4 py-3" style={{ borderBottom: "1px solid var(--border-default)" }}>
+                  <p className="text-[11px] font-medium uppercase" style={{ color: "var(--text-faint)" }}>
                     Type
                   </p>
                   <span
                     className="mt-1 inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold"
-                    style={{ background: "#DBEAFE", color: "#1D4ED8" }}
+                    style={{ background: "var(--accent-muted)", color: "var(--accent-strong)" }}
                   >
                     {formatExamType(selectedWeekReservation.examType)}
                   </span>
@@ -390,19 +394,19 @@ export function ReservationsTab({
               </div>
               {selectedWeekSlot && (
                 <div className="grid grid-cols-2">
-                  <div className="px-4 py-3" style={{ borderRight: "1px solid #E4E8EF" }}>
-                    <p className="text-[11px] font-medium uppercase" style={{ color: "#94A3B8" }}>
+                  <div className="px-4 py-3" style={{ borderRight: "1px solid var(--border-default)" }}>
+                    <p className="text-[11px] font-medium uppercase" style={{ color: "var(--text-faint)" }}>
                       Slot
                     </p>
-                    <p className="mt-0.5 text-sm font-semibold" style={{ color: "#111827" }}>
+                    <p className="mt-0.5 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                       {selectedWeekSlot.name}
                     </p>
                   </div>
                   <div className="px-4 py-3">
-                    <p className="text-[11px] font-medium uppercase" style={{ color: "#94A3B8" }}>
+                    <p className="text-[11px] font-medium uppercase" style={{ color: "var(--text-faint)" }}>
                       Time
                     </p>
-                    <p className="mt-0.5 text-sm font-semibold" style={{ color: "#111827" }}>
+                    <p className="mt-0.5 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                       {formatSlotTime(selectedWeekSlot.startsAt)} - {formatSlotTime(selectedWeekSlot.endsAt)}
                     </p>
                   </div>
@@ -413,7 +417,7 @@ export function ReservationsTab({
             {canCancelWeekReservation && (
               <div
                 className="flex justify-end px-5 py-4"
-                style={{ borderTop: "1px solid #F3F4F6" }}
+                style={{ borderTop: "1px solid var(--border-subtle)" }}
               >
                 <ReservationActionMenu
                   disabled={
