@@ -111,6 +111,20 @@ These are what make `<Link>` navigation instant: for dynamic server-rendered rou
 
 Skeletons share `components/skeletons/AppHeaderSkeleton.tsx` (the 56px app header, with the real brand mark so the header does not shift between loading and loaded) and the `Skeleton` primitive in `components/ui/skeleton.tsx`, which renders the `.skeleton` shimmer utility from `globals.css`. Skeleton markup must mirror the real layout's container widths, paddings, and grid columns so nothing jumps on hydration. Do not add spinners; do not animate skeletons with `framer-motion`.
 
+### Release Notes ("What's new")
+
+`app/dashboard/layout.tsx` is a data-free server layout whose only job is mounting `components/release/WhatsNewModal.tsx`, so the release dialog covers `/dashboard`, `/dashboard/schedule`, and `/dashboard/schools/[schoolId]` from one place. It deliberately does not cover `/`, `/login`, or `/invite/[inviteToken]` — a release dialog must not interrupt signing in or accepting an invite. Do not move authorization or data fetching into this layout; each route still builds its own shell.
+
+**To announce a release, prepend an entry to `RELEASES` in `lib/release-notes.ts`** in the same PR as the feature. Array position is the only ordering authority; the `YYYY.MM.N` version string is compared by equality and never parsed. Item icons come from the closed `RELEASE_ICONS` map, so an unknown icon name is a type error.
+
+This is intentionally separate from `UserNotifications` / `NotificationBell`, which is a per-user event feed (one row per user per event). A release announcement is the same content for everyone shown once on entry, so it lives in code and needs no database rows, migration, or RLS change.
+
+Seen state is localStorage under `js-release-seen:v1`, read through `useSyncExternalStore` in `lib/release-seen.ts` for the same reason the theme is (`lib/theme-store.ts`): the server snapshot renders nothing, which keeps hydration clean without a setState-in-effect dance. Every localStorage access for release notes lives in that one module, so moving to a `Profiles` column later is a single-file change. Known tradeoff: state is per-device and per-browser, so a release shows once per browser and is lost when site data is cleared.
+
+Behavior rules: a user with no marker sees only the latest release, not the whole history; dismissing records the newest version so catching up on several releases is one interaction; dismissal is final (there is no re-open control); and when localStorage is blocked the dialog does not render at all, since it could otherwise never be dismissed for good.
+
+`components/release/ReleaseNotesDialog.tsx` is presentation only and takes `releases` plus `onDismiss`. It follows the hand-rolled dialog pattern from `MemberKickDialog` (portal, `var(--overlay-scrim)`, `.panel`, `var(--shadow-dialog)`, `role="dialog"`), and owns focus restore, focus trap, Escape, body scroll lock, and `overscroll-behavior: contain`.
+
 ### Reservation Read Model
 
 Admin/professor reservation visibility is implemented in the school dashboard, not the student schedule workspace. `app/dashboard/schools/[schoolId]/page.tsx` loads active `ExamSlots` plus confirmed `Reservations` for the selected school and passes them into `components/dashboard/SchoolManagementTabs.tsx`.
@@ -220,7 +234,7 @@ Do not move authorization decisions into `proxy.ts`. Keep it focused on keeping 
 
 ## Disaster Recovery
 
-The full recovery plan is documented in `docs/free-database-backup-and-recovery.md`. Layers 1, 2, and 4 are implemented; Layers 3, 5, and 6 are not yet implemented.
+The full recovery plan is documented in `docs/notes/free-database-backup-and-recovery.md`. Layers 1, 2, and 4 are implemented; Layers 3, 5, and 6 are not yet implemented.
 
 Layer 1 (soft delete): `SchoolSubjects` uses `deleted_at`. Schools use `soft_delete_school` RPC. Hard-delete RLS policy on `Schools` was dropped in `20260508114018`.
 
