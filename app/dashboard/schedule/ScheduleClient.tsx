@@ -44,6 +44,12 @@ interface ScheduleClientProps {
   reservationError: string | null;
 }
 
+type SchedulePanel = "schedule" | "reservations" | "profile";
+
+function normalizePanel(value: string | null): SchedulePanel {
+  return value === "profile" || value === "reservations" ? value : "schedule";
+}
+
 function isMissingRefreshTokenError(error: unknown) {
   if (!error || typeof error !== "object") {
     return false;
@@ -442,12 +448,20 @@ export default function ScheduleClient({
     () => reservations.filter((reservation) => reservation.userId === currentUserId),
     [currentUserId, reservations],
   );
-  const panelParam = searchParams.get("panel");
-  const activePanel =
-    panelParam === "profile" || panelParam === "reservations" ? panelParam : "schedule";
+  // Panel selection is client-only state. The server never reads `?panel=`, so routing
+  // through router.replace would refetch the whole dynamic page (auth + every Supabase
+  // query) for nothing. Local state drives rendering; history.replaceState keeps the URL
+  // shareable and refresh-safe without a server round trip.
+  const [activePanel, setActivePanel] = useState<SchedulePanel>(() =>
+    normalizePanel(searchParams.get("panel")),
+  );
 
-  function selectPanel(panel: "schedule" | "reservations" | "profile") {
-    const params = new URLSearchParams(searchParams);
+  function selectPanel(panel: SchedulePanel) {
+    if (panel === activePanel) return;
+
+    setActivePanel(panel);
+
+    const params = new URLSearchParams(window.location.search);
     params.set("schoolId", schoolId);
 
     if (panel === "schedule") {
@@ -456,7 +470,7 @@ export default function ScheduleClient({
       params.set("panel", panel);
     }
 
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
   }
 
   return (
@@ -550,6 +564,7 @@ export default function ScheduleClient({
                       selectedDate={selectedDate}
                       selectedSlotId={selectedSlotId}
                       onSelectSlot={handleSlotSelect}
+                      onViewOtherDates={() => setBookingStep(1)}
                       slots={examSlots}
                       reservations={reservations}
                     />

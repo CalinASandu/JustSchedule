@@ -6,6 +6,7 @@ interface SlotPickerProps {
   selectedDate: string | null
   selectedSlotId: string | null
   onSelectSlot: (slotId: string) => void
+  onViewOtherDates?: () => void
   slots: SlotDef[]
   reservations: Reservation[]
 }
@@ -20,6 +21,7 @@ export default function SlotPicker({
   selectedDate,
   selectedSlotId,
   onSelectSlot,
+  onViewOtherDates,
   slots,
   reservations,
 }: SlotPickerProps) {
@@ -145,7 +147,12 @@ export default function SlotPicker({
           <div className="mt-2 pt-2" style={{ borderTop: '1px solid var(--surface-subtle)' }}>
             <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
               Can&apos;t find a suitable time?{' '}
-              <button className="font-medium transition-colors duration-150 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)]" style={{ color: 'var(--accent-color)' }}>
+              <button
+                type="button"
+                onClick={onViewOtherDates}
+                className="font-medium transition-colors duration-150 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)]"
+                style={{ color: 'var(--accent-color)' }}
+              >
                 View other dates
               </button>
             </p>
