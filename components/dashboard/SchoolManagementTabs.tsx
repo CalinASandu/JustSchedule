@@ -83,6 +83,7 @@ export default function SchoolManagementTabs({
   );
   const activeExamSlots = examSlots.filter((slot) => slot.isActive);
   const canViewExamRequests = currentUserRole === "admin" || currentUserRole === "professor";
+  const canReviewJoinRequests = canViewExamRequests;
 
   function renderTabButton(tab: SchoolDashboardTab, label: string) {
     const selected = activeTab === tab;
@@ -117,7 +118,7 @@ export default function SchoolManagementTabs({
           {renderTabButton("reservations", "Reservations")}
           {canViewExamRequests && renderTabButton("examRequests", "Exam Requests")}
           {canViewAttendance && renderTabButton("attendance", "Attendance")}
-          {canManageMembers && renderTabButton("requests", "Join Requests")}
+          {canReviewJoinRequests && renderTabButton("requests", "Join Requests")}
           {canManageMembers && renderTabButton("settings", "Settings")}
         </div>
       </div>
@@ -166,7 +167,7 @@ export default function SchoolManagementTabs({
         />
       )}
 
-      {activeTab === "requests" && canManageMembers && (
+      {activeTab === "requests" && canReviewJoinRequests && (
         <JoinRequestsTab
           schoolId={schoolId}
           joinRequests={joinRequests}
