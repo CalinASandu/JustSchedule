@@ -88,15 +88,18 @@ servePost(async (body, authorization) => {
       .maybeSingle(),
   ]);
 
-  const isAdmin = membership?.role === "admin" || school?.created_by === user.id;
-  if (!isAdmin) {
+  const canReview = Boolean(school) &&
+    (membership?.role === "admin" ||
+      membership?.role === "professor" ||
+      school?.created_by === user.id);
+  if (!canReview) {
     return jsonResponse(
-      { error: "Only school admins can review join requests." },
+      { error: "Only school admins and professors can review join requests." },
       403,
     );
   }
 
-  // The caller is a verified admin from here on, so privileged writes are allowed.
+  // The caller is a verified admin or professor from here on, so privileged writes are allowed.
   const adminClient = createAdminClient();
   if (adminClient instanceof Response) return adminClient;
 

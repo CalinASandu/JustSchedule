@@ -305,7 +305,7 @@ export function getUserFacingErrorMessage(
 
   if (context === "reviewJoinRequests") {
     if (messageIncludes(message, ["only school admins"])) {
-      return "Only school admins can review join requests.";
+      return "Only school admins and professors can review join requests.";
     }
 
     if (messageIncludes(message, ["no longer pending"])) {
