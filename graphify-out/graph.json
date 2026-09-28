@@ -9,7 +9,7 @@
       "source_file": "eslint.config.mjs",
       "source_location": "L1",
       "id": "eslint_config_mjs",
-      "community": 55,
+      "community": 56,
       "norm_label": "eslint.config.mjs"
     },
     {
@@ -18,7 +18,7 @@
       "source_file": "next-env.d.ts",
       "source_location": "L1",
       "id": "next_env_d_ts",
-      "community": 56,
+      "community": 57,
       "norm_label": "next-env.d.ts"
     },
     {
@@ -27,7 +27,7 @@
       "source_file": "next.config.ts",
       "source_location": "L1",
       "id": "next_config_ts",
-      "community": 57,
+      "community": 58,
       "norm_label": "next.config.ts"
     },
     {
@@ -36,7 +36,7 @@
       "source_file": "postcss.config.mjs",
       "source_location": "L1",
       "id": "postcss_config_mjs",
-      "community": 58,
+      "community": 59,
       "norm_label": "postcss.config.mjs"
     },
     {
@@ -90,7 +90,7 @@
       "source_file": "app\\layout.tsx",
       "source_location": "L1",
       "id": "app_layout_tsx",
-      "community": 59,
+      "community": 60,
       "norm_label": "layout.tsx"
     },
     {
@@ -99,7 +99,7 @@
       "source_file": "app\\page.tsx",
       "source_location": "L1",
       "id": "app_page_tsx",
-      "community": 1,
+      "community": 3,
       "norm_label": "page.tsx"
     },
     {
@@ -108,7 +108,7 @@
       "source_file": "app\\page.tsx",
       "source_location": "L7",
       "id": "app_page_home",
-      "community": 1,
+      "community": 3,
       "norm_label": "home()"
     },
     {
@@ -117,7 +117,7 @@
       "source_file": "app\\PostHogPageView.tsx",
       "source_location": "L1",
       "id": "app_posthogpageview_tsx",
-      "community": 29,
+      "community": 30,
       "norm_label": "posthogpageview.tsx"
     },
     {
@@ -126,7 +126,7 @@
       "source_file": "app\\PostHogPageView.tsx",
       "source_location": "L7",
       "id": "app_posthogpageview_posthogpageview",
-      "community": 29,
+      "community": 30,
       "norm_label": "posthogpageview()"
     },
     {
@@ -135,7 +135,7 @@
       "source_file": "app\\providers.tsx",
       "source_location": "L1",
       "id": "app_providers_tsx",
-      "community": 30,
+      "community": 31,
       "norm_label": "providers.tsx"
     },
     {
@@ -144,7 +144,7 @@
       "source_file": "app\\providers.tsx",
       "source_location": "L31",
       "id": "app_providers_posthogprovider",
-      "community": 30,
+      "community": 31,
       "norm_label": "posthogprovider()"
     },
     {
@@ -153,7 +153,7 @@
       "source_file": "app\\auth\\callback\\route.ts",
       "source_location": "L1",
       "id": "app_auth_callback_route_ts",
-      "community": 1,
+      "community": 3,
       "norm_label": "route.ts"
     },
     {
@@ -162,7 +162,7 @@
       "source_file": "app\\auth\\callback\\route.ts",
       "source_location": "L6",
       "id": "callback_route_decodecookievalue",
-      "community": 1,
+      "community": 3,
       "norm_label": "decodecookievalue()"
     },
     {
@@ -171,7 +171,7 @@
       "source_file": "app\\auth\\callback\\route.ts",
       "source_location": "L18",
       "id": "callback_route_get",
-      "community": 1,
+      "community": 3,
       "norm_label": "get()"
     },
     {
@@ -180,7 +180,7 @@
       "source_file": "app\\dashboard\\actions.ts",
       "source_location": "L1",
       "id": "app_dashboard_actions_ts",
-      "community": 1,
+      "community": 0,
       "norm_label": "actions.ts"
     },
     {
@@ -189,7 +189,7 @@
       "source_file": "app\\dashboard\\actions.ts",
       "source_location": "L13",
       "id": "dashboard_actions_registerschool",
-      "community": 1,
+      "community": 0,
       "norm_label": "registerschool()"
     },
     {
@@ -198,7 +198,7 @@
       "source_file": "app\\dashboard\\actions.ts",
       "source_location": "L70",
       "id": "dashboard_actions_requestdirectjoin",
-      "community": 1,
+      "community": 0,
       "norm_label": "requestdirectjoin()"
     },
     {
@@ -207,7 +207,7 @@
       "source_file": "app\\dashboard\\layout.tsx",
       "source_location": "L1",
       "id": "app_dashboard_layout_tsx",
-      "community": 31,
+      "community": 32,
       "norm_label": "layout.tsx"
     },
     {
@@ -216,7 +216,7 @@
       "source_file": "app\\dashboard\\layout.tsx",
       "source_location": "L12",
       "id": "dashboard_layout_dashboardlayout",
-      "community": 31,
+      "community": 32,
       "norm_label": "dashboardlayout()"
     },
     {
@@ -225,7 +225,7 @@
       "source_file": "app\\dashboard\\loading.tsx",
       "source_location": "L1",
       "id": "app_dashboard_loading_tsx",
-      "community": 60,
+      "community": 61,
       "norm_label": "loading.tsx"
     },
     {
@@ -297,7 +297,7 @@
       "source_file": "app\\dashboard\\schedule\\loading.tsx",
       "source_location": "L1",
       "id": "app_dashboard_schedule_loading_tsx",
-      "community": 61,
+      "community": 62,
       "norm_label": "loading.tsx"
     },
     {
@@ -306,7 +306,7 @@
       "source_file": "app\\dashboard\\schedule\\page.tsx",
       "source_location": "L1",
       "id": "app_dashboard_schedule_page_tsx",
-      "community": 1,
+      "community": 3,
       "norm_label": "page.tsx"
     },
     {
@@ -315,7 +315,7 @@
       "source_file": "app\\dashboard\\schedule\\page.tsx",
       "source_location": "L103",
       "id": "schedule_page_getschoolid",
-      "community": 1,
+      "community": 3,
       "norm_label": "getschoolid()"
     },
     {
@@ -324,7 +324,7 @@
       "source_file": "app\\dashboard\\schedule\\page.tsx",
       "source_location": "L108",
       "id": "schedule_page_formatlocaldate",
-      "community": 1,
+      "community": 3,
       "norm_label": "formatlocaldate()"
     },
     {
@@ -333,7 +333,7 @@
       "source_file": "app\\dashboard\\schedule\\page.tsx",
       "source_location": "L114",
       "id": "schedule_page_formattime",
-      "community": 1,
+      "community": 3,
       "norm_label": "formattime()"
     },
     {
@@ -342,7 +342,7 @@
       "source_file": "app\\dashboard\\schedule\\page.tsx",
       "source_location": "L122",
       "id": "schedule_page_formatduration",
-      "community": 1,
+      "community": 3,
       "norm_label": "formatduration()"
     },
     {
@@ -351,7 +351,7 @@
       "source_file": "app\\dashboard\\schedule\\page.tsx",
       "source_location": "L142",
       "id": "schedule_page_normalizeexamtype",
-      "community": 1,
+      "community": 3,
       "norm_label": "normalizeexamtype()"
     },
     {
@@ -360,7 +360,7 @@
       "source_file": "app\\dashboard\\schedule\\page.tsx",
       "source_location": "L146",
       "id": "schedule_page_schedulepage",
-      "community": 1,
+      "community": 3,
       "norm_label": "schedulepage()"
     },
     {
@@ -369,7 +369,7 @@
       "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
       "source_location": "L1",
       "id": "app_dashboard_schedule_scheduleclient_tsx",
-      "community": 6,
+      "community": 7,
       "norm_label": "scheduleclient.tsx"
     },
     {
@@ -378,7 +378,7 @@
       "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
       "source_location": "L49",
       "id": "schedule_scheduleclient_normalizepanel",
-      "community": 6,
+      "community": 7,
       "norm_label": "normalizepanel()"
     },
     {
@@ -387,7 +387,7 @@
       "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
       "source_location": "L53",
       "id": "schedule_scheduleclient_ismissingrefreshtokenerror",
-      "community": 6,
+      "community": 7,
       "norm_label": "ismissingrefreshtokenerror()"
     },
     {
@@ -396,7 +396,7 @@
       "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
       "source_location": "L110",
       "id": "schedule_scheduleclient_handledateselect",
-      "community": 6,
+      "community": 7,
       "norm_label": "handledateselect()"
     },
     {
@@ -405,7 +405,7 @@
       "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
       "source_location": "L118",
       "id": "schedule_scheduleclient_handleslotselect",
-      "community": 6,
+      "community": 7,
       "norm_label": "handleslotselect()"
     },
     {
@@ -414,7 +414,7 @@
       "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
       "source_location": "L125",
       "id": "schedule_scheduleclient_handlereserve",
-      "community": 6,
+      "community": 7,
       "norm_label": "handlereserve()"
     },
     {
@@ -423,7 +423,7 @@
       "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
       "source_location": "L214",
       "id": "schedule_scheduleclient_handlecreaterequest",
-      "community": 6,
+      "community": 7,
       "norm_label": "handlecreaterequest()"
     },
     {
@@ -432,7 +432,7 @@
       "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
       "source_location": "L282",
       "id": "schedule_scheduleclient_handlereset",
-      "community": 6,
+      "community": 7,
       "norm_label": "handlereset()"
     },
     {
@@ -441,7 +441,7 @@
       "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
       "source_location": "L293",
       "id": "schedule_scheduleclient_handlecancelreservation",
-      "community": 6,
+      "community": 7,
       "norm_label": "handlecancelreservation()"
     },
     {
@@ -450,7 +450,7 @@
       "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
       "source_location": "L350",
       "id": "schedule_scheduleclient_handlecancelrequest",
-      "community": 6,
+      "community": 7,
       "norm_label": "handlecancelrequest()"
     },
     {
@@ -459,7 +459,7 @@
       "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
       "source_location": "L389",
       "id": "schedule_scheduleclient_handlemarkrequestseen",
-      "community": 6,
+      "community": 7,
       "norm_label": "handlemarkrequestseen()"
     },
     {
@@ -468,7 +468,7 @@
       "source_file": "app\\dashboard\\schedule\\ScheduleClient.tsx",
       "source_location": "L459",
       "id": "schedule_scheduleclient_selectpanel",
-      "community": 6,
+      "community": 7,
       "norm_label": "selectpanel()"
     },
     {
@@ -477,7 +477,7 @@
       "source_file": "app\\dashboard\\schools\\[schoolId]\\loading.tsx",
       "source_location": "L1",
       "id": "app_dashboard_schools_schoolid_loading_tsx",
-      "community": 62,
+      "community": 63,
       "norm_label": "loading.tsx"
     },
     {
@@ -540,7 +540,7 @@
       "source_file": "app\\invite\\actions.ts",
       "source_location": "L1",
       "id": "app_invite_actions_ts",
-      "community": 1,
+      "community": 3,
       "norm_label": "actions.ts"
     },
     {
@@ -549,7 +549,7 @@
       "source_file": "app\\invite\\actions.ts",
       "source_location": "L13",
       "id": "invite_actions_requestschooljoin",
-      "community": 1,
+      "community": 3,
       "norm_label": "requestschooljoin()"
     },
     {
@@ -558,7 +558,7 @@
       "source_file": "app\\invite\\[inviteToken]\\page.tsx",
       "source_location": "L1",
       "id": "app_invite_invitetoken_page_tsx",
-      "community": 32,
+      "community": 33,
       "norm_label": "page.tsx"
     },
     {
@@ -567,7 +567,7 @@
       "source_file": "app\\invite\\[inviteToken]\\page.tsx",
       "source_location": "L20",
       "id": "invitetoken_page_formatdate",
-      "community": 32,
+      "community": 33,
       "norm_label": "formatdate()"
     },
     {
@@ -576,7 +576,7 @@
       "source_file": "app\\login\\page.tsx",
       "source_location": "L1",
       "id": "app_login_page_tsx",
-      "community": 1,
+      "community": 3,
       "norm_label": "page.tsx"
     },
     {
@@ -585,7 +585,7 @@
       "source_file": "app\\login\\page.tsx",
       "source_location": "L24",
       "id": "login_page_handlesubmit",
-      "community": 1,
+      "community": 3,
       "norm_label": "handlesubmit()"
     },
     {
@@ -594,7 +594,7 @@
       "source_file": "components\\dashboard\\DashboardSignOutButton.tsx",
       "source_location": "L1",
       "id": "components_dashboard_dashboardsignoutbutton_tsx",
-      "community": 33,
+      "community": 34,
       "norm_label": "dashboardsignoutbutton.tsx"
     },
     {
@@ -603,7 +603,7 @@
       "source_file": "components\\dashboard\\DashboardSignOutButton.tsx",
       "source_location": "L7",
       "id": "dashboard_dashboardsignoutbutton_dashboardsignoutbutton",
-      "community": 33,
+      "community": 34,
       "norm_label": "dashboardsignoutbutton()"
     },
     {
@@ -612,7 +612,7 @@
       "source_file": "components\\dashboard\\DirectJoinCard.tsx",
       "source_location": "L1",
       "id": "components_dashboard_directjoincard_tsx",
-      "community": 34,
+      "community": 35,
       "norm_label": "directjoincard.tsx"
     },
     {
@@ -621,7 +621,7 @@
       "source_file": "components\\dashboard\\DirectJoinCard.tsx",
       "source_location": "L18",
       "id": "dashboard_directjoincard_getinitials",
-      "community": 34,
+      "community": 35,
       "norm_label": "getinitials()"
     },
     {
@@ -630,7 +630,7 @@
       "source_file": "components\\dashboard\\JoinRequestForm.tsx",
       "source_location": "L1",
       "id": "components_dashboard_joinrequestform_tsx",
-      "community": 63,
+      "community": 64,
       "norm_label": "joinrequestform.tsx"
     },
     {
@@ -639,7 +639,7 @@
       "source_file": "components\\dashboard\\LeaveSchoolButton.tsx",
       "source_location": "L1",
       "id": "components_dashboard_leaveschoolbutton_tsx",
-      "community": 23,
+      "community": 24,
       "norm_label": "leaveschoolbutton.tsx"
     },
     {
@@ -648,7 +648,7 @@
       "source_file": "components\\dashboard\\LeaveSchoolButton.tsx",
       "source_location": "L34",
       "id": "dashboard_leaveschoolbutton_opendialog",
-      "community": 23,
+      "community": 24,
       "norm_label": "opendialog()"
     },
     {
@@ -657,7 +657,7 @@
       "source_file": "components\\dashboard\\LeaveSchoolButton.tsx",
       "source_location": "L40",
       "id": "dashboard_leaveschoolbutton_closedialog",
-      "community": 23,
+      "community": 24,
       "norm_label": "closedialog()"
     },
     {
@@ -675,7 +675,7 @@
       "source_file": "components\\dashboard\\NotificationBell.tsx",
       "source_location": "L1",
       "id": "components_dashboard_notificationbell_tsx",
-      "community": 24,
+      "community": 0,
       "norm_label": "notificationbell.tsx"
     },
     {
@@ -684,7 +684,7 @@
       "source_file": "components\\dashboard\\NotificationBell.tsx",
       "source_location": "L21",
       "id": "dashboard_notificationbell_formatnoticetime",
-      "community": 24,
+      "community": 0,
       "norm_label": "formatnoticetime()"
     },
     {
@@ -693,7 +693,7 @@
       "source_file": "components\\dashboard\\NotificationBell.tsx",
       "source_location": "L37",
       "id": "dashboard_notificationbell_markread",
-      "community": 24,
+      "community": 0,
       "norm_label": "markread()"
     },
     {
@@ -702,7 +702,7 @@
       "source_file": "components\\dashboard\\RegisterSchoolForm.tsx",
       "source_location": "L1",
       "id": "components_dashboard_registerschoolform_tsx",
-      "community": 64,
+      "community": 65,
       "norm_label": "registerschoolform.tsx"
     },
     {
@@ -711,16 +711,16 @@
       "source_file": "components\\dashboard\\SchoolManagementTabs.tsx",
       "source_location": "L1",
       "id": "components_dashboard_schoolmanagementtabs_tsx",
-      "community": 35,
+      "community": 36,
       "norm_label": "schoolmanagementtabs.tsx"
     },
     {
       "label": "renderTabButton()",
       "file_type": "code",
       "source_file": "components\\dashboard\\SchoolManagementTabs.tsx",
-      "source_location": "L87",
+      "source_location": "L88",
       "id": "dashboard_schoolmanagementtabs_rendertabbutton",
-      "community": 35,
+      "community": 36,
       "norm_label": "rendertabbutton()"
     },
     {
@@ -922,12 +922,21 @@
       "norm_label": "setreservationattendance()"
     },
     {
+      "label": "callGoogleSheetsFunction()",
+      "file_type": "code",
+      "source_file": "components\\dashboard\\school-management-tabs\\api.ts",
+      "source_location": "L623",
+      "id": "school_management_tabs_api_callgooglesheetsfunction",
+      "community": 0,
+      "norm_label": "callgooglesheetsfunction()"
+    },
+    {
       "label": "attendance-utils.ts",
       "file_type": "code",
       "source_file": "components\\dashboard\\school-management-tabs\\attendance-utils.ts",
       "source_location": "L1",
       "id": "components_dashboard_school_management_tabs_attendance_utils_ts",
-      "community": 18,
+      "community": 19,
       "norm_label": "attendance-utils.ts"
     },
     {
@@ -936,7 +945,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\attendance-utils.ts",
       "source_location": "L6",
       "id": "school_management_tabs_attendance_utils_getslotdatetime",
-      "community": 18,
+      "community": 19,
       "norm_label": "getslotdatetime()"
     },
     {
@@ -945,7 +954,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\attendance-utils.ts",
       "source_location": "L10",
       "id": "school_management_tabs_attendance_utils_isattendancemarkingopen",
-      "community": 18,
+      "community": 19,
       "norm_label": "isattendancemarkingopen()"
     },
     {
@@ -954,7 +963,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\attendance-utils.ts",
       "source_location": "L32",
       "id": "school_management_tabs_attendance_utils_getattendancewindowlabel",
-      "community": 18,
+      "community": 19,
       "norm_label": "getattendancewindowlabel()"
     },
     {
@@ -963,7 +972,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\AttendanceTab.tsx",
       "source_location": "L1",
       "id": "components_dashboard_school_management_tabs_attendancetab_tsx",
-      "community": 1,
+      "community": 3,
       "norm_label": "attendancetab.tsx"
     },
     {
@@ -972,7 +981,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\AttendanceTab.tsx",
       "source_location": "L86",
       "id": "school_management_tabs_attendancetab_updateattendance",
-      "community": 1,
+      "community": 3,
       "norm_label": "updateattendance()"
     },
     {
@@ -981,7 +990,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\AttendanceTab.tsx",
       "source_location": "L192",
       "id": "school_management_tabs_attendancetab_formatslottime",
-      "community": 1,
+      "community": 3,
       "norm_label": "formatslottime()"
     },
     {
@@ -990,7 +999,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\date-utils.ts",
       "source_location": "L1",
       "id": "components_dashboard_school_management_tabs_date_utils_ts",
-      "community": 7,
+      "community": 4,
       "norm_label": "date-utils.ts"
     },
     {
@@ -999,7 +1008,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\date-utils.ts",
       "source_location": "L1",
       "id": "school_management_tabs_date_utils_gettodaykey",
-      "community": 7,
+      "community": 4,
       "norm_label": "gettodaykey()"
     },
     {
@@ -1008,7 +1017,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\date-utils.ts",
       "source_location": "L10",
       "id": "school_management_tabs_date_utils_adddays",
-      "community": 7,
+      "community": 4,
       "norm_label": "adddays()"
     },
     {
@@ -1017,7 +1026,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\date-utils.ts",
       "source_location": "L20",
       "id": "school_management_tabs_date_utils_getweekdates",
-      "community": 7,
+      "community": 4,
       "norm_label": "getweekdates()"
     },
     {
@@ -1026,7 +1035,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\date-utils.ts",
       "source_location": "L28",
       "id": "school_management_tabs_date_utils_getdefaultexpirydate",
-      "community": 7,
+      "community": 4,
       "norm_label": "getdefaultexpirydate()"
     },
     {
@@ -1035,7 +1044,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\date-utils.ts",
       "source_location": "L32",
       "id": "school_management_tabs_date_utils_getmaxbookingdate",
-      "community": 7,
+      "community": 4,
       "norm_label": "getmaxbookingdate()"
     },
     {
@@ -1044,7 +1053,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\date-utils.ts",
       "source_location": "L36",
       "id": "school_management_tabs_date_utils_dateinputtoendofday",
-      "community": 7,
+      "community": 4,
       "norm_label": "dateinputtoendofday()"
     },
     {
@@ -1233,7 +1242,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\FloatingActionMenu.tsx",
       "source_location": "L1",
       "id": "components_dashboard_school_management_tabs_floatingactionmenu_tsx",
-      "community": 36,
+      "community": 37,
       "norm_label": "floatingactionmenu.tsx"
     },
     {
@@ -1242,7 +1251,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\FloatingActionMenu.tsx",
       "source_location": "L27",
       "id": "school_management_tabs_floatingactionmenu_floatingactionmenu",
-      "community": 36,
+      "community": 37,
       "norm_label": "floatingactionmenu()"
     },
     {
@@ -1305,7 +1314,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\InvitesTab.tsx",
       "source_location": "L1",
       "id": "components_dashboard_school_management_tabs_invitestab_tsx",
-      "community": 7,
+      "community": 4,
       "norm_label": "invitestab.tsx"
     },
     {
@@ -1314,7 +1323,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\InvitesTab.tsx",
       "source_location": "L47",
       "id": "school_management_tabs_invitestab_copyinvite",
-      "community": 7,
+      "community": 4,
       "norm_label": "copyinvite()"
     },
     {
@@ -1323,7 +1332,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\InvitesTab.tsx",
       "source_location": "L52",
       "id": "school_management_tabs_invitestab_createinvite",
-      "community": 7,
+      "community": 4,
       "norm_label": "createinvite()"
     },
     {
@@ -1350,7 +1359,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\MemberCard.tsx",
       "source_location": "L1",
       "id": "components_dashboard_school_management_tabs_membercard_tsx",
-      "community": 65,
+      "community": 66,
       "norm_label": "membercard.tsx"
     },
     {
@@ -1359,7 +1368,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\MemberKickDialog.tsx",
       "source_location": "L1",
       "id": "components_dashboard_school_management_tabs_memberkickdialog_tsx",
-      "community": 66,
+      "community": 67,
       "norm_label": "memberkickdialog.tsx"
     },
     {
@@ -1368,7 +1377,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\MemberRoleChangesPanel.tsx",
       "source_location": "L1",
       "id": "components_dashboard_school_management_tabs_memberrolechangespanel_tsx",
-      "community": 37,
+      "community": 38,
       "norm_label": "memberrolechangespanel.tsx"
     },
     {
@@ -1377,7 +1386,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\MemberRoleChangesPanel.tsx",
       "source_location": "L11",
       "id": "school_management_tabs_memberrolechangespanel_memberrolechangespanel",
-      "community": 37,
+      "community": 38,
       "norm_label": "memberrolechangespanel()"
     },
     {
@@ -1386,7 +1395,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\MemberScheduleDialog.tsx",
       "source_location": "L1",
       "id": "components_dashboard_school_management_tabs_memberscheduledialog_tsx",
-      "community": 38,
+      "community": 39,
       "norm_label": "memberscheduledialog.tsx"
     },
     {
@@ -1395,7 +1404,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\MemberScheduleDialog.tsx",
       "source_location": "L475",
       "id": "school_management_tabs_memberscheduledialog_if",
-      "community": 38,
+      "community": 39,
       "norm_label": "if()"
     },
     {
@@ -1485,7 +1494,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\ReservationActionMenu.tsx",
       "source_location": "L1",
       "id": "components_dashboard_school_management_tabs_reservationactionmenu_tsx",
-      "community": 67,
+      "community": 68,
       "norm_label": "reservationactionmenu.tsx"
     },
     {
@@ -1494,8 +1503,35 @@
       "source_file": "components\\dashboard\\school-management-tabs\\ReservationCancelDialog.tsx",
       "source_location": "L1",
       "id": "components_dashboard_school_management_tabs_reservationcanceldialog_tsx",
-      "community": 68,
+      "community": 69,
       "norm_label": "reservationcanceldialog.tsx"
+    },
+    {
+      "label": "ReservationCopyExamsButton.tsx",
+      "file_type": "code",
+      "source_file": "components\\dashboard\\school-management-tabs\\ReservationCopyExamsButton.tsx",
+      "source_location": "L1",
+      "id": "components_dashboard_school_management_tabs_reservationcopyexamsbutton_tsx",
+      "community": 26,
+      "norm_label": "reservationcopyexamsbutton.tsx"
+    },
+    {
+      "label": "handleKeyDown()",
+      "file_type": "code",
+      "source_file": "components\\dashboard\\school-management-tabs\\ReservationCopyExamsButton.tsx",
+      "source_location": "L63",
+      "id": "school_management_tabs_reservationcopyexamsbutton_handlekeydown",
+      "community": 26,
+      "norm_label": "handlekeydown()"
+    },
+    {
+      "label": "copyExams()",
+      "file_type": "code",
+      "source_file": "components\\dashboard\\school-management-tabs\\ReservationCopyExamsButton.tsx",
+      "source_location": "L95",
+      "id": "school_management_tabs_reservationcopyexamsbutton_copyexams",
+      "community": 26,
+      "norm_label": "copyexams()"
     },
     {
       "label": "ReservationDayView.tsx",
@@ -1503,7 +1539,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\ReservationDayView.tsx",
       "source_location": "L1",
       "id": "components_dashboard_school_management_tabs_reservationdayview_tsx",
-      "community": 69,
+      "community": 70,
       "norm_label": "reservationdayview.tsx"
     },
     {
@@ -1519,7 +1555,7 @@
       "label": "cancelReservation()",
       "file_type": "code",
       "source_file": "components\\dashboard\\school-management-tabs\\ReservationsTab.tsx",
-      "source_location": "L163",
+      "source_location": "L174",
       "id": "school_management_tabs_reservationstab_cancelreservation",
       "community": 0,
       "norm_label": "cancelreservation()"
@@ -1528,7 +1564,7 @@
       "label": "updateReservation()",
       "file_type": "code",
       "source_file": "components\\dashboard\\school-management-tabs\\ReservationsTab.tsx",
-      "source_location": "L195",
+      "source_location": "L206",
       "id": "school_management_tabs_reservationstab_updatereservation",
       "community": 0,
       "norm_label": "updatereservation()"
@@ -1537,7 +1573,7 @@
       "label": "formatSlotTime()",
       "file_type": "code",
       "source_file": "components\\dashboard\\school-management-tabs\\ReservationsTab.tsx",
-      "source_location": "L410",
+      "source_location": "L422",
       "id": "school_management_tabs_reservationstab_formatslottime",
       "community": 0,
       "norm_label": "formatslottime()"
@@ -1548,7 +1584,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\ReservationSummaryStrip.tsx",
       "source_location": "L1",
       "id": "components_dashboard_school_management_tabs_reservationsummarystrip_tsx",
-      "community": 39,
+      "community": 40,
       "norm_label": "reservationsummarystrip.tsx"
     },
     {
@@ -1557,7 +1593,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\ReservationSummaryStrip.tsx",
       "source_location": "L12",
       "id": "school_management_tabs_reservationsummarystrip_reservationsummarystrip",
-      "community": 39,
+      "community": 40,
       "norm_label": "reservationsummarystrip()"
     },
     {
@@ -1566,7 +1602,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\ReservationToolbar.tsx",
       "source_location": "L1",
       "id": "components_dashboard_school_management_tabs_reservationtoolbar_tsx",
-      "community": 70,
+      "community": 71,
       "norm_label": "reservationtoolbar.tsx"
     },
     {
@@ -1575,7 +1611,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\ReservationUpdateDialog.tsx",
       "source_location": "L1",
       "id": "components_dashboard_school_management_tabs_reservationupdatedialog_tsx",
-      "community": 26,
+      "community": 27,
       "norm_label": "reservationupdatedialog.tsx"
     },
     {
@@ -1584,7 +1620,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\ReservationUpdateDialog.tsx",
       "source_location": "L58",
       "id": "school_management_tabs_reservationupdatedialog_opendatepicker",
-      "community": 26,
+      "community": 27,
       "norm_label": "opendatepicker()"
     },
     {
@@ -1593,7 +1629,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\ReservationUpdateDialog.tsx",
       "source_location": "L63",
       "id": "school_management_tabs_reservationupdatedialog_submit",
-      "community": 26,
+      "community": 27,
       "norm_label": "submit()"
     },
     {
@@ -1602,7 +1638,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\ReservationWeekView.tsx",
       "source_location": "L1",
       "id": "components_dashboard_school_management_tabs_reservationweekview_tsx",
-      "community": 71,
+      "community": 72,
       "norm_label": "reservationweekview.tsx"
     },
     {
@@ -1611,7 +1647,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\role-utils.ts",
       "source_location": "L1",
       "id": "components_dashboard_school_management_tabs_role_utils_ts",
-      "community": 40,
+      "community": 41,
       "norm_label": "role-utils.ts"
     },
     {
@@ -1620,7 +1656,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\role-utils.ts",
       "source_location": "L6",
       "id": "school_management_tabs_role_utils_getrolepillstyle",
-      "community": 40,
+      "community": 41,
       "norm_label": "getrolepillstyle()"
     },
     {
@@ -1678,6 +1714,51 @@
       "norm_label": "submitslotform()"
     },
     {
+      "label": "SettingsGoogleSheetPanel.tsx",
+      "file_type": "code",
+      "source_file": "components\\dashboard\\school-management-tabs\\SettingsGoogleSheetPanel.tsx",
+      "source_location": "L1",
+      "id": "components_dashboard_school_management_tabs_settingsgooglesheetpanel_tsx",
+      "community": 17,
+      "norm_label": "settingsgooglesheetpanel.tsx"
+    },
+    {
+      "label": "formatDateTime()",
+      "file_type": "code",
+      "source_file": "components\\dashboard\\school-management-tabs\\SettingsGoogleSheetPanel.tsx",
+      "source_location": "L10",
+      "id": "school_management_tabs_settingsgooglesheetpanel_formatdatetime",
+      "community": 17,
+      "norm_label": "formatdatetime()"
+    },
+    {
+      "label": "copyEmail()",
+      "file_type": "code",
+      "source_file": "components\\dashboard\\school-management-tabs\\SettingsGoogleSheetPanel.tsx",
+      "source_location": "L64",
+      "id": "school_management_tabs_settingsgooglesheetpanel_copyemail",
+      "community": 17,
+      "norm_label": "copyemail()"
+    },
+    {
+      "label": "linkSheet()",
+      "file_type": "code",
+      "source_file": "components\\dashboard\\school-management-tabs\\SettingsGoogleSheetPanel.tsx",
+      "source_location": "L69",
+      "id": "school_management_tabs_settingsgooglesheetpanel_linksheet",
+      "community": 17,
+      "norm_label": "linksheet()"
+    },
+    {
+      "label": "unlinkSheet()",
+      "file_type": "code",
+      "source_file": "components\\dashboard\\school-management-tabs\\SettingsGoogleSheetPanel.tsx",
+      "source_location": "L90",
+      "id": "school_management_tabs_settingsgooglesheetpanel_unlinksheet",
+      "community": 17,
+      "norm_label": "unlinksheet()"
+    },
+    {
       "label": "SettingsSubjectsPanel.tsx",
       "file_type": "code",
       "source_file": "components\\dashboard\\school-management-tabs\\SettingsSubjectsPanel.tsx",
@@ -1710,7 +1791,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\SettingsTab.tsx",
       "source_location": "L1",
       "id": "components_dashboard_school_management_tabs_settingstab_tsx",
-      "community": 72,
+      "community": 73,
       "norm_label": "settingstab.tsx"
     },
     {
@@ -1719,7 +1800,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\shared.tsx",
       "source_location": "L1",
       "id": "components_dashboard_school_management_tabs_shared_tsx",
-      "community": 27,
+      "community": 28,
       "norm_label": "shared.tsx"
     },
     {
@@ -1728,7 +1809,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\shared.tsx",
       "source_location": "L1",
       "id": "school_management_tabs_shared_errorbanner",
-      "community": 27,
+      "community": 28,
       "norm_label": "errorbanner()"
     },
     {
@@ -1737,7 +1818,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\shared.tsx",
       "source_location": "L18",
       "id": "school_management_tabs_shared_emptystate",
-      "community": 27,
+      "community": 28,
       "norm_label": "emptystate()"
     },
     {
@@ -1746,7 +1827,7 @@
       "source_file": "components\\dashboard\\school-management-tabs\\types.ts",
       "source_location": "L1",
       "id": "components_dashboard_school_management_tabs_types_ts",
-      "community": 73,
+      "community": 74,
       "norm_label": "types.ts"
     },
     {
@@ -1755,7 +1836,7 @@
       "source_file": "components\\landing\\GoogleSignInButton.tsx",
       "source_location": "L1",
       "id": "components_landing_googlesigninbutton_tsx",
-      "community": 41,
+      "community": 42,
       "norm_label": "googlesigninbutton.tsx"
     },
     {
@@ -1764,7 +1845,7 @@
       "source_file": "components\\landing\\GoogleSignInButton.tsx",
       "source_location": "L13",
       "id": "landing_googlesigninbutton_googlesigninbutton",
-      "community": 41,
+      "community": 42,
       "norm_label": "googlesigninbutton()"
     },
     {
@@ -1773,7 +1854,7 @@
       "source_file": "components\\landing\\HeroSection.tsx",
       "source_location": "L1",
       "id": "components_landing_herosection_tsx",
-      "community": 74,
+      "community": 75,
       "norm_label": "herosection.tsx"
     },
     {
@@ -1782,7 +1863,7 @@
       "source_file": "components\\landing\\HeroVisual.tsx",
       "source_location": "L1",
       "id": "components_landing_herovisual_tsx",
-      "community": 75,
+      "community": 76,
       "norm_label": "herovisual.tsx"
     },
     {
@@ -1791,7 +1872,7 @@
       "source_file": "components\\landing\\Navbar.tsx",
       "source_location": "L1",
       "id": "components_landing_navbar_tsx",
-      "community": 42,
+      "community": 43,
       "norm_label": "navbar.tsx"
     },
     {
@@ -1800,7 +1881,7 @@
       "source_file": "components\\landing\\Navbar.tsx",
       "source_location": "L9",
       "id": "landing_navbar_navbar",
-      "community": 42,
+      "community": 43,
       "norm_label": "navbar()"
     },
     {
@@ -1809,7 +1890,7 @@
       "source_file": "components\\release\\ReleaseNotesDialog.tsx",
       "source_location": "L1",
       "id": "components_release_releasenotesdialog_tsx",
-      "community": 43,
+      "community": 44,
       "norm_label": "releasenotesdialog.tsx"
     },
     {
@@ -1818,7 +1899,7 @@
       "source_file": "components\\release\\ReleaseNotesDialog.tsx",
       "source_location": "L16",
       "id": "release_releasenotesdialog_formatreleasedate",
-      "community": 43,
+      "community": 44,
       "norm_label": "formatreleasedate()"
     },
     {
@@ -1827,7 +1908,7 @@
       "source_file": "components\\release\\WhatsNewModal.tsx",
       "source_location": "L1",
       "id": "components_release_whatsnewmodal_tsx",
-      "community": 44,
+      "community": 45,
       "norm_label": "whatsnewmodal.tsx"
     },
     {
@@ -1836,7 +1917,7 @@
       "source_file": "components\\release\\WhatsNewModal.tsx",
       "source_location": "L21",
       "id": "release_whatsnewmodal_whatsnewmodal",
-      "community": 44,
+      "community": 45,
       "norm_label": "whatsnewmodal()"
     },
     {
@@ -1899,7 +1980,7 @@
       "source_file": "components\\schedule\\BookingSummaryCard.tsx",
       "source_location": "L1",
       "id": "components_schedule_bookingsummarycard_tsx",
-      "community": 76,
+      "community": 77,
       "norm_label": "bookingsummarycard.tsx"
     },
     {
@@ -2034,7 +2115,7 @@
       "source_file": "components\\schedule\\constants.ts",
       "source_location": "L1",
       "id": "components_schedule_constants_ts",
-      "community": 77,
+      "community": 78,
       "norm_label": "constants.ts"
     },
     {
@@ -2043,7 +2124,7 @@
       "source_file": "components\\schedule\\DayBookingSummary.tsx",
       "source_location": "L1",
       "id": "components_schedule_daybookingsummary_tsx",
-      "community": 78,
+      "community": 79,
       "norm_label": "daybookingsummary.tsx"
     },
     {
@@ -2052,7 +2133,7 @@
       "source_file": "components\\schedule\\DebugPanel.tsx",
       "source_location": "L1",
       "id": "components_schedule_debugpanel_tsx",
-      "community": 45,
+      "community": 46,
       "norm_label": "debugpanel.tsx"
     },
     {
@@ -2061,7 +2142,7 @@
       "source_file": "components\\schedule\\DebugPanel.tsx",
       "source_location": "L9",
       "id": "schedule_debugpanel_debugpanel",
-      "community": 45,
+      "community": 46,
       "norm_label": "debugpanel()"
     },
     {
@@ -2088,7 +2169,7 @@
       "source_file": "components\\schedule\\ScheduleRequestsPanel.tsx",
       "source_location": "L1",
       "id": "components_schedule_schedulerequestspanel_tsx",
-      "community": 19,
+      "community": 20,
       "norm_label": "schedulerequestspanel.tsx"
     },
     {
@@ -2097,7 +2178,7 @@
       "source_file": "components\\schedule\\ScheduleRequestsPanel.tsx",
       "source_location": "L16",
       "id": "schedule_schedulerequestspanel_formatdate",
-      "community": 19,
+      "community": 20,
       "norm_label": "formatdate()"
     },
     {
@@ -2106,7 +2187,7 @@
       "source_file": "components\\schedule\\ScheduleRequestsPanel.tsx",
       "source_location": "L24",
       "id": "schedule_schedulerequestspanel_formattime",
-      "community": 19,
+      "community": 20,
       "norm_label": "formattime()"
     },
     {
@@ -2115,7 +2196,7 @@
       "source_file": "components\\schedule\\ScheduleRequestsPanel.tsx",
       "source_location": "L32",
       "id": "schedule_schedulerequestspanel_getstatuscopy",
-      "community": 19,
+      "community": 20,
       "norm_label": "getstatuscopy()"
     },
     {
@@ -2124,7 +2205,7 @@
       "source_file": "components\\schedule\\SeatAvailabilityOverview.tsx",
       "source_location": "L1",
       "id": "components_schedule_seatavailabilityoverview_tsx",
-      "community": 46,
+      "community": 47,
       "norm_label": "seatavailabilityoverview.tsx"
     },
     {
@@ -2133,7 +2214,7 @@
       "source_file": "components\\schedule\\SeatAvailabilityOverview.tsx",
       "source_location": "L11",
       "id": "schedule_seatavailabilityoverview_formatdate",
-      "community": 46,
+      "community": 47,
       "norm_label": "formatdate()"
     },
     {
@@ -2142,7 +2223,7 @@
       "source_file": "components\\schedule\\SlotCard.tsx",
       "source_location": "L1",
       "id": "components_schedule_slotcard_tsx",
-      "community": 47,
+      "community": 48,
       "norm_label": "slotcard.tsx"
     },
     {
@@ -2151,7 +2232,7 @@
       "source_file": "components\\schedule\\SlotCard.tsx",
       "source_location": "L10",
       "id": "schedule_slotcard_slotcard",
-      "community": 47,
+      "community": 48,
       "norm_label": "slotcard()"
     },
     {
@@ -2160,7 +2241,7 @@
       "source_file": "components\\schedule\\SlotCardList.tsx",
       "source_location": "L1",
       "id": "components_schedule_slotcardlist_tsx",
-      "community": 48,
+      "community": 49,
       "norm_label": "slotcardlist.tsx"
     },
     {
@@ -2169,7 +2250,7 @@
       "source_file": "components\\schedule\\SlotCardList.tsx",
       "source_location": "L13",
       "id": "schedule_slotcardlist_slotcardlist",
-      "community": 48,
+      "community": 49,
       "norm_label": "slotcardlist()"
     },
     {
@@ -2178,7 +2259,7 @@
       "source_file": "components\\schedule\\SlotPicker.tsx",
       "source_location": "L1",
       "id": "components_schedule_slotpicker_tsx",
-      "community": 49,
+      "community": 50,
       "norm_label": "slotpicker.tsx"
     },
     {
@@ -2187,7 +2268,7 @@
       "source_file": "components\\schedule\\SlotPicker.tsx",
       "source_location": "L14",
       "id": "schedule_slotpicker_formatdate",
-      "community": 49,
+      "community": 50,
       "norm_label": "formatdate()"
     },
     {
@@ -2196,7 +2277,7 @@
       "source_file": "components\\schedule\\SubjectCombobox.tsx",
       "source_location": "L1",
       "id": "components_schedule_subjectcombobox_tsx",
-      "community": 17,
+      "community": 18,
       "norm_label": "subjectcombobox.tsx"
     },
     {
@@ -2205,7 +2286,7 @@
       "source_file": "components\\schedule\\SubjectCombobox.tsx",
       "source_location": "L51",
       "id": "schedule_subjectcombobox_handlepointerdown",
-      "community": 17,
+      "community": 18,
       "norm_label": "handlepointerdown()"
     },
     {
@@ -2214,7 +2295,7 @@
       "source_file": "components\\schedule\\SubjectCombobox.tsx",
       "source_location": "L61",
       "id": "schedule_subjectcombobox_selectsubject",
-      "community": 17,
+      "community": 18,
       "norm_label": "selectsubject()"
     },
     {
@@ -2223,7 +2304,7 @@
       "source_file": "components\\schedule\\SubjectCombobox.tsx",
       "source_location": "L67",
       "id": "schedule_subjectcombobox_handleinputchange",
-      "community": 17,
+      "community": 18,
       "norm_label": "handleinputchange()"
     },
     {
@@ -2232,7 +2313,7 @@
       "source_file": "components\\schedule\\SubjectCombobox.tsx",
       "source_location": "L74",
       "id": "schedule_subjectcombobox_handlekeydown",
-      "community": 17,
+      "community": 18,
       "norm_label": "handlekeydown()"
     },
     {
@@ -2241,7 +2322,7 @@
       "source_file": "components\\schedule\\SubjectCommandPalette.tsx",
       "source_location": "L1",
       "id": "components_schedule_subjectcommandpalette_tsx",
-      "community": 1,
+      "community": 3,
       "norm_label": "subjectcommandpalette.tsx"
     },
     {
@@ -2250,7 +2331,7 @@
       "source_file": "components\\schedule\\SubjectCommandPalette.tsx",
       "source_location": "L47",
       "id": "schedule_subjectcommandpalette_openpalette",
-      "community": 1,
+      "community": 3,
       "norm_label": "openpalette()"
     },
     {
@@ -2259,7 +2340,7 @@
       "source_file": "components\\schedule\\SubjectCommandPalette.tsx",
       "source_location": "L53",
       "id": "schedule_subjectcommandpalette_closepalette",
-      "community": 1,
+      "community": 3,
       "norm_label": "closepalette()"
     },
     {
@@ -2268,7 +2349,7 @@
       "source_file": "components\\schedule\\SubjectCommandPalette.tsx",
       "source_location": "L58",
       "id": "schedule_subjectcommandpalette_select",
-      "community": 1,
+      "community": 3,
       "norm_label": "select()"
     },
     {
@@ -2277,7 +2358,7 @@
       "source_file": "components\\schedule\\SubjectCommandPalette.tsx",
       "source_location": "L66",
       "id": "schedule_subjectcommandpalette_handlepointerdown",
-      "community": 1,
+      "community": 3,
       "norm_label": "handlepointerdown()"
     },
     {
@@ -2286,7 +2367,7 @@
       "source_file": "components\\schedule\\SubjectCommandPalette.tsx",
       "source_location": "L85",
       "id": "schedule_subjectcommandpalette_handlekeydown",
-      "community": 1,
+      "community": 3,
       "norm_label": "handlekeydown()"
     },
     {
@@ -2295,7 +2376,7 @@
       "source_file": "components\\schedule\\TeacherRequestSelector.tsx",
       "source_location": "L1",
       "id": "components_schedule_teacherrequestselector_tsx",
-      "community": 50,
+      "community": 51,
       "norm_label": "teacherrequestselector.tsx"
     },
     {
@@ -2304,7 +2385,7 @@
       "source_file": "components\\schedule\\TeacherRequestSelector.tsx",
       "source_location": "L13",
       "id": "schedule_teacherrequestselector_getinitials",
-      "community": 50,
+      "community": 51,
       "norm_label": "getinitials()"
     },
     {
@@ -2313,7 +2394,7 @@
       "source_file": "components\\schedule\\types.ts",
       "source_location": "L1",
       "id": "components_schedule_types_ts",
-      "community": 79,
+      "community": 80,
       "norm_label": "types.ts"
     },
     {
@@ -2322,7 +2403,7 @@
       "source_file": "components\\skeletons\\AppHeaderSkeleton.tsx",
       "source_location": "L1",
       "id": "components_skeletons_appheaderskeleton_tsx",
-      "community": 80,
+      "community": 81,
       "norm_label": "appheaderskeleton.tsx"
     },
     {
@@ -2331,7 +2412,7 @@
       "source_file": "components\\theme\\ThemeToggle.tsx",
       "source_location": "L1",
       "id": "components_theme_themetoggle_tsx",
-      "community": 28,
+      "community": 29,
       "norm_label": "themetoggle.tsx"
     },
     {
@@ -2340,7 +2421,7 @@
       "source_file": "components\\theme\\ThemeToggle.tsx",
       "source_location": "L24",
       "id": "theme_themetoggle_handlepointerdown",
-      "community": 28,
+      "community": 29,
       "norm_label": "handlepointerdown()"
     },
     {
@@ -2349,7 +2430,7 @@
       "source_file": "components\\theme\\ThemeToggle.tsx",
       "source_location": "L30",
       "id": "theme_themetoggle_handlekeydown",
-      "community": 28,
+      "community": 29,
       "norm_label": "handlekeydown()"
     },
     {
@@ -2358,7 +2439,7 @@
       "source_file": "components\\theme\\useTheme.ts",
       "source_location": "L1",
       "id": "components_theme_usetheme_ts",
-      "community": 51,
+      "community": 52,
       "norm_label": "usetheme.ts"
     },
     {
@@ -2367,7 +2448,7 @@
       "source_file": "components\\theme\\useTheme.ts",
       "source_location": "L30",
       "id": "theme_usetheme_usetheme",
-      "community": 51,
+      "community": 52,
       "norm_label": "usetheme()"
     },
     {
@@ -2376,7 +2457,7 @@
       "source_file": "components\\ui\\badge.tsx",
       "source_location": "L1",
       "id": "components_ui_badge_tsx",
-      "community": 20,
+      "community": 21,
       "norm_label": "badge.tsx"
     },
     {
@@ -2385,7 +2466,7 @@
       "source_file": "components\\ui\\badge.tsx",
       "source_location": "L30",
       "id": "ui_badge_badge",
-      "community": 20,
+      "community": 21,
       "norm_label": "badge()"
     },
     {
@@ -2394,7 +2475,7 @@
       "source_file": "components\\ui\\button.tsx",
       "source_location": "L1",
       "id": "components_ui_button_tsx",
-      "community": 52,
+      "community": 53,
       "norm_label": "button.tsx"
     },
     {
@@ -2403,7 +2484,7 @@
       "source_file": "components\\ui\\button.tsx",
       "source_location": "L52",
       "id": "ui_button_cn",
-      "community": 52,
+      "community": 53,
       "norm_label": "cn()"
     },
     {
@@ -2412,7 +2493,7 @@
       "source_file": "components\\ui\\skeleton.tsx",
       "source_location": "L1",
       "id": "components_ui_skeleton_tsx",
-      "community": 81,
+      "community": 82,
       "norm_label": "skeleton.tsx"
     },
     {
@@ -2421,7 +2502,7 @@
       "source_file": "lib\\profile-name.ts",
       "source_location": "L1",
       "id": "lib_profile_name_ts",
-      "community": 1,
+      "community": 3,
       "norm_label": "profile-name.ts"
     },
     {
@@ -2430,7 +2511,7 @@
       "source_file": "lib\\profile-name.ts",
       "source_location": "L1",
       "id": "lib_profile_name_getcompletedprofilename",
-      "community": 1,
+      "community": 3,
       "norm_label": "getcompletedprofilename()"
     },
     {
@@ -2439,7 +2520,7 @@
       "source_file": "lib\\profile-name.ts",
       "source_location": "L7",
       "id": "lib_profile_name_getprofilenamesetuppath",
-      "community": 1,
+      "community": 3,
       "norm_label": "getprofilenamesetuppath()"
     },
     {
@@ -2529,7 +2610,7 @@
       "source_file": "lib\\theme-store.ts",
       "source_location": "L1",
       "id": "lib_theme_store_ts",
-      "community": 5,
+      "community": 6,
       "norm_label": "theme-store.ts"
     },
     {
@@ -2538,7 +2619,7 @@
       "source_file": "lib\\theme-store.ts",
       "source_location": "L26",
       "id": "lib_theme_store_emit",
-      "community": 5,
+      "community": 6,
       "norm_label": "emit()"
     },
     {
@@ -2547,7 +2628,7 @@
       "source_file": "lib\\theme-store.ts",
       "source_location": "L32",
       "id": "lib_theme_store_prefersdark",
-      "community": 5,
+      "community": 6,
       "norm_label": "prefersdark()"
     },
     {
@@ -2556,7 +2637,7 @@
       "source_file": "lib\\theme-store.ts",
       "source_location": "L37",
       "id": "lib_theme_store_syncdocument",
-      "community": 5,
+      "community": 6,
       "norm_label": "syncdocument()"
     },
     {
@@ -2565,7 +2646,7 @@
       "source_file": "lib\\theme-store.ts",
       "source_location": "L49",
       "id": "lib_theme_store_subscribe",
-      "community": 5,
+      "community": 6,
       "norm_label": "subscribe()"
     },
     {
@@ -2574,7 +2655,7 @@
       "source_file": "lib\\theme-store.ts",
       "source_location": "L68",
       "id": "lib_theme_store_getstoredtheme",
-      "community": 5,
+      "community": 6,
       "norm_label": "getstoredtheme()"
     },
     {
@@ -2583,7 +2664,7 @@
       "source_file": "lib\\theme-store.ts",
       "source_location": "L76",
       "id": "lib_theme_store_getservertheme",
-      "community": 5,
+      "community": 6,
       "norm_label": "getservertheme()"
     },
     {
@@ -2592,7 +2673,7 @@
       "source_file": "lib\\theme-store.ts",
       "source_location": "L80",
       "id": "lib_theme_store_getresolvedtheme",
-      "community": 5,
+      "community": 6,
       "norm_label": "getresolvedtheme()"
     },
     {
@@ -2601,7 +2682,7 @@
       "source_file": "lib\\theme-store.ts",
       "source_location": "L84",
       "id": "lib_theme_store_getserverresolvedtheme",
-      "community": 5,
+      "community": 6,
       "norm_label": "getserverresolvedtheme()"
     },
     {
@@ -2610,7 +2691,7 @@
       "source_file": "lib\\theme-store.ts",
       "source_location": "L88",
       "id": "lib_theme_store_setstoredtheme",
-      "community": 5,
+      "community": 6,
       "norm_label": "setstoredtheme()"
     },
     {
@@ -2619,7 +2700,7 @@
       "source_file": "lib\\theme-store.ts",
       "source_location": "L96",
       "id": "lib_theme_store_noopsubscribe",
-      "community": 5,
+      "community": 6,
       "norm_label": "noopsubscribe()"
     },
     {
@@ -2628,7 +2709,7 @@
       "source_file": "lib\\theme.ts",
       "source_location": "L1",
       "id": "lib_theme_ts",
-      "community": 5,
+      "community": 6,
       "norm_label": "theme.ts"
     },
     {
@@ -2637,7 +2718,7 @@
       "source_file": "lib\\theme.ts",
       "source_location": "L26",
       "id": "lib_theme_istheme",
-      "community": 5,
+      "community": 6,
       "norm_label": "istheme()"
     },
     {
@@ -2646,7 +2727,7 @@
       "source_file": "lib\\theme.ts",
       "source_location": "L30",
       "id": "lib_theme_parsetheme",
-      "community": 5,
+      "community": 6,
       "norm_label": "parsetheme()"
     },
     {
@@ -2655,7 +2736,7 @@
       "source_file": "lib\\urls.ts",
       "source_location": "L1",
       "id": "lib_urls_ts",
-      "community": 1,
+      "community": 3,
       "norm_label": "urls.ts"
     },
     {
@@ -2664,7 +2745,7 @@
       "source_file": "lib\\urls.ts",
       "source_location": "L1",
       "id": "lib_urls_sanitizerelativepath",
-      "community": 1,
+      "community": 3,
       "norm_label": "sanitizerelativepath()"
     },
     {
@@ -2673,7 +2754,7 @@
       "source_file": "lib\\urls.ts",
       "source_location": "L15",
       "id": "lib_urls_getrequestorigin",
-      "community": 1,
+      "community": 3,
       "norm_label": "getrequestorigin()"
     },
     {
@@ -2745,7 +2826,7 @@
       "source_file": "lib\\utils.ts",
       "source_location": "L1",
       "id": "lib_utils_ts",
-      "community": 20,
+      "community": 21,
       "norm_label": "utils.ts"
     },
     {
@@ -2754,7 +2835,7 @@
       "source_file": "lib\\utils.ts",
       "source_location": "L4",
       "id": "lib_utils_cn",
-      "community": 20,
+      "community": 21,
       "norm_label": "cn()"
     },
     {
@@ -2826,7 +2907,7 @@
       "source_file": "scripts\\booking-tests\\run.mjs",
       "source_location": "L1",
       "id": "scripts_booking_tests_run_mjs",
-      "community": 3,
+      "community": 5,
       "norm_label": "run.mjs"
     },
     {
@@ -2835,7 +2916,7 @@
       "source_file": "scripts\\booking-tests\\run.mjs",
       "source_location": "L29",
       "id": "booking_tests_run_parseargs",
-      "community": 3,
+      "community": 5,
       "norm_label": "parseargs()"
     },
     {
@@ -2844,7 +2925,7 @@
       "source_file": "scripts\\booking-tests\\run.mjs",
       "source_location": "L42",
       "id": "booking_tests_run_loadenvfile",
-      "community": 3,
+      "community": 5,
       "norm_label": "loadenvfile()"
     },
     {
@@ -2853,7 +2934,7 @@
       "source_file": "scripts\\booking-tests\\run.mjs",
       "source_location": "L96",
       "id": "booking_tests_run_record",
-      "community": 3,
+      "community": 5,
       "norm_label": "record()"
     },
     {
@@ -2862,7 +2943,7 @@
       "source_file": "scripts\\booking-tests\\run.mjs",
       "source_location": "L104",
       "id": "booking_tests_run_summarizefunction",
-      "community": 3,
+      "community": 5,
       "norm_label": "summarizefunction()"
     },
     {
@@ -2871,7 +2952,7 @@
       "source_file": "scripts\\booking-tests\\run.mjs",
       "source_location": "L114",
       "id": "booking_tests_run_summarizerpc",
-      "community": 3,
+      "community": 5,
       "norm_label": "summarizerpc()"
     },
     {
@@ -2880,7 +2961,7 @@
       "source_file": "scripts\\booking-tests\\run.mjs",
       "source_location": "L129",
       "id": "booking_tests_run_callfunction",
-      "community": 3,
+      "community": 5,
       "norm_label": "callfunction()"
     },
     {
@@ -2889,7 +2970,7 @@
       "source_file": "scripts\\booking-tests\\run.mjs",
       "source_location": "L148",
       "id": "booking_tests_run_userclient",
-      "community": 3,
+      "community": 5,
       "norm_label": "userclient()"
     },
     {
@@ -2898,7 +2979,7 @@
       "source_file": "scripts\\booking-tests\\run.mjs",
       "source_location": "L155",
       "id": "booking_tests_run_rpc",
-      "community": 3,
+      "community": 5,
       "norm_label": "rpc()"
     },
     {
@@ -2907,7 +2988,7 @@
       "source_file": "scripts\\booking-tests\\run.mjs",
       "source_location": "L163",
       "id": "booking_tests_run_finduserbyemail",
-      "community": 3,
+      "community": 5,
       "norm_label": "finduserbyemail()"
     },
     {
@@ -2916,7 +2997,7 @@
       "source_file": "scripts\\booking-tests\\run.mjs",
       "source_location": "L172",
       "id": "booking_tests_run_ensureaccount",
-      "community": 3,
+      "community": 5,
       "norm_label": "ensureaccount()"
     },
     {
@@ -2925,7 +3006,7 @@
       "source_file": "scripts\\booking-tests\\run.mjs",
       "source_location": "L197",
       "id": "booking_tests_run_signin",
-      "community": 3,
+      "community": 5,
       "norm_label": "signin()"
     },
     {
@@ -2934,7 +3015,7 @@
       "source_file": "scripts\\booking-tests\\run.mjs",
       "source_location": "L229",
       "id": "booking_tests_run_schooldatekey",
-      "community": 3,
+      "community": 5,
       "norm_label": "schooldatekey()"
     },
     {
@@ -2943,7 +3024,7 @@
       "source_file": "scripts\\booking-tests\\run.mjs",
       "source_location": "L236",
       "id": "booking_tests_run_isweekend",
-      "community": 3,
+      "community": 5,
       "norm_label": "isweekend()"
     },
     {
@@ -2952,7 +3033,7 @@
       "source_file": "scripts\\booking-tests\\run.mjs",
       "source_location": "L242",
       "id": "booking_tests_run_weekdayatorbefore",
-      "community": 3,
+      "community": 5,
       "norm_label": "weekdayatorbefore()"
     },
     {
@@ -2961,7 +3042,7 @@
       "source_file": "scripts\\booking-tests\\run.mjs",
       "source_location": "L250",
       "id": "booking_tests_run_resolveschool",
-      "community": 3,
+      "community": 5,
       "norm_label": "resolveschool()"
     },
     {
@@ -2970,7 +3051,7 @@
       "source_file": "scripts\\booking-tests\\run.mjs",
       "source_location": "L263",
       "id": "booking_tests_run_loadfixtures",
-      "community": 3,
+      "community": 5,
       "norm_label": "loadfixtures()"
     },
     {
@@ -2979,7 +3060,7 @@
       "source_file": "scripts\\booking-tests\\run.mjs",
       "source_location": "L322",
       "id": "booking_tests_run_setselfbooking",
-      "community": 3,
+      "community": 5,
       "norm_label": "setselfbooking()"
     },
     {
@@ -2988,7 +3069,7 @@
       "source_file": "scripts\\booking-tests\\run.mjs",
       "source_location": "L331",
       "id": "booking_tests_run_cleanup",
-      "community": 3,
+      "community": 5,
       "norm_label": "cleanup()"
     },
     {
@@ -2997,7 +3078,7 @@
       "source_file": "scripts\\booking-tests\\run.mjs",
       "source_location": "L361",
       "id": "booking_tests_run_runtests",
-      "community": 3,
+      "community": 5,
       "norm_label": "runtests()"
     },
     {
@@ -3006,7 +3087,7 @@
       "source_file": "scripts\\booking-tests\\run.mjs",
       "source_location": "L589",
       "id": "booking_tests_run_comparewith",
-      "community": 3,
+      "community": 5,
       "norm_label": "comparewith()"
     },
     {
@@ -3015,7 +3096,7 @@
       "source_file": "scripts\\booking-tests\\run.mjs",
       "source_location": "L623",
       "id": "booking_tests_run_main",
-      "community": 3,
+      "community": 5,
       "norm_label": "main()"
     },
     {
@@ -3053,6 +3134,303 @@
       "id": "create_school_invite_index_parsesiteurl",
       "community": 2,
       "norm_label": "parsesiteurl()"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L1",
+      "id": "supabase_functions_google_sheets_index_ts",
+      "community": 2,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "entryText()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L53",
+      "id": "google_sheets_index_entrytext",
+      "community": 2,
+      "norm_label": "entrytext()"
+    },
+    {
+      "label": "parseSpreadsheetId()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L59",
+      "id": "google_sheets_index_parsespreadsheetid",
+      "community": 2,
+      "norm_label": "parsespreadsheetid()"
+    },
+    {
+      "label": "describeError()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L65",
+      "id": "google_sheets_index_describeerror",
+      "community": 2,
+      "norm_label": "describeerror()"
+    },
+    {
+      "label": "loadSlotTemplates()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L79",
+      "id": "google_sheets_index_loadslottemplates",
+      "community": 2,
+      "norm_label": "loadslottemplates()"
+    },
+    {
+      "label": "syncSchoolSheet()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L107",
+      "id": "google_sheets_index_syncschoolsheet",
+      "community": 2,
+      "norm_label": "syncschoolsheet()"
+    },
+    {
+      "label": "updateClaimedLink()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L208",
+      "id": "google_sheets_index_updateclaimedlink",
+      "community": 2,
+      "norm_label": "updateclaimedlink()"
+    },
+    {
+      "label": "handleSync()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L222",
+      "id": "google_sheets_index_handlesync",
+      "community": 2,
+      "norm_label": "handlesync()"
+    },
+    {
+      "label": "handleAdminAction()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L274",
+      "id": "google_sheets_index_handleadminaction",
+      "community": 2,
+      "norm_label": "handleadminaction()"
+    },
+    {
+      "label": "week-tab.ts",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L1",
+      "id": "supabase_functions_google_sheets_week_tab_ts",
+      "community": 1,
+      "norm_label": "week-tab.ts"
+    },
+    {
+      "label": "mondayOf()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L57",
+      "id": "google_sheets_week_tab_mondayof",
+      "community": 1,
+      "norm_label": "mondayof()"
+    },
+    {
+      "label": "addDays()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L64",
+      "id": "google_sheets_week_tab_adddays",
+      "community": 1,
+      "norm_label": "adddays()"
+    },
+    {
+      "label": "weekTitle()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L71",
+      "id": "google_sheets_week_tab_weektitle",
+      "community": 1,
+      "norm_label": "weektitle()"
+    },
+    {
+      "label": "uniqueTitle()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L81",
+      "id": "google_sheets_week_tab_uniquetitle",
+      "community": 1,
+      "norm_label": "uniquetitle()"
+    },
+    {
+      "label": "isBlank()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L87",
+      "id": "google_sheets_week_tab_isblank",
+      "community": 1,
+      "norm_label": "isblank()"
+    },
+    {
+      "label": "timeKey()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L91",
+      "id": "google_sheets_week_tab_timekey",
+      "community": 1,
+      "norm_label": "timekey()"
+    },
+    {
+      "label": "findDayRow()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L97",
+      "id": "google_sheets_week_tab_finddayrow",
+      "community": 1,
+      "norm_label": "finddayrow()"
+    },
+    {
+      "label": "indexWeekTabs()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L107",
+      "id": "google_sheets_week_tab_indexweektabs",
+      "community": 2,
+      "norm_label": "indexweektabs()"
+    },
+    {
+      "label": "readLayout()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L135",
+      "id": "google_sheets_week_tab_readlayout",
+      "community": 1,
+      "norm_label": "readlayout()"
+    },
+    {
+      "label": "weekdayIndex()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L184",
+      "id": "google_sheets_week_tab_weekdayindex",
+      "community": 1,
+      "norm_label": "weekdayindex()"
+    },
+    {
+      "label": "planWeek()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L188",
+      "id": "google_sheets_week_tab_planweek",
+      "community": 1,
+      "norm_label": "planweek()"
+    },
+    {
+      "label": "growBlocks()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L256",
+      "id": "google_sheets_week_tab_growblocks",
+      "community": 1,
+      "norm_label": "growblocks()"
+    },
+    {
+      "label": "noticeText()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L293",
+      "id": "google_sheets_week_tab_noticetext",
+      "community": 1,
+      "norm_label": "noticetext()"
+    },
+    {
+      "label": "hasNotice()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L297",
+      "id": "google_sheets_week_tab_hasnotice",
+      "community": 1,
+      "norm_label": "hasnotice()"
+    },
+    {
+      "label": "noticeIsCurrent()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L301",
+      "id": "google_sheets_week_tab_noticeiscurrent",
+      "community": 1,
+      "norm_label": "noticeiscurrent()"
+    },
+    {
+      "label": "noticeTextRequest()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L306",
+      "id": "google_sheets_week_tab_noticetextrequest",
+      "community": 1,
+      "norm_label": "noticetextrequest()"
+    },
+    {
+      "label": "addNotice()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L337",
+      "id": "google_sheets_week_tab_addnotice",
+      "community": 1,
+      "norm_label": "addnotice()"
+    },
+    {
+      "label": "syncWeek()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L408",
+      "id": "google_sheets_week_tab_syncweek",
+      "community": 1,
+      "norm_label": "syncweek()"
+    },
+    {
+      "label": "createWeekTab()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L442",
+      "id": "google_sheets_week_tab_createweektab",
+      "community": 1,
+      "norm_label": "createweektab()"
+    },
+    {
+      "label": "registerTab()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L497",
+      "id": "google_sheets_week_tab_registertab",
+      "community": 1,
+      "norm_label": "registertab()"
+    },
+    {
+      "label": "rgb()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L506",
+      "id": "google_sheets_week_tab_rgb",
+      "community": 1,
+      "norm_label": "rgb()"
+    },
+    {
+      "label": "buildFreshWeekTab()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L516",
+      "id": "google_sheets_week_tab_buildfreshweektab",
+      "community": 1,
+      "norm_label": "buildfreshweektab()"
+    },
+    {
+      "label": "dimension()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L676",
+      "id": "google_sheets_week_tab_dimension",
+      "community": 1,
+      "norm_label": "dimension()"
     },
     {
       "label": "index.ts",
@@ -3134,6 +3512,150 @@
       "id": "shared_errors_databaseerrorresponse",
       "community": 2,
       "norm_label": "databaseerrorresponse()"
+    },
+    {
+      "label": "google.ts",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L1",
+      "id": "supabase_functions_shared_google_ts",
+      "community": 1,
+      "norm_label": "google.ts"
+    },
+    {
+      "label": "GoogleApiError",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L15",
+      "id": "shared_google_googleapierror",
+      "community": 1,
+      "norm_label": "googleapierror"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L16",
+      "id": "shared_google_googleapierror_constructor",
+      "community": 1,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": "getServiceAccount()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L28",
+      "id": "shared_google_getserviceaccount",
+      "community": 1,
+      "norm_label": "getserviceaccount()"
+    },
+    {
+      "label": "base64Url()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L45",
+      "id": "shared_google_base64url",
+      "community": 1,
+      "norm_label": "base64url()"
+    },
+    {
+      "label": "pemToDer()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L53",
+      "id": "shared_google_pemtoder",
+      "community": 1,
+      "norm_label": "pemtoder()"
+    },
+    {
+      "label": "getAccessToken()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L59",
+      "id": "shared_google_getaccesstoken",
+      "community": 1,
+      "norm_label": "getaccesstoken()"
+    },
+    {
+      "label": "sheetsRequest()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L113",
+      "id": "shared_google_sheetsrequest",
+      "community": 1,
+      "norm_label": "sheetsrequest()"
+    },
+    {
+      "label": "a1()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L136",
+      "id": "shared_google_a1",
+      "community": 1,
+      "norm_label": "a1()"
+    },
+    {
+      "label": "columnLetter()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L141",
+      "id": "shared_google_columnletter",
+      "community": 1,
+      "norm_label": "columnletter()"
+    },
+    {
+      "label": "getSpreadsheetInfo()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L158",
+      "id": "shared_google_getspreadsheetinfo",
+      "community": 1,
+      "norm_label": "getspreadsheetinfo()"
+    },
+    {
+      "label": "getTabGrid()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L170",
+      "id": "shared_google_gettabgrid",
+      "community": 1,
+      "norm_label": "gettabgrid()"
+    },
+    {
+      "label": "batchGetValues()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L187",
+      "id": "shared_google_batchgetvalues",
+      "community": 1,
+      "norm_label": "batchgetvalues()"
+    },
+    {
+      "label": "batchUpdateValues()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L201",
+      "id": "shared_google_batchupdatevalues",
+      "community": 1,
+      "norm_label": "batchupdatevalues()"
+    },
+    {
+      "label": "batchUpdate()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L213",
+      "id": "shared_google_batchupdate",
+      "community": 1,
+      "norm_label": "batchupdate()"
+    },
+    {
+      "label": "dateSerial()",
+      "file_type": "code",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L223",
+      "id": "shared_google_dateserial",
+      "community": 1,
+      "norm_label": "dateserial()"
     },
     {
       "label": "http.ts",
@@ -3248,7 +3770,7 @@
       "file_type": "document",
       "source_file": "AGENTS.md",
       "source_location": "1-5",
-      "community": 82,
+      "community": 83,
       "norm_label": "next.js agent rules",
       "id": "agents_nextjs_agent_rules"
     },
@@ -3256,7 +3778,7 @@
       "label": "JustSchedule Project",
       "file_type": "document",
       "source_file": "README.md",
-      "community": 21,
+      "community": 22,
       "norm_label": "justschedule project",
       "id": "readme_justschedule_project"
     },
@@ -3265,7 +3787,7 @@
       "file_type": "document",
       "source_file": "README.md",
       "source_location": "1",
-      "community": 21,
+      "community": 22,
       "norm_label": "next.js framework",
       "id": "readme_nextjs_framework"
     },
@@ -3274,7 +3796,7 @@
       "file_type": "document",
       "source_file": "README.md",
       "source_location": "5-8",
-      "community": 21,
+      "community": 22,
       "norm_label": "supabase integration",
       "id": "readme_supabase_integration"
     },
@@ -3283,7 +3805,7 @@
       "file_type": "document",
       "source_file": "README.md",
       "source_location": "13-16",
-      "community": 21,
+      "community": 22,
       "norm_label": "google auth provider",
       "id": "readme_google_auth"
     },
@@ -3292,7 +3814,7 @@
       "file_type": "document",
       "source_file": "docs/system-design.md",
       "source_location": "1-9",
-      "community": 53,
+      "community": 55,
       "norm_label": "justschedule system overview",
       "id": "sysdesign_justschedule_overview"
     },
@@ -3301,7 +3823,7 @@
       "file_type": "document",
       "source_file": "docs/system-design.md",
       "source_location": "15-27",
-      "community": 22,
+      "community": 23,
       "norm_label": "booking record data model",
       "id": "sysdesign_booking_record"
     },
@@ -3310,7 +3832,7 @@
       "file_type": "document",
       "source_file": "docs/system-design.md",
       "source_location": "29-36",
-      "community": 83,
+      "community": 84,
       "norm_label": "slot reference (static config)",
       "id": "sysdesign_slot_reference"
     },
@@ -3319,7 +3841,7 @@
       "file_type": "document",
       "source_file": "docs/system-design.md",
       "source_location": "38-59",
-      "community": 22,
+      "community": 23,
       "norm_label": "supabase bookings schema",
       "id": "sysdesign_supabase_schema"
     },
@@ -3328,7 +3850,7 @@
       "file_type": "document",
       "source_file": "docs/system-design.md",
       "source_location": "61-79",
-      "community": 22,
+      "community": 23,
       "norm_label": "row level security policy",
       "id": "sysdesign_row_level_security"
     },
@@ -3337,7 +3859,7 @@
       "file_type": "document",
       "source_file": "docs/system-design.md",
       "source_location": "188-198",
-      "community": 84,
+      "community": 85,
       "norm_label": "swap requests schema (proposed)",
       "id": "sysdesign_swap_requests_schema"
     },
@@ -3346,7 +3868,7 @@
       "file_type": "document",
       "source_file": "docs/system-design.md",
       "source_location": "128-145",
-      "community": 85,
+      "community": 86,
       "norm_label": "ui component structure",
       "id": "sysdesign_ui_component_structure"
     },
@@ -3354,7 +3876,7 @@
       "label": "Schedule Page Orchestrator",
       "file_type": "document",
       "source_file": "docs/system-design.md",
-      "community": 86,
+      "community": 87,
       "norm_label": "schedule page orchestrator",
       "id": "sysdesign_page_tsx"
     },
@@ -3363,7 +3885,7 @@
       "file_type": "document",
       "source_file": "docs/system-design.md",
       "source_location": "161-178",
-      "community": 87,
+      "community": 88,
       "norm_label": "booking flow",
       "id": "sysdesign_booking_flow"
     },
@@ -3372,7 +3894,7 @@
       "file_type": "document",
       "source_file": "docs/system-design.md",
       "source_location": "200-213",
-      "community": 88,
+      "community": 89,
       "norm_label": "design system (css custom properties)",
       "id": "sysdesign_design_system"
     },
@@ -3396,7 +3918,7 @@
       "label": "Spec: Booking Data Model",
       "file_type": "document",
       "source_file": "docs/superpowers/specs/2026-04-28-exam-scheduler-design.md",
-      "community": 22,
+      "community": 23,
       "norm_label": "spec: booking data model",
       "id": "spec_booking_data_model"
     },
@@ -3404,7 +3926,7 @@
       "label": "JustSchedule UI Mockup (Full Dashboard)",
       "file_type": "image",
       "source_file": "docs/ChatGPT Image Apr 29, 2026, 09_51_58 AM.png",
-      "community": 53,
+      "community": 55,
       "norm_label": "justschedule ui mockup (full dashboard)",
       "id": "img_ui_mockup_morning"
     },
@@ -3412,7 +3934,7 @@
       "label": "Weekly Schedule Grid (Dark Theme Concept)",
       "file_type": "image",
       "source_file": "docs/images/ChatGPT Image Apr 29, 2026, 02_43_55 PM.png",
-      "community": 89,
+      "community": 90,
       "norm_label": "weekly schedule grid (dark theme concept)",
       "id": "img_weekly_schedule_grid"
     }
@@ -4622,7 +5144,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "components\\dashboard\\SchoolManagementTabs.tsx",
-      "source_location": "L87",
+      "source_location": "L88",
       "weight": 1.0,
       "_src": "components_dashboard_schoolmanagementtabs_tsx",
       "_tgt": "dashboard_schoolmanagementtabs_rendertabbutton",
@@ -4883,6 +5405,18 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\dashboard\\school-management-tabs\\api.ts",
+      "source_location": "L623",
+      "weight": 1.0,
+      "_src": "components_dashboard_school_management_tabs_api_ts",
+      "_tgt": "school_management_tabs_api_callgooglesheetsfunction",
+      "source": "components_dashboard_school_management_tabs_api_ts",
+      "target": "school_management_tabs_api_callgooglesheetsfunction",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "components\\dashboard\\school-management-tabs\\api.ts",
@@ -4940,6 +5474,18 @@
       "_tgt": "school_management_tabs_api_getaccesstoken",
       "source": "school_management_tabs_api_getaccesstoken",
       "target": "school_management_tabs_api_cancelschoolreservation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\dashboard\\school-management-tabs\\api.ts",
+      "source_location": "L630",
+      "weight": 1.0,
+      "_src": "school_management_tabs_api_callgooglesheetsfunction",
+      "_tgt": "school_management_tabs_api_getaccesstoken",
+      "source": "school_management_tabs_api_getaccesstoken",
+      "target": "school_management_tabs_api_callgooglesheetsfunction",
       "confidence_score": 1.0
     },
     {
@@ -5613,6 +6159,42 @@
       "_tgt": "school_management_tabs_attendancetab_updateattendance",
       "source": "school_management_tabs_api_setreservationattendance",
       "target": "school_management_tabs_attendancetab_updateattendance"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "components\\dashboard\\school-management-tabs\\api.ts",
+      "source_location": "L636",
+      "weight": 1.0,
+      "_src": "school_management_tabs_api_callgooglesheetsfunction",
+      "_tgt": "supabase_server_createclient",
+      "source": "school_management_tabs_api_callgooglesheetsfunction",
+      "target": "supabase_server_createclient"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "components\\dashboard\\school-management-tabs\\SettingsGoogleSheetPanel.tsx",
+      "source_location": "L74",
+      "weight": 1.0,
+      "_src": "school_management_tabs_settingsgooglesheetpanel_linksheet",
+      "_tgt": "school_management_tabs_api_callgooglesheetsfunction",
+      "source": "school_management_tabs_api_callgooglesheetsfunction",
+      "target": "school_management_tabs_settingsgooglesheetpanel_linksheet"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "components\\dashboard\\school-management-tabs\\SettingsGoogleSheetPanel.tsx",
+      "source_location": "L92",
+      "weight": 1.0,
+      "_src": "school_management_tabs_settingsgooglesheetpanel_unlinksheet",
+      "_tgt": "school_management_tabs_api_callgooglesheetsfunction",
+      "source": "school_management_tabs_api_callgooglesheetsfunction",
+      "target": "school_management_tabs_settingsgooglesheetpanel_unlinksheet"
     },
     {
       "relation": "contains",
@@ -6301,8 +6883,32 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "components\\dashboard\\school-management-tabs\\ReservationCopyExamsButton.tsx",
+      "source_location": "L63",
+      "weight": 1.0,
+      "_src": "components_dashboard_school_management_tabs_reservationcopyexamsbutton_tsx",
+      "_tgt": "school_management_tabs_reservationcopyexamsbutton_handlekeydown",
+      "source": "components_dashboard_school_management_tabs_reservationcopyexamsbutton_tsx",
+      "target": "school_management_tabs_reservationcopyexamsbutton_handlekeydown",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\dashboard\\school-management-tabs\\ReservationCopyExamsButton.tsx",
+      "source_location": "L95",
+      "weight": 1.0,
+      "_src": "components_dashboard_school_management_tabs_reservationcopyexamsbutton_tsx",
+      "_tgt": "school_management_tabs_reservationcopyexamsbutton_copyexams",
+      "source": "components_dashboard_school_management_tabs_reservationcopyexamsbutton_tsx",
+      "target": "school_management_tabs_reservationcopyexamsbutton_copyexams",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "components\\dashboard\\school-management-tabs\\ReservationsTab.tsx",
-      "source_location": "L163",
+      "source_location": "L174",
       "weight": 1.0,
       "_src": "components_dashboard_school_management_tabs_reservationstab_tsx",
       "_tgt": "school_management_tabs_reservationstab_cancelreservation",
@@ -6314,7 +6920,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "components\\dashboard\\school-management-tabs\\ReservationsTab.tsx",
-      "source_location": "L195",
+      "source_location": "L206",
       "weight": 1.0,
       "_src": "components_dashboard_school_management_tabs_reservationstab_tsx",
       "_tgt": "school_management_tabs_reservationstab_updatereservation",
@@ -6326,7 +6932,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "components\\dashboard\\school-management-tabs\\ReservationsTab.tsx",
-      "source_location": "L410",
+      "source_location": "L422",
       "weight": 1.0,
       "_src": "components_dashboard_school_management_tabs_reservationstab_tsx",
       "_tgt": "school_management_tabs_reservationstab_formatslottime",
@@ -6452,6 +7058,54 @@
       "_tgt": "school_management_tabs_settingsexamroomspanel_mergeslots",
       "source": "school_management_tabs_settingsexamroomspanel_mergeslots",
       "target": "school_management_tabs_settingsexamroomspanel_submitslotform",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\dashboard\\school-management-tabs\\SettingsGoogleSheetPanel.tsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_src": "components_dashboard_school_management_tabs_settingsgooglesheetpanel_tsx",
+      "_tgt": "school_management_tabs_settingsgooglesheetpanel_formatdatetime",
+      "source": "components_dashboard_school_management_tabs_settingsgooglesheetpanel_tsx",
+      "target": "school_management_tabs_settingsgooglesheetpanel_formatdatetime",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\dashboard\\school-management-tabs\\SettingsGoogleSheetPanel.tsx",
+      "source_location": "L64",
+      "weight": 1.0,
+      "_src": "components_dashboard_school_management_tabs_settingsgooglesheetpanel_tsx",
+      "_tgt": "school_management_tabs_settingsgooglesheetpanel_copyemail",
+      "source": "components_dashboard_school_management_tabs_settingsgooglesheetpanel_tsx",
+      "target": "school_management_tabs_settingsgooglesheetpanel_copyemail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\dashboard\\school-management-tabs\\SettingsGoogleSheetPanel.tsx",
+      "source_location": "L69",
+      "weight": 1.0,
+      "_src": "components_dashboard_school_management_tabs_settingsgooglesheetpanel_tsx",
+      "_tgt": "school_management_tabs_settingsgooglesheetpanel_linksheet",
+      "source": "components_dashboard_school_management_tabs_settingsgooglesheetpanel_tsx",
+      "target": "school_management_tabs_settingsgooglesheetpanel_linksheet",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "components\\dashboard\\school-management-tabs\\SettingsGoogleSheetPanel.tsx",
+      "source_location": "L90",
+      "weight": 1.0,
+      "_src": "components_dashboard_school_management_tabs_settingsgooglesheetpanel_tsx",
+      "_tgt": "school_management_tabs_settingsgooglesheetpanel_unlinksheet",
+      "source": "components_dashboard_school_management_tabs_settingsgooglesheetpanel_tsx",
+      "target": "school_management_tabs_settingsgooglesheetpanel_unlinksheet",
       "confidence_score": 1.0
     },
     {
@@ -7829,8 +8483,8 @@
       "source_file": "scripts\\booking-tests\\run.mjs",
       "source_location": "L149",
       "weight": 1.0,
-      "_src": "booking_tests_run_userclient",
-      "_tgt": "supabase_server_createclient",
+      "_src": "supabase_server_createclient",
+      "_tgt": "booking_tests_run_userclient",
       "source": "supabase_server_createclient",
       "target": "booking_tests_run_userclient"
     },
@@ -7841,8 +8495,8 @@
       "source_file": "scripts\\booking-tests\\run.mjs",
       "source_location": "L198",
       "weight": 1.0,
-      "_src": "booking_tests_run_signin",
-      "_tgt": "supabase_server_createclient",
+      "_src": "supabase_server_createclient",
+      "_tgt": "booking_tests_run_signin",
       "source": "supabase_server_createclient",
       "target": "booking_tests_run_signin"
     },
@@ -7853,8 +8507,8 @@
       "source_file": "supabase\\functions\\_shared\\supabase.ts",
       "source_location": "L46",
       "weight": 1.0,
-      "_src": "shared_supabase_authenticate",
-      "_tgt": "supabase_server_createclient",
+      "_src": "supabase_server_createclient",
+      "_tgt": "shared_supabase_authenticate",
       "source": "supabase_server_createclient",
       "target": "shared_supabase_authenticate"
     },
@@ -7865,8 +8519,8 @@
       "source_file": "supabase\\functions\\_shared\\supabase.ts",
       "source_location": "L75",
       "weight": 1.0,
-      "_src": "shared_supabase_createadminclient",
-      "_tgt": "supabase_server_createclient",
+      "_src": "supabase_server_createclient",
+      "_tgt": "shared_supabase_createadminclient",
       "source": "supabase_server_createclient",
       "target": "shared_supabase_createadminclient"
     },
@@ -8461,6 +9115,1194 @@
     {
       "relation": "imports_from",
       "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_index_ts",
+      "_tgt": "supabase_functions_shared_google_ts",
+      "source": "supabase_functions_google_sheets_index_ts",
+      "target": "supabase_functions_shared_google_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_index_ts",
+      "_tgt": "supabase_functions_shared_http_ts",
+      "source": "supabase_functions_google_sheets_index_ts",
+      "target": "supabase_functions_shared_http_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_index_ts",
+      "_tgt": "supabase_functions_shared_supabase_ts",
+      "source": "supabase_functions_google_sheets_index_ts",
+      "target": "supabase_functions_shared_supabase_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_index_ts",
+      "_tgt": "supabase_functions_google_sheets_week_tab_ts",
+      "source": "supabase_functions_google_sheets_index_ts",
+      "target": "supabase_functions_google_sheets_week_tab_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L53",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_index_ts",
+      "_tgt": "google_sheets_index_entrytext",
+      "source": "supabase_functions_google_sheets_index_ts",
+      "target": "google_sheets_index_entrytext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L59",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_index_ts",
+      "_tgt": "google_sheets_index_parsespreadsheetid",
+      "source": "supabase_functions_google_sheets_index_ts",
+      "target": "google_sheets_index_parsespreadsheetid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L65",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_index_ts",
+      "_tgt": "google_sheets_index_describeerror",
+      "source": "supabase_functions_google_sheets_index_ts",
+      "target": "google_sheets_index_describeerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L79",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_index_ts",
+      "_tgt": "google_sheets_index_loadslottemplates",
+      "source": "supabase_functions_google_sheets_index_ts",
+      "target": "google_sheets_index_loadslottemplates",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L107",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_index_ts",
+      "_tgt": "google_sheets_index_syncschoolsheet",
+      "source": "supabase_functions_google_sheets_index_ts",
+      "target": "google_sheets_index_syncschoolsheet",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L208",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_index_ts",
+      "_tgt": "google_sheets_index_updateclaimedlink",
+      "source": "supabase_functions_google_sheets_index_ts",
+      "target": "google_sheets_index_updateclaimedlink",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L222",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_index_ts",
+      "_tgt": "google_sheets_index_handlesync",
+      "source": "supabase_functions_google_sheets_index_ts",
+      "target": "google_sheets_index_handlesync",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L274",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_index_ts",
+      "_tgt": "google_sheets_index_handleadminaction",
+      "source": "supabase_functions_google_sheets_index_ts",
+      "target": "google_sheets_index_handleadminaction",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L125",
+      "weight": 1.0,
+      "_src": "google_sheets_index_syncschoolsheet",
+      "_tgt": "google_sheets_index_entrytext",
+      "source": "google_sheets_index_entrytext",
+      "target": "google_sheets_index_syncschoolsheet",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L335",
+      "weight": 1.0,
+      "_src": "google_sheets_index_handleadminaction",
+      "_tgt": "google_sheets_index_parsespreadsheetid",
+      "source": "google_sheets_index_parsespreadsheetid",
+      "target": "google_sheets_index_handleadminaction",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L250",
+      "weight": 1.0,
+      "_src": "google_sheets_index_handlesync",
+      "_tgt": "google_sheets_index_describeerror",
+      "source": "google_sheets_index_describeerror",
+      "target": "google_sheets_index_handlesync",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L346",
+      "weight": 1.0,
+      "_src": "google_sheets_index_handleadminaction",
+      "_tgt": "google_sheets_index_describeerror",
+      "source": "google_sheets_index_describeerror",
+      "target": "google_sheets_index_handleadminaction",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L171",
+      "weight": 1.0,
+      "_src": "google_sheets_index_syncschoolsheet",
+      "_tgt": "google_sheets_index_loadslottemplates",
+      "source": "google_sheets_index_loadslottemplates",
+      "target": "google_sheets_index_syncschoolsheet",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L246",
+      "weight": 1.0,
+      "_src": "google_sheets_index_handlesync",
+      "_tgt": "google_sheets_index_syncschoolsheet",
+      "source": "google_sheets_index_syncschoolsheet",
+      "target": "google_sheets_index_handlesync",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L163",
+      "weight": 1.0,
+      "_src": "google_sheets_index_syncschoolsheet",
+      "_tgt": "shared_google_getspreadsheetinfo",
+      "source": "google_sheets_index_syncschoolsheet",
+      "target": "shared_google_getspreadsheetinfo"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L164",
+      "weight": 1.0,
+      "_src": "google_sheets_index_syncschoolsheet",
+      "_tgt": "google_sheets_week_tab_indexweektabs",
+      "source": "google_sheets_index_syncschoolsheet",
+      "target": "google_sheets_week_tab_indexweektabs"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L169",
+      "weight": 1.0,
+      "_src": "google_sheets_index_syncschoolsheet",
+      "_tgt": "shared_google_dateserial",
+      "source": "google_sheets_index_syncschoolsheet",
+      "target": "shared_google_dateserial"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L172",
+      "weight": 1.0,
+      "_src": "google_sheets_index_syncschoolsheet",
+      "_tgt": "google_sheets_week_tab_createweektab",
+      "source": "google_sheets_index_syncschoolsheet",
+      "target": "google_sheets_week_tab_createweektab"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L177",
+      "weight": 1.0,
+      "_src": "google_sheets_index_syncschoolsheet",
+      "_tgt": "google_sheets_week_tab_syncweek",
+      "source": "google_sheets_index_syncschoolsheet",
+      "target": "google_sheets_week_tab_syncweek"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L256",
+      "weight": 1.0,
+      "_src": "google_sheets_index_handlesync",
+      "_tgt": "google_sheets_index_updateclaimedlink",
+      "source": "google_sheets_index_updateclaimedlink",
+      "target": "google_sheets_index_handlesync",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L219",
+      "weight": 1.0,
+      "_src": "google_sheets_index_updateclaimedlink",
+      "_tgt": "shared_supabase_logdatabaseerror",
+      "source": "google_sheets_index_updateclaimedlink",
+      "target": "shared_supabase_logdatabaseerror"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L223",
+      "weight": 1.0,
+      "_src": "google_sheets_index_handlesync",
+      "_tgt": "shared_supabase_createadminclient",
+      "source": "google_sheets_index_handlesync",
+      "target": "shared_supabase_createadminclient"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L231",
+      "weight": 1.0,
+      "_src": "google_sheets_index_handlesync",
+      "_tgt": "shared_http_jsonresponse",
+      "source": "google_sheets_index_handlesync",
+      "target": "shared_http_jsonresponse"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L236",
+      "weight": 1.0,
+      "_src": "google_sheets_index_handlesync",
+      "_tgt": "shared_supabase_logdatabaseerror",
+      "source": "google_sheets_index_handlesync",
+      "target": "shared_supabase_logdatabaseerror"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L240",
+      "weight": 1.0,
+      "_src": "google_sheets_index_handlesync",
+      "_tgt": "shared_google_getserviceaccount",
+      "source": "google_sheets_index_handlesync",
+      "target": "shared_google_getserviceaccount"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L275",
+      "weight": 1.0,
+      "_src": "google_sheets_index_handleadminaction",
+      "_tgt": "shared_http_readstring",
+      "source": "google_sheets_index_handleadminaction",
+      "target": "shared_http_readstring"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L277",
+      "weight": 1.0,
+      "_src": "google_sheets_index_handleadminaction",
+      "_tgt": "shared_http_jsonresponse",
+      "source": "google_sheets_index_handleadminaction",
+      "target": "shared_http_jsonresponse"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L280",
+      "weight": 1.0,
+      "_src": "google_sheets_index_handleadminaction",
+      "_tgt": "shared_supabase_authenticate",
+      "source": "google_sheets_index_handleadminaction",
+      "target": "shared_supabase_authenticate"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L288",
+      "weight": 1.0,
+      "_src": "google_sheets_index_handleadminaction",
+      "_tgt": "shared_supabase_logdatabaseerror",
+      "source": "google_sheets_index_handleadminaction",
+      "target": "shared_supabase_logdatabaseerror"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L295",
+      "weight": 1.0,
+      "_src": "google_sheets_index_handleadminaction",
+      "_tgt": "shared_supabase_createadminclient",
+      "source": "google_sheets_index_handleadminaction",
+      "target": "shared_supabase_createadminclient"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L298",
+      "weight": 1.0,
+      "_src": "google_sheets_index_handleadminaction",
+      "_tgt": "shared_google_getserviceaccount",
+      "source": "google_sheets_index_handleadminaction",
+      "target": "shared_google_getserviceaccount"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\index.ts",
+      "source_location": "L343",
+      "weight": 1.0,
+      "_src": "google_sheets_index_handleadminaction",
+      "_tgt": "shared_google_getspreadsheetinfo",
+      "source": "google_sheets_index_handleadminaction",
+      "target": "shared_google_getspreadsheetinfo"
+    },
+    {
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_week_tab_ts",
+      "_tgt": "supabase_functions_shared_google_ts",
+      "source": "supabase_functions_google_sheets_week_tab_ts",
+      "target": "supabase_functions_shared_google_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L57",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_week_tab_ts",
+      "_tgt": "google_sheets_week_tab_mondayof",
+      "source": "supabase_functions_google_sheets_week_tab_ts",
+      "target": "google_sheets_week_tab_mondayof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L64",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_week_tab_ts",
+      "_tgt": "google_sheets_week_tab_adddays",
+      "source": "supabase_functions_google_sheets_week_tab_ts",
+      "target": "google_sheets_week_tab_adddays",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L71",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_week_tab_ts",
+      "_tgt": "google_sheets_week_tab_weektitle",
+      "source": "supabase_functions_google_sheets_week_tab_ts",
+      "target": "google_sheets_week_tab_weektitle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L81",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_week_tab_ts",
+      "_tgt": "google_sheets_week_tab_uniquetitle",
+      "source": "supabase_functions_google_sheets_week_tab_ts",
+      "target": "google_sheets_week_tab_uniquetitle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L87",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_week_tab_ts",
+      "_tgt": "google_sheets_week_tab_isblank",
+      "source": "supabase_functions_google_sheets_week_tab_ts",
+      "target": "google_sheets_week_tab_isblank",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L91",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_week_tab_ts",
+      "_tgt": "google_sheets_week_tab_timekey",
+      "source": "supabase_functions_google_sheets_week_tab_ts",
+      "target": "google_sheets_week_tab_timekey",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L97",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_week_tab_ts",
+      "_tgt": "google_sheets_week_tab_finddayrow",
+      "source": "supabase_functions_google_sheets_week_tab_ts",
+      "target": "google_sheets_week_tab_finddayrow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L107",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_week_tab_ts",
+      "_tgt": "google_sheets_week_tab_indexweektabs",
+      "source": "supabase_functions_google_sheets_week_tab_ts",
+      "target": "google_sheets_week_tab_indexweektabs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L135",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_week_tab_ts",
+      "_tgt": "google_sheets_week_tab_readlayout",
+      "source": "supabase_functions_google_sheets_week_tab_ts",
+      "target": "google_sheets_week_tab_readlayout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L184",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_week_tab_ts",
+      "_tgt": "google_sheets_week_tab_weekdayindex",
+      "source": "supabase_functions_google_sheets_week_tab_ts",
+      "target": "google_sheets_week_tab_weekdayindex",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L188",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_week_tab_ts",
+      "_tgt": "google_sheets_week_tab_planweek",
+      "source": "supabase_functions_google_sheets_week_tab_ts",
+      "target": "google_sheets_week_tab_planweek",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L256",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_week_tab_ts",
+      "_tgt": "google_sheets_week_tab_growblocks",
+      "source": "supabase_functions_google_sheets_week_tab_ts",
+      "target": "google_sheets_week_tab_growblocks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L293",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_week_tab_ts",
+      "_tgt": "google_sheets_week_tab_noticetext",
+      "source": "supabase_functions_google_sheets_week_tab_ts",
+      "target": "google_sheets_week_tab_noticetext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L297",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_week_tab_ts",
+      "_tgt": "google_sheets_week_tab_hasnotice",
+      "source": "supabase_functions_google_sheets_week_tab_ts",
+      "target": "google_sheets_week_tab_hasnotice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L301",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_week_tab_ts",
+      "_tgt": "google_sheets_week_tab_noticeiscurrent",
+      "source": "supabase_functions_google_sheets_week_tab_ts",
+      "target": "google_sheets_week_tab_noticeiscurrent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L306",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_week_tab_ts",
+      "_tgt": "google_sheets_week_tab_noticetextrequest",
+      "source": "supabase_functions_google_sheets_week_tab_ts",
+      "target": "google_sheets_week_tab_noticetextrequest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L337",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_week_tab_ts",
+      "_tgt": "google_sheets_week_tab_addnotice",
+      "source": "supabase_functions_google_sheets_week_tab_ts",
+      "target": "google_sheets_week_tab_addnotice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L408",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_week_tab_ts",
+      "_tgt": "google_sheets_week_tab_syncweek",
+      "source": "supabase_functions_google_sheets_week_tab_ts",
+      "target": "google_sheets_week_tab_syncweek",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L442",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_week_tab_ts",
+      "_tgt": "google_sheets_week_tab_createweektab",
+      "source": "supabase_functions_google_sheets_week_tab_ts",
+      "target": "google_sheets_week_tab_createweektab",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L497",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_week_tab_ts",
+      "_tgt": "google_sheets_week_tab_registertab",
+      "source": "supabase_functions_google_sheets_week_tab_ts",
+      "target": "google_sheets_week_tab_registertab",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L506",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_week_tab_ts",
+      "_tgt": "google_sheets_week_tab_rgb",
+      "source": "supabase_functions_google_sheets_week_tab_ts",
+      "target": "google_sheets_week_tab_rgb",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L516",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_week_tab_ts",
+      "_tgt": "google_sheets_week_tab_buildfreshweektab",
+      "source": "supabase_functions_google_sheets_week_tab_ts",
+      "target": "google_sheets_week_tab_buildfreshweektab",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L676",
+      "weight": 1.0,
+      "_src": "supabase_functions_google_sheets_week_tab_ts",
+      "_tgt": "google_sheets_week_tab_dimension",
+      "source": "supabase_functions_google_sheets_week_tab_ts",
+      "target": "google_sheets_week_tab_dimension",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L72",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_weektitle",
+      "_tgt": "google_sheets_week_tab_adddays",
+      "source": "google_sheets_week_tab_adddays",
+      "target": "google_sheets_week_tab_weektitle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L448",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_createweektab",
+      "_tgt": "google_sheets_week_tab_weektitle",
+      "source": "google_sheets_week_tab_weektitle",
+      "target": "google_sheets_week_tab_createweektab",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L448",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_createweektab",
+      "_tgt": "google_sheets_week_tab_uniquetitle",
+      "source": "google_sheets_week_tab_uniquetitle",
+      "target": "google_sheets_week_tab_createweektab",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L237",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_planweek",
+      "_tgt": "google_sheets_week_tab_isblank",
+      "source": "google_sheets_week_tab_isblank",
+      "target": "google_sheets_week_tab_planweek",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L167",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_readlayout",
+      "_tgt": "google_sheets_week_tab_timekey",
+      "source": "google_sheets_week_tab_timekey",
+      "target": "google_sheets_week_tab_readlayout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L145",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_readlayout",
+      "_tgt": "google_sheets_week_tab_finddayrow",
+      "source": "google_sheets_week_tab_finddayrow",
+      "target": "google_sheets_week_tab_readlayout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L464",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_createweektab",
+      "_tgt": "google_sheets_week_tab_finddayrow",
+      "source": "google_sheets_week_tab_finddayrow",
+      "target": "google_sheets_week_tab_createweektab",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L108",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_indexweektabs",
+      "_tgt": "shared_google_batchgetvalues",
+      "source": "google_sheets_week_tab_indexweektabs",
+      "target": "shared_google_batchgetvalues"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L416",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_syncweek",
+      "_tgt": "google_sheets_week_tab_readlayout",
+      "source": "google_sheets_week_tab_readlayout",
+      "target": "google_sheets_week_tab_syncweek",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L463",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_createweektab",
+      "_tgt": "google_sheets_week_tab_readlayout",
+      "source": "google_sheets_week_tab_readlayout",
+      "target": "google_sheets_week_tab_createweektab",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L141",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_readlayout",
+      "_tgt": "shared_google_batchgetvalues",
+      "source": "google_sheets_week_tab_readlayout",
+      "target": "shared_google_batchgetvalues"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L141",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_readlayout",
+      "_tgt": "shared_google_a1",
+      "source": "google_sheets_week_tab_readlayout",
+      "target": "shared_google_a1"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L142",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_readlayout",
+      "_tgt": "shared_google_gettabgrid",
+      "source": "google_sheets_week_tab_readlayout",
+      "target": "shared_google_gettabgrid"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L185",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_weekdayindex",
+      "_tgt": "shared_google_dateserial",
+      "source": "google_sheets_week_tab_weekdayindex",
+      "target": "shared_google_dateserial"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L425",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_syncweek",
+      "_tgt": "google_sheets_week_tab_planweek",
+      "source": "google_sheets_week_tab_planweek",
+      "target": "google_sheets_week_tab_syncweek",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L428",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_syncweek",
+      "_tgt": "google_sheets_week_tab_growblocks",
+      "source": "google_sheets_week_tab_growblocks",
+      "target": "google_sheets_week_tab_syncweek",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L271",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_growblocks",
+      "_tgt": "shared_google_batchupdate",
+      "source": "google_sheets_week_tab_growblocks",
+      "target": "shared_google_batchupdate"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L418",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_syncweek",
+      "_tgt": "google_sheets_week_tab_hasnotice",
+      "source": "google_sheets_week_tab_hasnotice",
+      "target": "google_sheets_week_tab_syncweek",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L421",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_syncweek",
+      "_tgt": "google_sheets_week_tab_noticeiscurrent",
+      "source": "google_sheets_week_tab_noticeiscurrent",
+      "target": "google_sheets_week_tab_syncweek",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L403",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_addnotice",
+      "_tgt": "google_sheets_week_tab_noticetextrequest",
+      "source": "google_sheets_week_tab_noticetextrequest",
+      "target": "google_sheets_week_tab_addnotice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L422",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_syncweek",
+      "_tgt": "google_sheets_week_tab_noticetextrequest",
+      "source": "google_sheets_week_tab_noticetextrequest",
+      "target": "google_sheets_week_tab_syncweek",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L366",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_addnotice",
+      "_tgt": "google_sheets_week_tab_rgb",
+      "source": "google_sheets_week_tab_addnotice",
+      "target": "google_sheets_week_tab_rgb",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L419",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_syncweek",
+      "_tgt": "google_sheets_week_tab_addnotice",
+      "source": "google_sheets_week_tab_addnotice",
+      "target": "google_sheets_week_tab_syncweek",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L342",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_addnotice",
+      "_tgt": "shared_google_batchupdate",
+      "source": "google_sheets_week_tab_addnotice",
+      "target": "shared_google_batchupdate"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L415",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_syncweek",
+      "_tgt": "shared_google_dateserial",
+      "source": "google_sheets_week_tab_syncweek",
+      "target": "shared_google_dateserial"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L422",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_syncweek",
+      "_tgt": "shared_google_batchupdate",
+      "source": "google_sheets_week_tab_syncweek",
+      "target": "shared_google_batchupdate"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L433",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_syncweek",
+      "_tgt": "shared_google_batchupdatevalues",
+      "source": "google_sheets_week_tab_syncweek",
+      "target": "shared_google_batchupdatevalues"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L488",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_createweektab",
+      "_tgt": "google_sheets_week_tab_registertab",
+      "source": "google_sheets_week_tab_createweektab",
+      "target": "google_sheets_week_tab_registertab",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L492",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_createweektab",
+      "_tgt": "google_sheets_week_tab_buildfreshweektab",
+      "source": "google_sheets_week_tab_createweektab",
+      "target": "google_sheets_week_tab_buildfreshweektab",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L449",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_createweektab",
+      "_tgt": "shared_google_dateserial",
+      "source": "google_sheets_week_tab_createweektab",
+      "target": "shared_google_dateserial"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L453",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_createweektab",
+      "_tgt": "shared_google_batchupdate",
+      "source": "google_sheets_week_tab_createweektab",
+      "target": "shared_google_batchupdate"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L482",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_createweektab",
+      "_tgt": "shared_google_a1",
+      "source": "google_sheets_week_tab_createweektab",
+      "target": "shared_google_a1"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L482",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_createweektab",
+      "_tgt": "shared_google_columnletter",
+      "source": "google_sheets_week_tab_createweektab",
+      "target": "shared_google_columnletter"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L486",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_createweektab",
+      "_tgt": "shared_google_batchupdatevalues",
+      "source": "google_sheets_week_tab_createweektab",
+      "target": "shared_google_batchupdatevalues"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L550",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_buildfreshweektab",
+      "_tgt": "google_sheets_week_tab_rgb",
+      "source": "google_sheets_week_tab_rgb",
+      "target": "google_sheets_week_tab_buildfreshweektab",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L649",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_buildfreshweektab",
+      "_tgt": "google_sheets_week_tab_dimension",
+      "source": "google_sheets_week_tab_buildfreshweektab",
+      "target": "google_sheets_week_tab_dimension",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L531",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_buildfreshweektab",
+      "_tgt": "shared_google_batchupdate",
+      "source": "google_sheets_week_tab_buildfreshweektab",
+      "target": "shared_google_batchupdate"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L665",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_buildfreshweektab",
+      "_tgt": "shared_google_batchupdatevalues",
+      "source": "google_sheets_week_tab_buildfreshweektab",
+      "target": "shared_google_batchupdatevalues"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "supabase\\functions\\google-sheets\\week-tab.ts",
+      "source_location": "L666",
+      "weight": 1.0,
+      "_src": "google_sheets_week_tab_buildfreshweektab",
+      "_tgt": "shared_google_a1",
+      "source": "google_sheets_week_tab_buildfreshweektab",
+      "target": "shared_google_a1"
+    },
+    {
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
       "source_file": "supabase\\functions\\reserve-exam-slot\\index.ts",
       "source_location": "L1",
       "weight": 1.0,
@@ -8761,6 +10603,306 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_src": "supabase_functions_shared_google_ts",
+      "_tgt": "shared_google_googleapierror",
+      "source": "supabase_functions_shared_google_ts",
+      "target": "shared_google_googleapierror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L28",
+      "weight": 1.0,
+      "_src": "supabase_functions_shared_google_ts",
+      "_tgt": "shared_google_getserviceaccount",
+      "source": "supabase_functions_shared_google_ts",
+      "target": "shared_google_getserviceaccount",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L45",
+      "weight": 1.0,
+      "_src": "supabase_functions_shared_google_ts",
+      "_tgt": "shared_google_base64url",
+      "source": "supabase_functions_shared_google_ts",
+      "target": "shared_google_base64url",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L53",
+      "weight": 1.0,
+      "_src": "supabase_functions_shared_google_ts",
+      "_tgt": "shared_google_pemtoder",
+      "source": "supabase_functions_shared_google_ts",
+      "target": "shared_google_pemtoder",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L59",
+      "weight": 1.0,
+      "_src": "supabase_functions_shared_google_ts",
+      "_tgt": "shared_google_getaccesstoken",
+      "source": "supabase_functions_shared_google_ts",
+      "target": "shared_google_getaccesstoken",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L113",
+      "weight": 1.0,
+      "_src": "supabase_functions_shared_google_ts",
+      "_tgt": "shared_google_sheetsrequest",
+      "source": "supabase_functions_shared_google_ts",
+      "target": "shared_google_sheetsrequest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L136",
+      "weight": 1.0,
+      "_src": "supabase_functions_shared_google_ts",
+      "_tgt": "shared_google_a1",
+      "source": "supabase_functions_shared_google_ts",
+      "target": "shared_google_a1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L141",
+      "weight": 1.0,
+      "_src": "supabase_functions_shared_google_ts",
+      "_tgt": "shared_google_columnletter",
+      "source": "supabase_functions_shared_google_ts",
+      "target": "shared_google_columnletter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L158",
+      "weight": 1.0,
+      "_src": "supabase_functions_shared_google_ts",
+      "_tgt": "shared_google_getspreadsheetinfo",
+      "source": "supabase_functions_shared_google_ts",
+      "target": "shared_google_getspreadsheetinfo",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L170",
+      "weight": 1.0,
+      "_src": "supabase_functions_shared_google_ts",
+      "_tgt": "shared_google_gettabgrid",
+      "source": "supabase_functions_shared_google_ts",
+      "target": "shared_google_gettabgrid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L187",
+      "weight": 1.0,
+      "_src": "supabase_functions_shared_google_ts",
+      "_tgt": "shared_google_batchgetvalues",
+      "source": "supabase_functions_shared_google_ts",
+      "target": "shared_google_batchgetvalues",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L201",
+      "weight": 1.0,
+      "_src": "supabase_functions_shared_google_ts",
+      "_tgt": "shared_google_batchupdatevalues",
+      "source": "supabase_functions_shared_google_ts",
+      "target": "shared_google_batchupdatevalues",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L213",
+      "weight": 1.0,
+      "_src": "supabase_functions_shared_google_ts",
+      "_tgt": "shared_google_batchupdate",
+      "source": "supabase_functions_shared_google_ts",
+      "target": "shared_google_batchupdate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L223",
+      "weight": 1.0,
+      "_src": "supabase_functions_shared_google_ts",
+      "_tgt": "shared_google_dateserial",
+      "source": "supabase_functions_shared_google_ts",
+      "target": "shared_google_dateserial",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_src": "shared_google_googleapierror",
+      "_tgt": "shared_google_googleapierror_constructor",
+      "source": "shared_google_googleapierror",
+      "target": "shared_google_googleapierror_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L64",
+      "weight": 1.0,
+      "_src": "shared_google_getaccesstoken",
+      "_tgt": "shared_google_getserviceaccount",
+      "source": "shared_google_getserviceaccount",
+      "target": "shared_google_getaccesstoken",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L66",
+      "weight": 1.0,
+      "_src": "shared_google_getaccesstoken",
+      "_tgt": "shared_google_base64url",
+      "source": "shared_google_base64url",
+      "target": "shared_google_getaccesstoken",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L78",
+      "weight": 1.0,
+      "_src": "shared_google_getaccesstoken",
+      "_tgt": "shared_google_pemtoder",
+      "source": "shared_google_pemtoder",
+      "target": "shared_google_getaccesstoken",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L118",
+      "weight": 1.0,
+      "_src": "shared_google_sheetsrequest",
+      "_tgt": "shared_google_getaccesstoken",
+      "source": "shared_google_getaccesstoken",
+      "target": "shared_google_sheetsrequest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L159",
+      "weight": 1.0,
+      "_src": "shared_google_getspreadsheetinfo",
+      "_tgt": "shared_google_sheetsrequest",
+      "source": "shared_google_sheetsrequest",
+      "target": "shared_google_getspreadsheetinfo",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L171",
+      "weight": 1.0,
+      "_src": "shared_google_gettabgrid",
+      "_tgt": "shared_google_sheetsrequest",
+      "source": "shared_google_sheetsrequest",
+      "target": "shared_google_gettabgrid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L190",
+      "weight": 1.0,
+      "_src": "shared_google_batchgetvalues",
+      "_tgt": "shared_google_sheetsrequest",
+      "source": "shared_google_sheetsrequest",
+      "target": "shared_google_batchgetvalues",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L206",
+      "weight": 1.0,
+      "_src": "shared_google_batchupdatevalues",
+      "_tgt": "shared_google_sheetsrequest",
+      "source": "shared_google_sheetsrequest",
+      "target": "shared_google_batchupdatevalues",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L215",
+      "weight": 1.0,
+      "_src": "shared_google_batchupdate",
+      "_tgt": "shared_google_sheetsrequest",
+      "source": "shared_google_sheetsrequest",
+      "target": "shared_google_batchupdate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "supabase\\functions\\_shared\\google.ts",
+      "source_location": "L173",
+      "weight": 1.0,
+      "_src": "shared_google_gettabgrid",
+      "_tgt": "shared_google_a1",
+      "source": "shared_google_a1",
+      "target": "shared_google_gettabgrid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "supabase\\functions\\_shared\\http.ts",
       "source_location": "L10",
       "weight": 1.0,
@@ -8837,8 +10979,8 @@
       "source_file": "supabase\\functions\\_shared\\supabase.ts",
       "source_location": "L14",
       "weight": 1.0,
-      "_src": "shared_supabase_missingenvresponse",
-      "_tgt": "shared_http_jsonresponse",
+      "_src": "shared_http_jsonresponse",
+      "_tgt": "shared_supabase_missingenvresponse",
       "source": "shared_http_jsonresponse",
       "target": "shared_supabase_missingenvresponse"
     },
@@ -8849,8 +10991,8 @@
       "source_file": "supabase\\functions\\_shared\\supabase.ts",
       "source_location": "L57",
       "weight": 1.0,
-      "_src": "shared_supabase_authenticate",
-      "_tgt": "shared_http_jsonresponse",
+      "_src": "shared_http_jsonresponse",
+      "_tgt": "shared_supabase_authenticate",
       "source": "shared_http_jsonresponse",
       "target": "shared_supabase_authenticate"
     },
@@ -8861,8 +11003,8 @@
       "source_file": "supabase\\functions\\_shared\\reservations.ts",
       "source_location": "L25",
       "weight": 1.0,
-      "_src": "shared_reservations_parsereservationinput",
-      "_tgt": "shared_http_readstring",
+      "_src": "shared_http_readstring",
+      "_tgt": "shared_reservations_parsereservationinput",
       "source": "shared_http_readstring",
       "target": "shared_reservations_parsereservationinput"
     },
@@ -8873,8 +11015,8 @@
       "source_file": "supabase\\functions\\_shared\\reservations.ts",
       "source_location": "L33",
       "weight": 1.0,
-      "_src": "shared_reservations_parsereservationinput",
-      "_tgt": "shared_http_isisodate",
+      "_src": "shared_http_isisodate",
+      "_tgt": "shared_reservations_parsereservationinput",
       "source": "shared_http_isisodate",
       "target": "shared_reservations_parsereservationinput"
     },

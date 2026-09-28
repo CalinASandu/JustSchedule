@@ -1,9 +1,11 @@
 import type React from "react";
 import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
+import { ReservationCopyExamsButton } from "./ReservationCopyExamsButton";
 import type { ReservationViewMode } from "./types";
 
 type ReservationToolbarProps = {
   reservationDate: string;
+  dayExamLines: string[];
   reservationViewMode: ReservationViewMode;
   reservationWeekDates: string[];
   setReservationDate: React.Dispatch<React.SetStateAction<string>>;
@@ -14,6 +16,7 @@ type ReservationToolbarProps = {
 
 export function ReservationToolbar({
   reservationDate,
+  dayExamLines,
   reservationViewMode,
   reservationWeekDates,
   setReservationDate,
@@ -94,6 +97,10 @@ export function ReservationToolbar({
             <ChevronRight size={16} />
           </button>
         </div>
+
+        {reservationViewMode === "day" && (
+          <ReservationCopyExamsButton lines={dayExamLines} dateLabel={rangeLabel} />
+        )}
 
         <div
           className="flex w-full rounded-xl p-1 md:w-fit"

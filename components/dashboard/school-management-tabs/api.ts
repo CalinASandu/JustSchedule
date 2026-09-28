@@ -605,3 +605,56 @@ export async function setReservationAttendance(args: {
 
   return { data: null, error: null };
 }
+
+export type SchoolSheetLink = {
+  spreadsheet_id: string;
+  spreadsheet_title: string | null;
+  linked_at: string;
+  last_synced_at: string | null;
+  last_error: string | null;
+};
+
+export type SchoolSheetStatus = {
+  serviceAccountEmail: string;
+  link: SchoolSheetLink | null;
+};
+
+/** Calls the google-sheets function; its error messages are already written for users. */
+export async function callGoogleSheetsFunction(
+  body: { action: "status" | "unlink"; schoolId: string } | {
+    action: "link";
+    schoolId: string;
+    sheetUrl: string;
+  },
+): Promise<ApiResult<Partial<SchoolSheetStatus>>> {
+  const accessToken = await getAccessToken();
+
+  if (!accessToken) {
+    return { data: null, error: "You need to sign in again." };
+  }
+
+  const supabase = createClient();
+  const { data, error } = await supabase.functions.invoke("google-sheets", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body,
+  });
+
+  if (error) {
+    console.error(`Google Sheets ${body.action} failed`, error);
+    const context = (error as { context?: unknown }).context;
+    const payload =
+      context instanceof Response ? await context.clone().json().catch(() => null) : null;
+
+    return {
+      data: null,
+      error:
+        typeof payload?.error === "string"
+          ? payload.error
+          : "Could not reach the Google Sheets service. Try again in a moment.",
+    };
+  }
+
+  return { data: (data ?? {}) as Partial<SchoolSheetStatus>, error: null };
+}
