@@ -130,6 +130,17 @@ export function ReservationsTab({
     () => visibleReservations.filter((reservation) => reservation.reservationDate === reservationDate),
     [reservationDate, visibleReservations],
   );
+  // "Exam name, Type" for every exam that day, in time-slot order.
+  const dayExamLines = useMemo(() => {
+    const slotStart = new Map(examSlots.map((slot) => [slot.id, slot.startsAt]));
+    return [...dayReservations]
+      .sort(
+        (first, second) =>
+          (slotStart.get(first.slotId) ?? "").localeCompare(slotStart.get(second.slotId) ?? "") ||
+          first.createdAt.localeCompare(second.createdAt),
+      )
+      .map((reservation) => `${reservation.examName}, ${formatExamType(reservation.examType)}`);
+  }, [dayReservations, examSlots]);
   const weekReservations = useMemo(
     () =>
       visibleReservations.filter((reservation) =>
@@ -253,6 +264,7 @@ export function ReservationsTab({
     <div className="p-4 sm:p-5">
       <ReservationToolbar
         reservationDate={reservationDate}
+        dayExamLines={dayExamLines}
         reservationViewMode={reservationViewMode}
         reservationWeekDates={reservationWeekDates}
         setReservationDate={setReservationDate}

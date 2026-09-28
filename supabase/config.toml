@@ -12,3 +12,8 @@ verify_jwt = true
 
 [functions.cancel-reservation]
 verify_jwt = true
+
+# Called by pg_cron with a vault secret (no user JWT); user actions check the
+# caller's session and admin role inside the function.
+[functions.google-sheets]
+verify_jwt = false

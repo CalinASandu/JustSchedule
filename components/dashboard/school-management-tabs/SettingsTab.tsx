@@ -2,10 +2,11 @@ import { useState } from "react";
 import { InvitesTab } from "./InvitesTab";
 import { SettingsDangerZonePanel } from "./SettingsDangerZonePanel";
 import { SettingsExamRoomsPanel } from "./SettingsExamRoomsPanel";
+import { SettingsGoogleSheetPanel } from "./SettingsGoogleSheetPanel";
 import { SettingsSubjectsPanel } from "./SettingsSubjectsPanel";
 import type { ExamSlot, SchoolInvite, SchoolSubject } from "./types";
 
-export type SettingsSection = "subjects" | "examRooms" | "invites" | "danger";
+export type SettingsSection = "subjects" | "examRooms" | "invites" | "googleSheet" | "danger";
 
 type SettingsTabProps = {
   schoolId: string;
@@ -21,6 +22,7 @@ const settingsSections: { id: SettingsSection; label: string }[] = [
   { id: "subjects", label: "Subjects" },
   { id: "examRooms", label: "Exam rooms" },
   { id: "invites", label: "Invites" },
+  { id: "googleSheet", label: "Google Sheet" },
   { id: "danger", label: "Danger zone" },
 ];
 
@@ -90,6 +92,8 @@ export function SettingsTab({
           embedded
         />
       )}
+
+      {activeSection === "googleSheet" && <SettingsGoogleSheetPanel schoolId={schoolId} />}
 
       {activeSection === "danger" && (
         <SettingsDangerZonePanel schoolId={schoolId} schoolName={schoolName} />
