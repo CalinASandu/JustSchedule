@@ -3,7 +3,7 @@ import { Check, ClipboardCopy, Copy, X } from "lucide-react";
 import { createPortal } from "react-dom";
 
 type ReservationCopyExamsButtonProps = {
-  /** One "Exam name, Type" line per reservation of the selected day, in slot order. */
+  /** One "Exam name, Type" line per distinct exam of the selected day, in slot order. */
   lines: string[];
   dateLabel: string;
 };
@@ -127,7 +127,7 @@ function CopyExamsDialog({
               Exams on {dateLabel}
             </h2>
             <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)" }}>
-              {lines.length} exam{lines.length === 1 ? "" : "s"} across all time slots.
+              {lines.length} different exam{lines.length === 1 ? "" : "s"} across all time slots.
             </p>
           </div>
           <button

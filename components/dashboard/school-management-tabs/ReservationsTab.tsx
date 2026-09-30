@@ -130,16 +130,25 @@ export function ReservationsTab({
     () => visibleReservations.filter((reservation) => reservation.reservationDate === reservationDate),
     [reservationDate, visibleReservations],
   );
-  // "Exam name, Type" for every exam that day, in time-slot order.
+  // "Exam name, Type" for each distinct exam that day, in time-slot order of
+  // first appearance. Same name (trimmed, any case) and type are listed once.
   const dayExamLines = useMemo(() => {
     const slotStart = new Map(examSlots.map((slot) => [slot.id, slot.startsAt]));
-    return [...dayReservations]
-      .sort(
-        (first, second) =>
-          (slotStart.get(first.slotId) ?? "").localeCompare(slotStart.get(second.slotId) ?? "") ||
-          first.createdAt.localeCompare(second.createdAt),
-      )
-      .map((reservation) => `${reservation.examName}, ${formatExamType(reservation.examType)}`);
+    const seen = new Set<string>();
+    const lines: string[] = [];
+    const sorted = [...dayReservations].sort(
+      (first, second) =>
+        (slotStart.get(first.slotId) ?? "").localeCompare(slotStart.get(second.slotId) ?? "") ||
+        first.createdAt.localeCompare(second.createdAt),
+    );
+    for (const reservation of sorted) {
+      const examName = reservation.examName.trim();
+      const key = `${examName.toLowerCase()}|${reservation.examType}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      lines.push(`${examName}, ${formatExamType(reservation.examType)}`);
+    }
+    return lines;
   }, [dayReservations, examSlots]);
   const weekReservations = useMemo(
     () =>
