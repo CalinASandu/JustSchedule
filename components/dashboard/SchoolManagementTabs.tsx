@@ -77,13 +77,15 @@ export default function SchoolManagementTabs({
         ? "reservations"
         : "members";
   const initialSettingsSection: SettingsSection =
-    requestedTab === "invites" ? "invites" : "examRooms";
+    requestedTab === "invites" && canManageMembers ? "invites" : "examRooms";
   const [activeTab, setActiveTab] = useState<SchoolDashboardTab>(
     initialTab,
   );
   const activeExamSlots = examSlots.filter((slot) => slot.isActive);
   const canViewExamRequests = currentUserRole === "admin" || currentUserRole === "professor";
   const canReviewJoinRequests = canViewExamRequests;
+  // Professors get Subjects and Exam rooms; invites, Google Sheet, and deletion stay admin-only.
+  const canViewSettings = canViewExamRequests;
 
   function renderTabButton(tab: SchoolDashboardTab, label: string) {
     const selected = activeTab === tab;
@@ -119,7 +121,7 @@ export default function SchoolManagementTabs({
           {canViewExamRequests && renderTabButton("examRequests", "Exam Requests")}
           {canViewAttendance && renderTabButton("attendance", "Attendance")}
           {canReviewJoinRequests && renderTabButton("requests", "Join Requests")}
-          {canManageMembers && renderTabButton("settings", "Settings")}
+          {canViewSettings && renderTabButton("settings", "Settings")}
         </div>
       </div>
 
@@ -175,11 +177,13 @@ export default function SchoolManagementTabs({
         />
       )}
 
-      {activeTab === "settings" && canManageMembers && (
+      {activeTab === "settings" && canViewSettings && (
         <SettingsTab
           schoolId={schoolId}
           schoolName={schoolName}
+          canManageAdminSettings={canManageMembers}
           initialExamSlots={examSlots}
+          reservations={reservations}
           initialSubjects={schoolSubjects}
           invites={invites}
           inviteError={inviteError}

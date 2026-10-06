@@ -335,6 +335,10 @@ export function getUserFacingErrorMessage(
       return "An exam room with these details already exists.";
     }
 
+    if (messageIncludes(message, ["already booked on"])) {
+      return message;
+    }
+
     if (messageIncludes(message, ["capacity"])) {
       return "Capacity must be at least 1.";
     }

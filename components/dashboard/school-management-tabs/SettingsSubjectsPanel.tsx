@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Loader2, Plus, X } from "lucide-react";
+import { Loader2, Plus, Search, Trash2 } from "lucide-react";
 import { removeSchoolSubject, upsertSchoolSubject } from "./api";
 import type { SchoolSubject } from "./types";
 
@@ -8,31 +8,46 @@ type SettingsSubjectsPanelProps = {
   initialSubjects: SchoolSubject[];
 };
 
+function normalizeSubjectName(value: string) {
+  return value.trim().toLowerCase();
+}
+
 export function SettingsSubjectsPanel({
   schoolId,
   initialSubjects,
 }: SettingsSubjectsPanelProps) {
   const [subjects, setSubjects] = useState<SchoolSubject[]>(initialSubjects);
-  const [newSubjectName, setNewSubjectName] = useState("");
+  const [query, setQuery] = useState("");
   const [subjectState, setSubjectState] = useState<{
     error: string | null;
-    pending: boolean;
-  }>({ error: null, pending: false });
+    // "add" while adding, or the subject id being removed.
+    pendingKey: string | null;
+  }>({ error: null, pendingKey: null });
+
+  const trimmedQuery = query.trim();
+  const normalizedQuery = normalizeSubjectName(query);
+  const matchingSubjects = normalizedQuery
+    ? subjects.filter((subject) => normalizeSubjectName(subject.name).includes(normalizedQuery))
+    : subjects;
+  const hasExactMatch = subjects.some(
+    (subject) => normalizeSubjectName(subject.name) === normalizedQuery,
+  );
+  const canAdd = trimmedQuery.length > 0 && !hasExactMatch;
+  const pending = subjectState.pendingKey !== null;
 
   async function addSubject() {
-    const name = newSubjectName.trim();
-    if (!name) return;
+    if (!canAdd || pending) return;
 
-    setSubjectState({ error: null, pending: true });
-    const result = await upsertSchoolSubject({ schoolId, name });
+    setSubjectState({ error: null, pendingKey: "add" });
+    const result = await upsertSchoolSubject({ schoolId, name: trimmedQuery });
 
     if (result.error) {
-      setSubjectState({ error: result.error, pending: false });
+      setSubjectState({ error: result.error, pendingKey: null });
       return;
     }
 
     if (!result.data) {
-      setSubjectState({ error: "Could not add subject. Try again.", pending: false });
+      setSubjectState({ error: "Could not add subject. Try again.", pendingKey: null });
       return;
     }
 
@@ -42,21 +57,21 @@ export function SettingsSubjectsPanel({
         a.name.localeCompare(b.name),
       ),
     );
-    setNewSubjectName("");
-    setSubjectState({ error: null, pending: false });
+    setQuery("");
+    setSubjectState({ error: null, pendingKey: null });
   }
 
   async function removeSubject(id: string) {
-    setSubjectState({ error: null, pending: true });
+    setSubjectState({ error: null, pendingKey: id });
     const result = await removeSchoolSubject({ schoolId, subjectId: id });
 
     if (result.error) {
-      setSubjectState({ error: result.error, pending: false });
+      setSubjectState({ error: result.error, pendingKey: null });
       return;
     }
 
     setSubjects((prev) => prev.filter((subject) => subject.id !== id));
-    setSubjectState({ error: null, pending: false });
+    setSubjectState({ error: null, pendingKey: null });
   }
 
   return (
@@ -64,89 +79,115 @@ export function SettingsSubjectsPanel({
       className="rounded-[10px] border p-4"
       style={{ background: "var(--surface-panel)", borderColor: "var(--border-default)" }}
     >
-      <p className="mb-1 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
-        Subjects
-      </p>
-      <p className="mb-4 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}>
-        Students select from these subjects when scheduling an exam.
-      </p>
-
-      {subjects.length > 0 ? (
-        <div className="mb-4 flex flex-wrap gap-2">
-          {subjects.map((subject) => (
-            <span
-              key={subject.id}
-              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium"
-              style={{
-                background: "var(--accent-subtle)",
-                color: "var(--accent-strong)",
-                border: "1px solid var(--accent-muted)",
-              }}
-            >
-              {subject.name}
-              <button
-                type="button"
-                onClick={() => removeSubject(subject.id)}
-                disabled={subjectState.pending}
-                className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full transition-colors duration-150 hover:bg-[var(--accent-muted)] disabled:cursor-not-allowed"
-                aria-label={`Remove ${subject.name}`}
-              >
-                <X size={10} strokeWidth={2.5} />
-              </button>
-            </span>
-          ))}
+      <div className="mb-4 flex items-baseline justify-between gap-3">
+        <div>
+          <p className="mb-1 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+            Subjects
+          </p>
+          <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}>
+            Students select from these subjects when scheduling an exam.
+          </p>
         </div>
-      ) : (
-        <p className="mb-4 text-sm" style={{ color: "var(--text-muted)" }}>
-          No subjects yet. Add one below.
-        </p>
-      )}
+        <span className="shrink-0 text-sm tabular-nums" style={{ color: "var(--text-muted)" }}>
+          {subjects.length} {subjects.length === 1 ? "subject" : "subjects"}
+        </span>
+      </div>
 
-      <div className="flex flex-col gap-2 sm:flex-row">
+      <div className="relative">
+        <Search
+          size={16}
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2"
+          style={{ color: "var(--text-muted)" }}
+          aria-hidden="true"
+        />
         <input
-          type="text"
-          value={newSubjectName}
-          onChange={(event) => setNewSubjectName(event.target.value)}
+          type="search"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
           onKeyDown={(event) => {
             if (event.key === "Enter") {
               event.preventDefault();
               addSubject();
             }
           }}
-          placeholder="Add a subject..."
-          disabled={subjectState.pending}
-          className="h-[2.625rem] min-w-0 flex-1 rounded-[10px] px-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] disabled:cursor-not-allowed"
+          placeholder="Search or add a subject…"
+          aria-label="Search or add a subject"
+          aria-controls="subject-results"
+          autoComplete="off"
+          className="h-[2.625rem] w-full min-w-0 rounded-[10px] pl-9 pr-3 text-[0.9375rem] outline-none transition-[border-color,box-shadow] focus-visible:border-[var(--accent-color)]"
           style={{
             background: "var(--surface-panel)",
             border: "1.5px solid var(--border-default)",
             color: "var(--text-primary)",
           }}
         />
-        <button
-          type="button"
-          onClick={addSubject}
-          disabled={subjectState.pending || !newSubjectName.trim()}
-          className="inline-flex h-[2.625rem] items-center justify-center gap-1.5 rounded-[10px] px-4 text-[0.9375rem] font-semibold transition-colors duration-150 disabled:cursor-not-allowed"
-          style={{
-            color: "var(--text-on-accent)",
-            background:
-              subjectState.pending || !newSubjectName.trim()
-                ? "var(--accent-disabled)"
-                : "var(--accent-color)",
-            boxShadow:
-              subjectState.pending || !newSubjectName.trim()
-                ? "none"
-                : "0 1px 3px rgba(37,99,235,0.25), 0 4px 12px rgba(37,99,235,0.12)",
-          }}
-        >
-          {subjectState.pending ? (
-            <Loader2 size={15} className="animate-spin" />
-          ) : (
-            <Plus size={15} strokeWidth={2.2} />
-          )}
-          Add
-        </button>
       </div>
+
+      <ul
+        id="subject-results"
+        className="mt-2 max-h-[22rem] overflow-y-auto overscroll-contain rounded-[10px] border"
+        style={{ borderColor: "var(--border-default)" }}
+        aria-label="Subjects"
+      >
+        {canAdd && (
+          <li>
+            <button
+              type="button"
+              onClick={addSubject}
+              disabled={pending}
+              className="flex min-h-11 w-full items-center gap-2.5 px-3 py-2 text-left text-sm font-semibold transition-colors duration-150 hover:bg-[var(--accent-subtle)] disabled:cursor-not-allowed"
+              style={{ color: "var(--accent-strong)" }}
+            >
+              {subjectState.pendingKey === "add" ? (
+                <Loader2 size={15} className="shrink-0 animate-spin" />
+              ) : (
+                <Plus size={15} strokeWidth={2.2} className="shrink-0" />
+              )}
+              <span className="min-w-0 truncate">Add &ldquo;{trimmedQuery}&rdquo;</span>
+            </button>
+          </li>
+        )}
+
+        {matchingSubjects.map((subject, index) => {
+          const removing = subjectState.pendingKey === subject.id;
+
+          return (
+            <li
+              key={subject.id}
+              className={
+                index > 0 || canAdd ? "border-t border-[var(--border-subtle)]" : undefined
+              }
+            >
+              <div className="flex min-h-11 items-center justify-between gap-3 px-3 py-1.5">
+                <span className="min-w-0 truncate text-sm" style={{ color: "var(--text-body)" }}>
+                  {subject.name}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => removeSubject(subject.id)}
+                  disabled={pending}
+                  className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-[8px] px-2.5 text-[0.8125rem] font-medium transition-colors duration-150 hover:bg-[var(--danger-subtle)] disabled:cursor-not-allowed disabled:opacity-60"
+                  style={{ color: "var(--danger)" }}
+                  aria-label={`Remove ${subject.name}`}
+                >
+                  {removing ? (
+                    <Loader2 size={14} className="animate-spin" />
+                  ) : (
+                    <Trash2 size={14} />
+                  )}
+                  Remove
+                </button>
+              </div>
+            </li>
+          );
+        })}
+
+        {matchingSubjects.length === 0 && !canAdd && (
+          <li className="px-3 py-3 text-sm" style={{ color: "var(--text-muted)" }}>
+            No subjects yet. Type a name above to add one.
+          </li>
+        )}
+      </ul>
 
       {subjectState.error && (
         <p
@@ -156,6 +197,7 @@ export function SettingsSubjectsPanel({
             border: "1px solid var(--danger-border)",
             color: "var(--danger)",
           }}
+          role="alert"
         >
           {subjectState.error}
         </p>
