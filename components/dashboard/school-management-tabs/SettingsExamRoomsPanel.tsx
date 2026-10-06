@@ -7,15 +7,19 @@ import {
   setExamSlotActive,
   updateExamSlot,
 } from "./api";
+import { getTodayKey } from "./date-utils";
 import { formatSlotTime } from "./formatters";
 import { ErrorBanner } from "./shared";
 import { FloatingActionMenu } from "./FloatingActionMenu";
-import type { ExamSlot } from "./types";
+import type { ExamSlot, Reservation } from "./types";
 
 type SettingsExamRoomsPanelProps = {
   schoolId: string;
   initialExamSlots: ExamSlot[];
+  reservations: Reservation[];
 };
+
+type BookedSeats = { seats: number; date: string };
 
 type SlotDialogState =
   | { mode: "create-primary" }
@@ -37,6 +41,7 @@ type PendingState = {
 export function SettingsExamRoomsPanel({
   schoolId,
   initialExamSlots,
+  reservations,
 }: SettingsExamRoomsPanelProps) {
   const [slots, setSlots] = useState<ExamSlot[]>(() => sortSlots(initialExamSlots));
   const [dialogState, setDialogState] = useState<SlotDialogState | null>(null);
@@ -140,6 +145,7 @@ export function SettingsExamRoomsPanel({
 
   const dialogSlot =
     dialogState?.mode === "edit" ? slots.find((slot) => slot.id === dialogState.slotId) ?? null : null;
+  const dialogBookedSeats = dialogSlot ? getBusiestUpcomingDate(dialogSlot.id, reservations) : null;
   const dialogPrimarySlot =
     dialogState?.mode === "create-overflow"
       ? slots.find((slot) => slot.id === dialogState.primarySlotId) ?? null
@@ -237,6 +243,7 @@ export function SettingsExamRoomsPanel({
           state={dialogState}
           slot={dialogSlot}
           primarySlot={dialogPrimarySlot}
+          bookedSeats={dialogBookedSeats}
           pending={slotState.pendingKey === "dialog"}
           error={slotState.error}
           onClose={() => {
@@ -427,6 +434,7 @@ function SlotDialog({
   state,
   slot,
   primarySlot,
+  bookedSeats,
   pending,
   error,
   onClose,
@@ -435,6 +443,7 @@ function SlotDialog({
   state: SlotDialogState;
   slot: ExamSlot | null;
   primarySlot: ExamSlot | null;
+  bookedSeats: BookedSeats | null;
   pending: boolean;
   error: string | null;
   onClose: () => void;
@@ -456,12 +465,20 @@ function SlotDialog({
   const submitLabel = state.mode === "edit" ? "Save changes" : "Add room";
   const timeFieldsDisabled = pending || isOverflowCreate || isOverflowEdit;
   const capacityNumber = Number(capacity);
+  // Raising capacity or keeping it is always allowed; lowering stops at the busiest booked date.
+  const minimumCapacity = Math.max(1, Math.min(bookedSeats?.seats ?? 1, slot?.capacity ?? 1));
+  const belowBookedSeats =
+    bookedSeats !== null &&
+    slot !== null &&
+    capacityNumber < slot.capacity &&
+    capacityNumber < bookedSeats.seats;
   const canSubmit =
     (isOverflowCreate || name.trim().length > 0) &&
     startsAt &&
     endsAt &&
     Number.isInteger(capacityNumber) &&
-    capacityNumber > 0;
+    capacityNumber > 0 &&
+    !belowBookedSeats;
 
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -586,7 +603,8 @@ function SlotDialog({
                 <input
                   id="slot-capacity"
                   type="number"
-                  min={1}
+                  min={minimumCapacity}
+                  aria-describedby={bookedSeats ? "slot-capacity-hint" : undefined}
                   value={capacity}
                   onChange={(event) => setCapacity(event.target.value)}
                   disabled={pending}
@@ -599,6 +617,19 @@ function SlotDialog({
                 />
               </Field>
             </div>
+
+            {bookedSeats && (
+              <p
+                id="slot-capacity-hint"
+                className="text-[0.8125rem]"
+                style={{ color: belowBookedSeats ? "var(--danger)" : "var(--text-secondary)" }}
+                aria-live="polite"
+              >
+                {bookedSeats.seats} {bookedSeats.seats === 1 ? "seat is" : "seats are"} already
+                booked on {formatBookedDate(bookedSeats.date)}, so seats can&apos;t go below{" "}
+                {Math.min(bookedSeats.seats, slot?.capacity ?? bookedSeats.seats)}.
+              </p>
+            )}
           </div>
 
           <div className="mt-5 flex flex-col-reverse gap-2 border-t border-[var(--border-subtle)] pt-4 sm:flex-row sm:justify-end">
@@ -686,6 +717,39 @@ function getInitialSlotValues(
     endsAt: slot?.endsAt.slice(0, 5) ?? primarySlot?.endsAt.slice(0, 5) ?? "11:00",
     capacity: slot?.capacity ?? 6,
   };
+}
+
+function getBusiestUpcomingDate(slotId: string, reservations: Reservation[]): BookedSeats | null {
+  const today = getTodayKey();
+  const seatsByDate = new Map<string, number>();
+
+  reservations.forEach((reservation) => {
+    if (
+      reservation.slotId !== slotId ||
+      reservation.status !== "confirmed" ||
+      reservation.reservationDate < today
+    ) {
+      return;
+    }
+    seatsByDate.set(reservation.reservationDate, (seatsByDate.get(reservation.reservationDate) ?? 0) + 1);
+  });
+
+  let busiest: BookedSeats | null = null;
+  seatsByDate.forEach((seats, date) => {
+    if (!busiest || seats > busiest.seats || (seats === busiest.seats && date < busiest.date)) {
+      busiest = { seats, date };
+    }
+  });
+
+  return busiest;
+}
+
+function formatBookedDate(dateKey: string) {
+  return new Date(`${dateKey}T00:00:00`).toLocaleDateString(undefined, {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  });
 }
 
 function groupSlots(slots: ExamSlot[]) {
